@@ -1,0 +1,43 @@
+Notes for the final project code:
+
+Loaded data for both `model_fits.R` and `model_validation.R`:
+- check all "base" data imports, there may be some redundant data imports here.
+- Current data imports:
+-- `ne_data.rda` :
+-- `se_data.rda` :
+-- `bounded_data.rda` :
+-- `data_matrix.rda` :
+-- `lag_list.rda` : 
+
+Imported data objects into `model_validation.R`:
+- Models from `model_fits.R`:
+(Base)
+-- NEmodels : list of linear model (lm) objects for each group in NE Aus
+-- NErefits : list of terms for each group in NE Aus, as char string (formula)
+-- SEmodels : list of linear model (lm) objects for each group in SE Aus
+-- SErefits : list of terms for each group in SE Aus, as char string (formula)
+(eBIC Base)
+-- NEmodels.eBIC : list of linear model (lm) objects for each gamma in each group of NE Aus
+-- NErefits.eBIC : list of terms for each gamma in each group of NE Aus, as char string (formula)
+-- SEmodels.eBIC : list of linear model (lm) objects for each gamma in each group of SE Aus
+-- SErefits.eBIC : list of terms for each gamma in each group of SE Aus, as char string (formula)
+- Notes: 
+-- For .models lists, use for "base" model validation
+-- for .refits lists, use for refiting the coefficients to create "constant" model
+
+Imported model fits/validation into `model_figures.R` 
+-from `model_validation.R`
+-- NEvalid : list of model validations and pred intervals
+	[[1]] NE.rmse : 
+	[[2]] NE.cprs :
+	[[3]] NE.ints :
+	[[4]] NE.pred.int : 
+-- NErefit.new : list of terms and models from constant and varying fits, contains
+	[[1]] NE.vary.terms : terms from varying models fit without single seasons 
+	[[2]] NE.const.LM : linear model (lm) objects for constant term fit without single seasons
+	[[3]] NE.vary.LM : linear model (lm) objects for varying term fit without single seasons
+
+
+	
+
+
