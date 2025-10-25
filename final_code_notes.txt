@@ -1,5 +1,9 @@
 Notes for the final project code:
 
+EDA Code: {`correlation_figures.R`}
+
+
+Model Code: {`model_fits.R`, `model_validation.R`, `model_figures.R`}
 Loaded data for both `model_fits.R` and `model_validation.R`:
 - check all "base" data imports, there may be some redundant data imports here.
 - Current data imports:
@@ -36,6 +40,10 @@ Imported model fits/validation into `model_figures.R`
 	[[1]] NE.vary.terms : terms from varying models fit without single seasons 
 	[[2]] NE.const.LM : linear model (lm) objects for constant term fit without single seasons
 	[[3]] NE.vary.LM : linear model (lm) objects for varying term fit without single seasons
+-- (Repeat for SE)
+
+
+
 
 
 	
