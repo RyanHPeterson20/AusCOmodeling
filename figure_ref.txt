@@ -1,2 +1,3 @@
 location of figures in final project code
-
+-Weekly pIOD indices and WTIO/ETIO: (scattered, needs consolidation)
+-2019/2020 Prediction: `model_figures.R` Line ~782

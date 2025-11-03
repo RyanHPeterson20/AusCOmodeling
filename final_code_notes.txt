@@ -25,6 +25,11 @@ Imported data objects into `model_validation.R`:
 -- NErefits.eBIC : list of terms for each gamma in each group of NE Aus, as char string (formula)
 -- SEmodels.eBIC : list of linear model (lm) objects for each gamma in each group of SE Aus
 -- SErefits.eBIC : list of terms for each gamma in each group of SE Aus, as char string (formula)
+(alt Base: new, noOLR)
+-- NEmodels.new : list of linear model (lm) objects for each group in NE Aus, only uses Nino, IOD(W,E), AAO
+-- NErefits.enew : list of terms for each group in NE Aus, as char string (formula), only uses Nino, IOD(W,E), AAO
+-- SEmodels.new : list of linear model (lm) objects for each group in SE Aus, only uses Nino, IOD(W,E), AAO
+-- SErefits.enew : list of terms for each group in SE Aus, as char string (formula), only uses Nino, IOD(W,E), AAO
 - Notes: 
 -- For .models lists, use for "base" model validation
 -- for .refits lists, use for refiting the coefficients to create "constant" model
