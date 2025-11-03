@@ -70,7 +70,10 @@ wtio.df <- data.frame(sst = sst.wtio, date = time.wtio, week = epiweek(time.wtio
 etio.df <- data.frame(sst = sst.etio, date = time.etio, week = epiweek(time.etio))
 tsa.df <- data.frame(sst = sst.tsa, date = time.tsa, week = epiweek(time.tsa))
 
-#TODO: combine these into a single data object. (e.g. predictor_anoms.csv)
+#combine dmi, wtio, etio into a single iod.df
+iod.df <- data.frame(dmi.anom = dmi.df$sst, wtio.anom = wtio.df$sst, etio.anom = etio.df$sst,
+                     date = dmi.df$date, week = dmi.df$week)
+
 
 sam.monthly.df <- data.frame(sst = sst.sam, date = time.sam)
 
@@ -81,44 +84,37 @@ aao.df$week <- epiweek(aao.date)
 aao.df$wday <- wday(aao.date)
 aao.df <- aao.df[1:17100, ]
 
-#TODO: finalize weekly aao avg data, delete when done
-##everything below is WIP
 
-#temp day of the week check, delete when done.
-#wday(aao.date[10]) #Wednesday as 4
-
-
-aao.years <- unique(aao.df$year)
-
-#temp, delete when done
-i <- aao.years[2]
-temp.df <- aao.df[which(aao.df$year == i), ]
-mean(temp.df$aao_index_cdas[c(1:5)])
-
-#'manual' setup/test:
-aao.df$wday[1:6]
-aao.df$wday[7:13]
-
+weeks.n <- length(which(aao.df$wday == 7))-1
+#it's messy but it kinda works
 i <- 1
 j <- 6
-aao.df$wday[i:j]
+aao.avg <- mean(aao.df$aao_index_cdas[i:j])
 i.new <- j+1
 j.new <- j+7
-aao.df$wday[i.new:j.new]
-i.new <- j.new+1
-j.new <- j.new+7
-aao.df$wday[i.new:j.new]
-weeks.n <- length(which(aao.df$wday == 7))-1
-
-
-for (k in weeks.n) {
-  
+for (k in 1:weeks.n) {
+  aao.avg <- c(aao.avg, mean(aao.df$aao_index_cdas[i.new:j.new]))
+  i.new <- j.new+1
+  j.new <- j.new+7
 }
 
-#get weekly averaged aao data 
-for(i in aao.years) {
-  temp.df <- aao.df[which(aao.df$year == i), ]
-  
-}
-rm(i, temp.df)
+rm(i, i.new, j, j.new, k, weeks.n)
+
+aao.temp.df <- aao.df[which(aao.df$wday == 4), ]
+sam.df <- data.frame(anom = aao.avg, date = aao.temp.df$date, week = aao.temp.df$week)
+
+sam.min.date <- which(sam.df$date == min(dmi.df$date))
+sam.max.date <- which(sam.df$date == max(dmi.df$date))
+
+sam.df <- sam.df[c(sam.min.date:sam.max.date), ]
+
+rm(aao.temp.df, sam.min.date, sam.max.date)
+
+#export data
+setwd("~/CO_AUS/AusCOmodeling/Data") 
+#write csv
+write.csv(nino.df, "nino_weekly_anoms.csv")
+write.csv(iod.df, "iod_weekly_anoms.csv")
+write.csv(tsa.df, "tsa_weekly_anoms.csv")
+write.csv(sam.df, "aao_weekly_anoms.csv")
 

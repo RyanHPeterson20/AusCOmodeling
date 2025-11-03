@@ -6,4 +6,4 @@ Current notes for updating and consolidating code (delete when done.)
 -- used for provided data: _weekly_avg.csv (pred) and _WEDCEN.csv (resp)
 -IOD "updated" index data (so that we can correctly match the provided mopitt data) is in `IOD_dmi.rmd` in `~CO_AUS\Aus_CO-main/Interactions_New`
 -- as .nc data (requires  ncdf4/terra) or a .csv (for aao data)
--- 
+-- produces .csv files for nino, dmi, tsa, and aao weekly avg anomalies (from 1981-11-04 to 2021-04-07).
