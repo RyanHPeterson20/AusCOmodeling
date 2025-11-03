@@ -1,8 +1,9 @@
 
-#base data cleaning for aus wildfire CO-climate modeling
+#base data cleaning for Aus Wildfire CO-climate modeling
 
 #notes: 
-## prep for data cleaning and prep 
-
+## for data cleaning and prep 
 
 #TODO: import from ~/Data
+
+
