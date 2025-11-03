@@ -1,0 +1,9 @@
+Notes for updates to data cleaning:
+(update with details when done.)
+
+Current notes for updating and consolidating code (delete when done.)
+-original data cleaning for climate indices and mopitt response data: `CO_data_cleaning_EDA.Rmd` in `~CO_AUS\Aus_CO-main`
+-- used for provided data: _weekly_avg.csv (pred) and _WEDCEN.csv (resp)
+-IOD "updated" index data (so that we can correctly match the provided mopitt data) is in `IOD_dmi.rmd` in `~CO_AUS\Aus_CO-main/Interactions_New`
+-- as .nc data (requires  ncdf4/terra) or a .csv (for aao data)
+-- 
