@@ -14,4 +14,4 @@ Current notes for updating and consolidating code (delete when done.)
 -using `data_cleaning.rmd` to create .rda files of prepared data
 --data is prepared as lagged data:
 --existing data as:
---- ne_data.rda/se_data.rda : list of seasons, response, and all lags for each week.
+--- lag_list.rda : list of seasons, response, and all lags for each week.

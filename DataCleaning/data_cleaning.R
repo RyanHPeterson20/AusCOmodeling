@@ -85,6 +85,7 @@ resp.df <- resp.df[-resp.week53, ]
 rm( pred.week53, resp.week53)
 
 #setup season data
+##Note: we can adjust the seasonal boundaries here
 season.weeks <- c(38:52, 1:14)
 season.years <- unique(resp.df$year)
 
@@ -111,25 +112,55 @@ SE.laglist <- list()
 ##seasons
 
 #setup: 
-#get min/max year
-min.year <- min(resp.df$year)
-max.year <- max(resp.df$year)
+
+
 
 i <- season.weeks[1]
 resp.temp <- resp.df[resp.df$week == i, ]
 
 if (i <= 14) {
-  resp.temp <- resp.temp[-which(resp.temp$year == min.year), ]
+  resp.temp <- resp.temp[-which(resp.temp$year == min(resp.df$year)), ]
 }
 
 NEdf.temp <- data.frame(seasons, NEAus.anom = resp.temp$NEAus.anom)
 SEdf.temp <- data.frame(seasons, SEAus.anom = resp.temp$SEAus.anom)
 
 #TODO: setup the df (or data structure) for predictors/indices
-#current, pick up on line 587 in data_cleaning.rmd
+#current, pick up on line 487 in data_cleaning.rmd
+
+#min/max year for response week i
+min.year <- min(resp.temp$year)
+max.year <- max(resp.temp$year)
+
+nino.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+dmi.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+wtio.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+etio.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+tsa.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+aao.lag <- matrix(NA, nrow = ength(resp.temp$NEAus.anom))
+
+#NEolr_lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+#SEolr_lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+
+week.vec <- c()
+lag.vec <- c()
+j <- 1
+lag.week <- i - j
+
+if (lag.week <= 0) {
+  lag.week <- 52 + lag.week
+  lag.year <- c(min.year - 1, max.year -1)
+} else {
+  lag.year <- min.year #what did I do here?
+  lag.year <- c(min.year, max.year)
+}
+
+#get lagged predictors
+lag.pred <- pred.df[pred.df$week == j, ]
+lag.pred <- lag.pred[which((lag.pred$year >= lag.year[1] & lag.pred$year <= lag.year[2])),]
 
 
-#j <- 1
+
 #pred.temp <- pred.df[pred.df$week == j, ]
 
 
