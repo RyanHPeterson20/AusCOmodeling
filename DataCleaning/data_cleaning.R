@@ -9,14 +9,14 @@
 ##for date/data mgmt
 suppressMessages(library(lubridate))
 
-#TODO: import from ~/Data
-#import as raw data 
+#import data 
 setwd("~/CO_AUS/AusCOmodeling") 
 #predictor data: from
 nino.raw <- read.csv("Data/nino_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 iod.raw  <- read.csv("Data/iod_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 tsa.raw  <- read.csv("Data/tsa_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 aao.raw  <- read.csv("Data/aao_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
+#TODO: add in OLR
 
 #response data: MOPITT V9J WEDCEN for both regions
 NEAus.raw <- read.csv("Data/NEAus_V9JMOPITT_weeklyanomalies_WEDCEN.csv", header = TRUE, stringsAsFactors = FALSE)
@@ -24,5 +24,87 @@ SEAus.raw <- read.csv("Data/SEAus_V9JMOPITT_weeklyanomalies_WEDCEN.csv", header 
 
 #TODO: load in functions as needed (also move any internal functions over)
 
+
+##setup##
+NEAus.raw$time <- ymd(NEAus.raw$time)
+SEAus.raw$time <- ymd(SEAus.raw$time)
+
+
+#combine into a single pred df and single resp df
+pred.df <- data.frame(nino.anom = nino.raw$sst, dmi.anom = iod.raw$dmi.anom, wtio.anom = iod.raw$wtio.anom,
+                      etio.anom = iod.raw$etio.anom, tsa.anom = tsa.raw$sst, aao.anom = aao.raw$anom, 
+                      date = nino.raw$date, week = nino.raw$week, year = year(nino.raw$date))
+resp.df <- data.frame(NEAus.anom = NEAus.raw$anomaly_co, SEAus.anom = SEAus.raw$anomaly_co, 
+                      date = NEAus.raw$time, week = epiweek(NEAus.raw$time), year = year(NEAus.raw$time))
+#alternative response data for actual CO data and CO climatologies
+resp.alt.df <- data.frame(NEAus.co = NEAus.raw$x_co, SEAus.co = SEAus.raw$x_co, NEAus.clim = NEAus.raw$x_co.climatology,
+                          SEAus.clim = SEAus.raw$x_co.climatology, date = NEAus.raw$time, week = epiweek(NEAus.raw$time), 
+                          year = year(NEAus.raw$time))
+
+#get min and max dates
+pred.min.date <- min(as_date(pred.df$date))
+pred.max.date <- max(as_date(pred.df$date))
+
+resp.min.date <- min(NEAus.raw$time)
+resp.max.date <- max(NEAus.raw$time)
+
+new.pred.min <- resp.min.date - weeks(52)
+
+#get upper bound of response data
+resp.df <- resp.df[which(resp.df$date <= pred.max.date), ]
+resp.alt.df <- resp.alt.df[which(resp.alt.df$date <= pred.max.date), ]
+
+#get lower bound for predictor data
+pred.df <- pred.df[which(pred.df$date >= new.pred.min), ]
+
+rownames(resp.df) <- NULL
+rownames(resp.alt.df) <- NULL
+rownames(pred.df) <- NULL
+
+#export .csv for the base dfs
+setwd("~/CO_AUS/AusCOmodeling/Data") 
+#write csv
+write.csv(pred.df, "pred_anoms.csv")
+write.csv(resp.df, "resp_anoms.csv")
+write.csv(resp.alt.df, "resp_alt_anoms.csv")
+
+
+#prepare data for use in modeling
+
+##clean up week 53 data
+pred.week53 <- which(pred.df$week == 53)
+resp.week53 <- which(resp.df$week == 53)
+
+
+for (k in pred.week53) {
+  temp.52 <- pred.df[k-1, 1:6]
+  temp.53 <- pred.df[k, 1:6]
+  
+  pred.df[k-1, 1:6] <- colMeans(rbind(temp.52, temp.53))
+}
+pred.df <- pred.df[-pred.week53, ]
+
+for (j in resp.week53) {
+  temp.52 <- resp.df[j-1, 1:2]
+  temp.53 <- resp.df[j, 1:2]
+  
+  resp.df[j-1, 1:2] <- colMeans(rbind(temp.52, temp.53))
+}
+resp.df <- resp.df[-resp.week53, ]
+
+#TODO: add in resp.alt.df
+rm(k, j, pred.week53, resp.week53, temp.52, temp.53)
+
+#setup season data
+season.weeks <- c(38:52, 1:14)
+season.years <- unique(resp.df$year)
+
+#get seasons as 20..-20..
+seasons <- c()
+for (i in 1:(length(season.years)-1)) {
+  temp.season <- paste0(season.years[i], "-", season.years[i+1])
+  seasons <- c(seasons, temp.season)
+}
+rm(i, temp.season)
 
 
