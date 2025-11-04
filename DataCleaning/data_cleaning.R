@@ -22,8 +22,8 @@ aao.raw  <- read.csv("Data/aao_weekly_anoms.csv", header = TRUE, stringsAsFactor
 NEAus.raw <- read.csv("Data/NEAus_V9JMOPITT_weeklyanomalies_WEDCEN.csv", header = TRUE, stringsAsFactors = FALSE)
 SEAus.raw <- read.csv("Data/SEAus_V9JMOPITT_weeklyanomalies_WEDCEN.csv", header = TRUE, stringsAsFactors = FALSE)
 
-#TODO: load in functions as needed (also move any internal functions over)
-
+#load internal functions
+source("Functions/dataclean_functions.R") # functions 
 
 ##setup##
 NEAus.raw$time <- ymd(NEAus.raw$time)
@@ -75,25 +75,14 @@ write.csv(resp.alt.df, "resp_alt_anoms.csv")
 pred.week53 <- which(pred.df$week == 53)
 resp.week53 <- which(resp.df$week == 53)
 
-
-for (k in pred.week53) {
-  temp.52 <- pred.df[k-1, 1:6]
-  temp.53 <- pred.df[k, 1:6]
-  
-  pred.df[k-1, 1:6] <- colMeans(rbind(temp.52, temp.53))
-}
+pred.df[,1:6] <- week53_avg(pred.df[,1:6], pred.week53)
 pred.df <- pred.df[-pred.week53, ]
 
-for (j in resp.week53) {
-  temp.52 <- resp.df[j-1, 1:2]
-  temp.53 <- resp.df[j, 1:2]
-  
-  resp.df[j-1, 1:2] <- colMeans(rbind(temp.52, temp.53))
-}
+resp.df[,1:2] <- week53_avg(resp.df[,1:2], resp.week53)
 resp.df <- resp.df[-resp.week53, ]
 
 #TODO: add in resp.alt.df
-rm(k, j, pred.week53, resp.week53, temp.52, temp.53)
+rm( pred.week53, resp.week53)
 
 #setup season data
 season.weeks <- c(38:52, 1:14)
@@ -107,4 +96,51 @@ for (i in 1:(length(season.years)-1)) {
 }
 rm(i, temp.season)
 
+#create lag predictor lists and dfs
+NE.laglist <- list()
+#TODO: call functions
+
+SE.laglist <- list()
+
+
+
+#TODO: test functions here, then move everything over to dataclean_functions.R
+#pass:
+##resp.df
+##season.weeks
+##seasons
+
+#setup: 
+#get min/max year
+min.year <- min(resp.df$year)
+max.year <- max(resp.df$year)
+
+i <- season.weeks[1]
+resp.temp <- resp.df[resp.df$week == i, ]
+
+if (i <= 14) {
+  resp.temp <- resp.temp[-which(resp.temp$year == min.year), ]
+}
+
+NEdf.temp <- data.frame(seasons, NEAus.anom = resp.temp$NEAus.anom)
+SEdf.temp <- data.frame(seasons, SEAus.anom = resp.temp$SEAus.anom)
+
+#TODO: setup the df (or data structure) for predictors/indices
+#current, pick up on line 587 in data_cleaning.rmd
+
+
+#j <- 1
+#pred.temp <- pred.df[pred.df$week == j, ]
+
+
+
+
+
+for (i in season.weeks) {
+  
+  for (j in 1:52) {
+    
+  }
+  
+}
 

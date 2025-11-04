@@ -12,4 +12,6 @@ Current notes for updating and consolidating code (delete when done.)
 `data_cleaning.R` creates finalized data "products" for use elsewhere in
 -outputs simple .csv for all data within the study period.
 -using `data_cleaning.rmd` to create .rda files of prepared data
---data is prepared as lagged data
+--data is prepared as lagged data:
+--existing data as:
+--- ne_data.rda/se_data.rda : list of seasons, response, and all lags for each week.
