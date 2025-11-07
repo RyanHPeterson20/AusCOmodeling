@@ -108,12 +108,11 @@ SE.laglist <- list()
 #TODO: test functions here, then move everything over to dataclean_functions.R
 #pass:
 ##resp.df
+##pred.df
 ##season.weeks
 ##seasons
 
 #setup: 
-
-
 
 i <- season.weeks[1]
 resp.temp <- resp.df[resp.df$week == i, ]
@@ -125,9 +124,6 @@ if (i <= 14) {
 NEdf.temp <- data.frame(seasons, NEAus.anom = resp.temp$NEAus.anom)
 SEdf.temp <- data.frame(seasons, SEAus.anom = resp.temp$SEAus.anom)
 
-#TODO: setup the df (or data structure) for predictors/indices
-#current, pick up on line 487 in data_cleaning.rmd
-
 #min/max year for response week i
 min.year <- min(resp.temp$year)
 max.year <- max(resp.temp$year)
@@ -137,14 +133,16 @@ dmi.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
 wtio.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
 etio.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
 tsa.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
-aao.lag <- matrix(NA, nrow = ength(resp.temp$NEAus.anom))
+aao.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
 
-#NEolr_lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
-#SEolr_lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+#olr.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+
 
 week.vec <- c()
 lag.vec <- c()
-j <- 1
+
+for (j in 1:52) {
+  
 lag.week <- i - j
 
 if (lag.week <= 0) {
@@ -160,18 +158,80 @@ lag.pred <- pred.df[pred.df$week == j, ]
 lag.pred <- lag.pred[which((lag.pred$year >= lag.year[1] & lag.pred$year <= lag.year[2])),]
 
 
+nino.lag <- cbind(nino.lag, lag.pred$nino.anom)
+dmi.lag <- cbind(dmi.lag, lag.pred$dmi.anom)
+wtio.lag <- cbind(wtio.lag, lag.pred$wtio.anom)
+etio.lag <- cbind(etio.lag, lag.pred$etio.anom)
+tsa.lag <- cbind(tsa.lag, lag.pred$tsa.anom)
+aao.lag <- cbind(aao.lag, lag.pred$aao.anom)
 
-#pred.temp <- pred.df[pred.df$week == j, ]
+#olr.lag <- cbind(olr.lag, lag.olr$olr.anom)
+
+week.vec <- c(week.vec, lag.week)
+lag.vec <- c(lag.vec, j)
+
+}
 
 
-
-
-
-for (i in season.weeks) {
+#test function: 
+#TODO: move to dataclean_functions.R when done
+pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
   
-  for (j in 1:52) {
+  for (i in season.weeks) {
+    
+    resp.temp <- resp.df[resp.df$week == i, ]
+    
+    if (i <= 14) {
+      resp.temp <- resp.temp[-which(resp.temp$year == min(resp.df$year)), ]
+    }
+    
+    NEdf.temp <- data.frame(seasons, NEAus.anom = resp.temp$NEAus.anom)
+    SEdf.temp <- data.frame(seasons, SEAus.anom = resp.temp$SEAus.anom)
+    
+    #min/max year for response week i
+    min.year <- min(resp.temp$year)
+    max.year <- max(resp.temp$year)
+    
+    nino.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+    dmi.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+    wtio.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+    etio.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+    tsa.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+    aao.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+    #olr.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+    
+    week.vec <- c()
+    lag.vec <- c()
+    for (j in 1:52) {
+      lag.week <- i - j
+      
+      if (lag.week <= 0) {
+        lag.week <- 52 + lag.week
+        lag.year <- c(min.year - 1, max.year -1)
+      } else {
+        lag.year <- min.year #what did I do here?
+        lag.year <- c(min.year, max.year)
+      }
+      
+      #get lagged predictors
+      lag.pred <- pred.df[pred.df$week == j, ]
+      lag.pred <- lag.pred[which((lag.pred$year >= lag.year[1] & lag.pred$year <= lag.year[2])),]
+      
+      nino.lag <- cbind(nino.lag, lag.pred$nino.anom)
+      dmi.lag <- cbind(dmi.lag, lag.pred$dmi.anom)
+      wtio.lag <- cbind(wtio.lag, lag.pred$wtio.anom)
+      etio.lag <- cbind(etio.lag, lag.pred$etio.anom)
+      tsa.lag <- cbind(tsa.lag, lag.pred$tsa.anom)
+      aao.lag <- cbind(aao.lag, lag.pred$aao.anom)
+      #olr.lag <- cbind(olr.lag, lag.olr$olr.anom)
+      
+      week.vec <- c(week.vec, lag.week)
+      lag.vec <- c(lag.vec, j)
+    }
+    
     
   }
   
 }
+
 
