@@ -15,3 +15,9 @@ Current notes for updating and consolidating code (delete when done.)
 --data is prepared as lagged data:
 --existing data as:
 --- lag_list.rda : list of seasons, response, and all lags for each week.
+
+
+
+`olr_prep.R` prepares OLR data from .nc files
+- repeat work from `CO_OLR.rmd` and `co_olr.R` to redo OLR as a proxy for MJO (following Daniels et al, 2022)
+- 

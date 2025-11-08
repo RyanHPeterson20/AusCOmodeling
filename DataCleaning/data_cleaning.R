@@ -99,3 +99,10 @@ rm(i, temp.season)
 
 #get lags for data
 data.lags <- pred_lags(resp.df, pred.df, season.weeks, seasons)
+NEAus.lag <- data.lags$NElag
+SEAus.lag <- data.lags$SElag
+
+#output lag data as .rda
+setwd("~/CO_AUS/AusCOmodeling/Data") 
+save(NEAus.lag, SEAus.lag, file = "lagdata.rda")
+
