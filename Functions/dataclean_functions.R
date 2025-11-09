@@ -120,3 +120,7 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
   return(list(NElag = NE_laglist, SElag = SE_laglist))
   
 }
+
+
+## -- OLR prep functions -- ##
+

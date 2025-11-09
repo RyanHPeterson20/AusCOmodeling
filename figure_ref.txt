@@ -1,3 +1,9 @@
+Figure plans:
+1. Maps and Time-Series figures
+2. Model Coefficients (SE Aus-Mid(2)) and Model Predictions (SE Aus 2019/2020) 
+3. SON: Correlation (WTIO/ETIO and M-/S-index) and coefficient overlaps for IOD terms
+
+
 location of figures in final project code
 -Weekly pIOD indices and WTIO/ETIO: (scattered, needs consolidation)
 -2019/2020 Prediction: `model_figures.R` Line ~782

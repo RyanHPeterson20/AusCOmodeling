@@ -3,7 +3,7 @@
 
 #notes:
 ## region boundaries:
-
+#lat: (10N, 10S); lon: (90, 160)
 
 #libraries
 suppressMessages( library(lubridate))
@@ -12,10 +12,10 @@ suppressMessages( library(ncdf4))
 #load raw olr data from .nc files
 setwd("~/CO_AUS/AusCOmodeling") 
 #1999-2021
-olr_nc_1999 <- nc_open('AUS_CO-main/OLR/olr-daily_v01r02_19990101_19991231.nc') #1999
-olr_nc_2000 <- nc_open('AUS_CO-main/OLR/olr-daily_v01r02_20000101_20001231.nc') #2000
-olr_nc_2001 <- nc_open('AUS_CO-main/OLR/olr-daily_v01r02_20010101_20011231.nc') #2001
-olr_nc_2002 <- nc_open('AUS_CO-main/OLR/olr-daily_v01r02_20020101_20021231.nc') #2002
+olr_nc_1999 <- nc_open('Data/OLR/olr-daily_v01r02_19990101_19991231.nc') #1999
+olr_nc_2000 <- nc_open('Data/OLR/olr-daily_v01r02_20000101_20001231.nc') #2000
+olr_nc_2001 <- nc_open('Data/OLR/olr-daily_v01r02_20010101_20011231.nc') #2001
+olr_nc_2002 <- nc_open('Data/OLR/olr-daily_v01r02_20020101_20021231.nc') #2002
 olr_nc_2003 <- nc_open('AUS_CO-main/OLR/olr-daily_v01r02_20030101_20031231.nc') #2003
 olr_nc_2004 <- nc_open('AUS_CO-main/OLR/olr-daily_v01r02_20040101_20041231.nc') #2004
 olr_nc_2005 <- nc_open('AUS_CO-main/OLR/olr-daily_v01r02_20050101_20051231.nc') #2005
@@ -36,8 +36,14 @@ olr_nc_2019 <- nc_open('AUS_CO-main/OLR/olr-daily_v01r02_20190101_20191231.nc') 
 olr_nc_2020 <- nc_open('AUS_CO-main/OLR/olr-daily_v01r02_20200101_20201231.nc') #2020
 olr_nc_2021 <- nc_open('AUS_CO-main/OLR/olr-daily_v01r02_20210101_20211231.nc') #2021
 
+setwd("~/CO_AUS/AusCOmodeling") 
+#load internal functions
+source("Functions/dataclean_functions.R") # functions 
 
 #lat-lon boundaries
+#Daniels et al, 2022 uses MSEA boundary for OLR-MJO
+##lat: (10N, 10S); lon: (90, 160)
+lat.range <- c(-10, 10) 
+lon.range <- c(90, 160)
 
-
-
+##TODO: create and test functions for data cleaning

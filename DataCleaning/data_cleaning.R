@@ -88,6 +88,7 @@ rm( pred.week53, resp.week53)
 ##Note: we can adjust the seasonal boundaries here
 season.weeks <- c(38:52, 1:14)
 season.years <- unique(resp.df$year)
+season.years.pred <- unique(pred.df$year)
 
 #get seasons as 20..-20..
 seasons <- c()
@@ -105,16 +106,10 @@ SEAus.lag <- data.lags$SElag
 #output lag data as .rda
 setwd("~/CO_AUS/AusCOmodeling/Data") 
 save(NEAus.lag, SEAus.lag, file = "lagdata.rda")
-load("lagdata.rda")
+#load("lagdata.rda")
 
 ## data matrix
 #response data matrix
-
-#TODO: check on the existing data matrices
-setwd("~/CO_AUS/Aus_CO-main/Interactions")
-#load( "Data/bounded_data.rda")
-load( "Data/data_matrix.rda")
-
 #resp matrix [19x64] rows : year, columns : (NE Aus, SE Aus) weeks
 
 resp.matrix <- matrix(NA, ncol = 58) #29 weeks for each season
@@ -137,9 +132,24 @@ rownames(resp.matrix) <- seasons
 rm(j, temp.resp1, temp.resp2, season.1, season.2)
 
 #predictor data matrix
+#pred matrix [20x312] rows: years; columns: climate mode weeks
 
 pred.matrix <- matrix(NA, ncol = 312)
-colnames(pred.matrix) <- colnames(NEAus.lag[[1]][ ,3:314]) #get column names from lag lists
+colnames(pred.matrix) <- c(paste0("Nino_", 1:52), paste0("DMI_", 1:52), paste0("WTIO_", 1:52),
+                           paste0("ETIO_", 1:52), paste0("TSA_", 1:52), paste0("AAO_", 1:52))
 
+for (k in season.years.pred[1:21]) {
+  temp.pred <- pred.df[pred.df$year == k, ]
+  pred.matrix <- rbind(pred.matrix, c(temp.pred$nino.anom, temp.pred$dmi.anom, 
+                                      temp.pred$wtio.anom, temp.pred$etio.anom,
+                                      temp.pred$tsa.anom, temp.pred$aao.anom))
+}
 
+pred.matrix <- pred.matrix[-1, ]
+rownames(pred.matrix) <- season.years.pred[1:21]
 
+rm(k, temp.pred)
+
+#output matrices as .rda
+setwd("~/CO_AUS/AusCOmodeling/Data") 
+save(resp.matrix, pred.matrix, file = "matrixdata.rda")
