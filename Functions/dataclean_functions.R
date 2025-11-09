@@ -80,6 +80,7 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
       
       lag.vec <- c(lag.vec, j)
     }
+    
     nino.lag <- nino.lag[,-1]
     colnames(nino.lag) <- paste0("nino_lag", lag.vec[1:52])
     nino.lag <- scale(nino.lag, center = TRUE, scale = TRUE)
@@ -87,6 +88,14 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
     dmi.lag <- dmi.lag[,-1]
     colnames(dmi.lag) <- paste0("dmi_lag", lag.vec[1:52])
     dmi.lag <- scale(dmi.lag, center = TRUE, scale = TRUE)
+    
+    wtio.lag <- wtio.lag[,-1]
+    colnames(wtio.lag) <- paste0("wtio_lag", lag.vec[1:52])
+    wtio.lag <- scale(wtio.lag, center = TRUE, scale = TRUE)
+    
+    etio.lag <- etio.lag[,-1]
+    colnames(etio.lag) <- paste0("etio_lag", lag.vec[1:52])
+    etio.lag <- scale(etio.lag, center = TRUE, scale = TRUE)
     
     tsa.lag <- tsa.lag[,-1]
     colnames(tsa.lag) <- paste0("tsa_lag", lag.vec[1:52])
@@ -100,8 +109,8 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
     #colnames(olr.lag) <- paste0("olr_lag", lag.vec[1:52])
     #olr.lag <- scale(olr.lag, center = TRUE, scale = TRUE)
     
-    NEweek.lag <- data.frame(NEdf.temp, nino.lag, dmi.lag, tsa.lag, aao.lag)
-    SEweek.lag <- data.frame(SEdf.temp, nino.lag, dmi.lag, tsa.lag, aao.lag)
+    NEweek.lag <- data.frame(NEdf.temp, nino.lag, dmi.lag, wtio.lag, etio.lag, tsa.lag, aao.lag)
+    SEweek.lag <- data.frame(SEdf.temp, nino.lag, dmi.lag, wtio.lag, etio.lag, tsa.lag, aao.lag)
     
     NE_laglist[[paste("Week ", i)]] <- NEweek.lag
     SE_laglist[[paste("Week ", i)]] <- SEweek.lag

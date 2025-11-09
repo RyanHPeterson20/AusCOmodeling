@@ -105,4 +105,41 @@ SEAus.lag <- data.lags$SElag
 #output lag data as .rda
 setwd("~/CO_AUS/AusCOmodeling/Data") 
 save(NEAus.lag, SEAus.lag, file = "lagdata.rda")
+load("lagdata.rda")
+
+## data matrix
+#response data matrix
+
+#TODO: check on the existing data matrices
+setwd("~/CO_AUS/Aus_CO-main/Interactions")
+#load( "Data/bounded_data.rda")
+load( "Data/data_matrix.rda")
+
+#resp matrix [19x64] rows : year, columns : (NE Aus, SE Aus) weeks
+
+resp.matrix <- matrix(NA, ncol = 58) #29 weeks for each season
+colnames(resp.matrix) <- c(paste0("NEAus", season.weeks), paste0("SEAus", season.weeks))
+
+for (j in season.years[1:20]) {
+  temp.resp1 <- resp.df[resp.df$year == j, ]
+  season.1 <- temp.resp1[temp.resp1$week %in% 38:52,]
+  
+  temp.resp2 <- resp.df[resp.df$year == j+1, ]
+  season.2 <- temp.resp2[temp.resp2$week %in% 1:14, ]
+  
+  resp.matrix <- rbind(resp.matrix, c(season.1$NEAus.anom, season.2$NEAus.anom,
+                                      season.1$SEAus.anom, season.2$SEAus.anom))
+}
+
+resp.matrix <- resp.matrix[-1, ]
+rownames(resp.matrix) <- seasons
+
+rm(j, temp.resp1, temp.resp2, season.1, season.2)
+
+#predictor data matrix
+
+pred.matrix <- matrix(NA, ncol = 312)
+colnames(pred.matrix) <- colnames(NEAus.lag[[1]][ ,3:314]) #get column names from lag lists
+
+
 
