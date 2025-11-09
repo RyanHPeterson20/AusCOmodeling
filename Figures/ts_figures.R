@@ -3,15 +3,80 @@
 #create ts sub-figures for figure 1
 
 #libraries
+suppressMessages( library(fields)) #envelope plot
+suppressMessages( library(scales)) #for alpha()
+#TODO: add in libraries as needed
 
 
 #load data
 setwd("~/CO_AUS/AusCOmodeling") 
 load("Data/matrixdata.rda")
+#load .csv data
+pred.raw <- read.csv("Data/pred_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
+resp.raw  <- read.csv("Data/resp_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
+resp.alt.raw  <- read.csv("Data/resp_alt_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
+
 
 #setup (As needed)
+#color setup
+top.color <- "orange" #change to more red
+bottom.color <- "cyan" #change to more blue
+
+top.col <- "tomato2" #new red test
+bot.col <- "steelblue2" #new blue test
+
+#response ts
+
+## response anoms
+NE.anom <- resp.raw$NEAus.anom
+SE.anom <- resp.raw$SEAus.anom
+
+#test scale anoms
+test.for.zero(scale(NE.anom), (NE.anom - mean(NE.anom))/sd(NE.anom))
+test.for.zero(scale(SE.anom), (SE.anom - mean(SE.anom))/sd(SE.anom))
+
+#anom scales
+NE.anom.std <- scale(NE.anom)
+SE.anom.std <- scale(SE.anom)
+
+#temporal setup
+resp.time <- resp.raw$date
+resp.week <- resp.raw$week
+
+resp.time.range <- range(resp.time)
+
+#TODO: check on response ranges
+
+#yearly ticks
+x.ticks <- seq(year(resp.time.range[1]), year(resp.time.range[2]), by = 1)
+x.ticks <- ymd(paste0(x.ticks, "01", "01"))
 
 
-#
+#TODO: expand to both regions when single figure is finalized
+#figure test for a single region
+
+time.plot <- as.Date(resp.time)
+
+#get y.ticks and labels
+y.tick.max <- max(round(range(NE.anom.std)))
+y.ticks <- seq(-y.tick.max, y.tick.max, by = 1)
+
+y.tick.steps <- y.tick.max/4
+y.tick.seq <- seq(y.tick.steps, y.tick.max-y.tick.steps, by = y.tick.steps)
+y.tick.lab <- c(-rev(y.tick.seq), 0, y.tick.seq)
+
+#TODO: finalize the plot
+par(mfrow = c(2, 1))
+
+par(mar = c(0,2,0,0))
+par(oma = c(1.5,2,0,0))
+par(mgp = c(2.75,1,0))
+
+plot(time.plot, NE.anom.std, type = "l", col = "black")
+
+
+ylab.vals <- c("Anomaly CO",
+                 "Anomaly CO")
+
 
 
