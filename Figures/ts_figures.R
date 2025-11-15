@@ -6,6 +6,7 @@
 suppressMessages( library(fields)) #envelope plot
 suppressMessages( library(scales)) #for alpha()
 suppressMessages( library(lubridate)) #for temporal data
+suppressMessages( library(rcartocolor)) #color choices
 #TODO: add in libraries as needed
 
 
@@ -26,7 +27,13 @@ bottom.color <- "cyan" #change to more blue
 top.col <- "tomato2" #new red test
 bot.col <- "steelblue2" #new blue test
 
+#alternate colors (hex codes also in rcartocolor: peach/teal)
+top.col <- "#EF6A4CFF"
+bot.col <- "#4F90A6FF"
+
 #response ts
+resp.raw <- resp.raw[resp.raw$date <= "2021-01-06", ]
+#resp.raw <- resp.raw[resp.raw$year <= 2020, ]
 
 ## response anoms
 NE.anom <- resp.raw$NEAus.anom
@@ -51,7 +58,7 @@ resp.time.range <- range(resp.time)
 #yearly ticks
 x.ticks <- seq(year(resp.time.range[1]), year(resp.time.range[2]), by = 1)
 x.ticks <- ymd(paste0(x.ticks, "01", "01"))
-
+x.ticks.reduced <- x.ticks[1:20]
 
 #TODO: expand to both regions when single figure is finalized
 #figure test for a single region
@@ -74,7 +81,7 @@ resp.bot <- NE.anom.std
 resp.bot[over] <- 0
 
 #TODO: finalize the plot (cut off )
-par(mfrow = c(2, 1))
+#par(mfrow = c(2, 1))
 
 par(mar = c(0,2,0,0))
 par(oma = c(1.5,2,0,0))
@@ -86,27 +93,79 @@ plot(time.plot, NE.anom.std, type = "l", col = "black", lwd = 2,
      xlim = c(as.Date(resp.time.range[1]) + months(7), as.Date(resp.time.range[2]) - months(7)),
      ylim = range(y.ticks), bty = "n", cex.lab = 1.25,  xpd = NA)
 #bottom figure labels
-text(x = x.ticks + months(6),
+text(x = x.ticks.reduced + months(6),
      y = range(y.ticks)[1]-0.7,
-     labels = year(x.ticks),
+     labels = year(x.ticks.reduced),
      cex = 1.1, col = "black", xpd = NA)
 abline(v = x.ticks[1:(length(x.ticks))],
        lty = 2, col = "grey", lwd = 2)
 axis(side = 2, at = y.tick.lab, labels = y.tick.lab, col = NA, cex = 1.1,
-     col.ticks = "black", col.axis = "black")
+     col.ticks = "black", col.axis = "black", las =1)
 abline(h = 0, lty = 1, col = "grey", lwd = 1)
 #envelope plots
 envelopePlot(x1 = time.plot,
              y1 = resp.top,
              x2 = time.plot,
              y2 = rep(0, length(resp.time)),
-             col = alpha(top.col, 0.7),
+             col = alpha(top.col, 0.67),
              lineCol = NA)
 envelopePlot(x1 = time.plot,
              y1 = resp.bot,
              x2 = time.plot,
              y2 = rep(0, length(resp.time)),
-             col = alpha(bot.col, 0.7),
+             col = alpha(bot.col, 0.67),
+             lineCol = NA)
+
+
+
+
+#SE Aus plot
+y.tick.max <- max(round(range(SE.anom.std)))
+y.ticks <- seq(-y.tick.max, y.tick.max, by = 1)
+
+y.tick.steps <- y.tick.max/4
+y.tick.seq <- seq(y.tick.steps, y.tick.max-y.tick.steps, by = y.tick.steps)
+y.tick.lab <- c(-rev(y.tick.seq), 0, y.tick.seq)
+
+#get envelope plot data
+over <- SE.anom.std >= 0
+resp.top <- SE.anom.std
+resp.top[!over] <- 0
+resp.bot <- SE.anom.std
+resp.bot[over] <- 0
+
+
+par(mar = c(0,2,0,0))
+par(oma = c(1.5,2,0,0))
+par(mgp = c(2.75,1,0))
+
+plot(time.plot, SE.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly CO", col.lab = "black",
+     xlim = c(as.Date(resp.time.range[1]) + months(7), as.Date(resp.time.range[2]) - months(7)),
+     ylim = range(y.ticks), bty = "n", cex.lab = 1.25,  xpd = NA)
+#bottom figure labels
+text(x = x.ticks.reduced + months(6),
+     y = range(y.ticks)[1]-0.7,
+     labels = year(x.ticks.reduced),
+     cex = 1.1, col = "black", xpd = NA)
+abline(v = x.ticks[1:(length(x.ticks))],
+       lty = 2, col = "grey", lwd = 2)
+axis(side = 2, at = y.tick.lab, labels = y.tick.lab, col = NA, cex = 1.1,
+     col.ticks = "black", col.axis = "black", las = 1)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+#envelope plots
+envelopePlot(x1 = time.plot,
+             y1 = resp.top,
+             x2 = time.plot,
+             y2 = rep(0, length(resp.time)),
+             col = alpha(top.col, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.plot,
+             y1 = resp.bot,
+             x2 = time.plot,
+             y2 = rep(0, length(resp.time)),
+             col = alpha(bot.col, 0.67),
              lineCol = NA)
 
 
