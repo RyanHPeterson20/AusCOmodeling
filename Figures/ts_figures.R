@@ -5,6 +5,7 @@
 #libraries
 suppressMessages( library(fields)) #envelope plot
 suppressMessages( library(scales)) #for alpha()
+suppressMessages( library(lubridate)) #for temporal data
 #TODO: add in libraries as needed
 
 
@@ -116,6 +117,9 @@ y1 = resp.top
 x2 = time.plot
 y2 = rep(0, length(resp.time))
 polygon(c(x1, rev(x2)), c(y1, rev(y2)), col = top.col, border = NA)
+
+
+
 
 
 ylab.vals <- c("Anomaly CO",
