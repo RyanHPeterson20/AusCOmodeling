@@ -62,6 +62,9 @@ rasterImage(temp.raster,
 
 
 
+#TODO: get this all working correctly:
+## there are issues with the color/raster matrices, get this working
+
 #test plot for time series data
 x1 = time.plot
 y1 = resp.top
@@ -70,7 +73,7 @@ y2 = rep(0, length(resp.time))
 plot(NA, xlim = range(x1, x2), ylim = range(y1, y2), xlab = "", ylab = "")
 
 #col: passes solid color or gradient
-col <- carto_pal(200, "Peach")
+col <- carto_pal(200, "Peach") 
 h.res <- 1000
 #vertical res
 vert.res <- 400
@@ -87,6 +90,7 @@ grid.list <- list(x = seq(min(poly.x), max(poly.x), length.out = h.res),
                   y = seq(min(poly.y), max(poly.y), length.out = vert.res))
 xp <- cbind( poly.x, poly.y)
 
+#TODO: get in.poly/in.poly.grid working faster this is a hold-up for several things. Currently too slow.
 temp.in <- in.poly.grid(grid.list, xp)
 
 #get raster image colors
@@ -128,7 +132,7 @@ envelopePlot <- function(x1, y1, x2 = x1, y2,
   polygon(c(x1, rev(x2)), c(y1, rev(y2)), col = col, border = NA, ...)
   
   #if(!gradient)
-  #else: call gradient function
+  #else: call gradient function (written below)
   
   lines(x1, y1, lwd = 3, col = lineCol)
   lines(x2, y2, lwd = 3, col = lineCol)
@@ -138,7 +142,11 @@ envelopePlot <- function(x1, y1, x2 = x1, y2,
 ## gradient function 
 
 
-#old, failed work.
+
+
+
+
+## --- old (failed) work --- ##
 ##TODO: delete when done
 
 # Create a gradient image using image()
