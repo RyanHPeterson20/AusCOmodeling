@@ -93,7 +93,7 @@ aao.avg <- mean(aao.df$aao_index_cdas[i:j])
 i.new <- j+1
 j.new <- j+7
 for (k in 1:weeks.n) {
-  aao.avg <- c(aao.avg, mean(aao.df$aao_index_cdas[i.new:j.new]))
+  aao.avg <- c(aao.avg, mean(aao.df$aao_index_cdas[i.new:j.new], na.rm = TRUE))
   i.new <- j.new+1
   j.new <- j.new+7
 }
