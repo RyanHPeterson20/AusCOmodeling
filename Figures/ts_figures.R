@@ -82,24 +82,27 @@ resp.bot[over] <- 0
 
 #TODO: finalize the plot (cut off )
 #par(mfrow = c(2, 1))
+setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-par(mar = c(0,2,0,0))
+png(filename = "NEonly_ts.png", width = 4800, height = 1200, res = 250)
+par(mar = c(0,4,0,0))
 par(oma = c(1.5,2,0,0))
-par(mgp = c(2.75,1,0))
+par(mgp = c(4,1,0))
 
 plot(time.plot, NE.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
-     yaxt = "n", ylab = "Anomaly CO", col.lab = "black",
+     yaxt = "n", ylab = "Anomaly CO", col.lab = "black", 
      xlim = c(as.Date(resp.time.range[1]) + months(7), as.Date(resp.time.range[2]) - months(7)),
      ylim = range(y.ticks), bty = "n", cex.lab = 1.25,  xpd = NA)
 #bottom figure labels
 text(x = x.ticks.reduced + months(6),
      y = range(y.ticks)[1]-0.7,
      labels = year(x.ticks.reduced),
-     cex = 1.1, col = "black", xpd = NA)
+     cex = 1.25, col = "black", xpd = NA)
 abline(v = x.ticks[1:(length(x.ticks))],
        lty = 2, col = "grey", lwd = 2)
-axis(side = 2, at = y.tick.lab, labels = y.tick.lab, col = NA, cex = 1.1,
+axis(side = 2, at = y.tick.lab, labels = y.tick.lab, cex.lab = 2, 
+     col = NA, cex = 1.75,
      col.ticks = "black", col.axis = "black", las =1)
 abline(h = 0, lty = 1, col = "grey", lwd = 1)
 #envelope plots
@@ -115,7 +118,7 @@ envelopePlot(x1 = time.plot,
              y2 = rep(0, length(resp.time)),
              col = alpha(bot.col, 0.67),
              lineCol = NA)
-
+dev.off()
 
 
 
@@ -134,10 +137,13 @@ resp.top[!over] <- 0
 resp.bot <- SE.anom.std
 resp.bot[over] <- 0
 
+#output figures
+setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-par(mar = c(0,2,0,0))
-par(oma = c(1.5,2,0,0))
-par(mgp = c(2.75,1,0))
+png(filename = "SEonly_ts.png", width = 4800, height = 1200, res = 250)
+par(mar = c(0, 4, 0, 0))
+par(oma = c(1.5, 2, 0, 0))
+par(mgp = c(4, 1, 0))
 
 plot(time.plot, SE.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
@@ -167,7 +173,18 @@ envelopePlot(x1 = time.plot,
              y2 = rep(0, length(resp.time)),
              col = alpha(bot.col, 0.67),
              lineCol = NA)
+dev.off()
 
+
+
+#combined response time series
+
+
+
+
+
+
+#old, delete below
 
 #TODO: envelope Plot tests
 #get color palettes/gradients to work in envelopePlot so that the color changes within the polygon
