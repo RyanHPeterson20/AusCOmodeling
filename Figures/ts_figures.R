@@ -53,7 +53,6 @@ resp.week <- resp.raw$week
 
 resp.time.range <- range(resp.time)
 
-#TODO: check on response ranges
 
 #yearly ticks
 x.ticks <- seq(year(resp.time.range[1]), year(resp.time.range[2]), by = 1)
@@ -80,8 +79,7 @@ resp.top[!over] <- 0
 resp.bot <- NE.anom.std
 resp.bot[over] <- 0
 
-#TODO: finalize the plot (cut off )
-#par(mfrow = c(2, 1))
+
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
 png(filename = "NEonly_ts.png", width = 4800, height = 1200, res = 250)
@@ -176,8 +174,21 @@ envelopePlot(x1 = time.plot,
 dev.off()
 
 
-
 #combined response time series
+
+#perform for "base" and standardized response data
+
+#base: using NE.anom and SE.anom
+range(NE.anom)
+range(SE.anom)
+
+#TODO: get this working
+#get y.ticks and labels (set-up by 10s)
+y.tick.max <- max(round(range(NE.anom.std)))
+y.ticks <- seq(-y.tick.max, y.tick.max, by = 1)
+
+#par(mfrow = c(2, 1))
+
 
 
 

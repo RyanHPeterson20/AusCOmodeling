@@ -4,3 +4,4 @@ figure_notes:
 Figure 1. Map and time series of data:
 -Time-series sub-figure: of response and predictor data. 
 -- Modify existing plots from: `CO_base_viz.rmd` (time series sections)
+-- Response time-series, for NE Aus (top) and SE Aus (bottom) 

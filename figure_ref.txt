@@ -5,5 +5,8 @@ Figure plans:
 
 
 location of figures in final project code
+-1.b response_ts.png: `ts_figures.R`
+
+
 -Weekly pIOD indices and WTIO/ETIO: (scattered, needs consolidation)
 -2019/2020 Prediction: `model_figures.R` Line ~782
