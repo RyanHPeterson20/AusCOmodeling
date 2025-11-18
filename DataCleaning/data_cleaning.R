@@ -17,6 +17,7 @@ iod.raw  <- read.csv("Data/iod_weekly_anoms.csv", header = TRUE, stringsAsFactor
 tsa.raw  <- read.csv("Data/tsa_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 aao.raw  <- read.csv("Data/aao_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 #TODO: add in OLR
+olr.raw <- read.csv("Data/olr_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 
 #response data: MOPITT V9J WEDCEN for both regions
 NEAus.raw <- read.csv("Data/NEAus_V9JMOPITT_weeklyanomalies_WEDCEN.csv", header = TRUE, stringsAsFactors = FALSE)
@@ -56,6 +57,8 @@ resp.alt.df <- resp.alt.df[which(resp.alt.df$date <= pred.max.date), ]
 
 #get lower bound for predictor data
 pred.df <- pred.df[which(pred.df$date >= new.pred.min), ]
+pred.df <- data.frame(pred.df[,c(1:6)], olr.anom = olr.raw$olr.anom, pred.df[,c(7:9)] )
+
 
 rownames(resp.df) <- NULL
 rownames(resp.alt.df) <- NULL
@@ -75,7 +78,7 @@ write.csv(resp.alt.df, "resp_alt_anoms.csv")
 pred.week53 <- which(pred.df$week == 53)
 resp.week53 <- which(resp.df$week == 53)
 
-pred.df[,1:6] <- week53_avg(pred.df[,1:6], pred.week53)
+pred.df[,1:6] <- week53_avg(pred.df[,1:7], pred.week53)
 pred.df <- pred.df[-pred.week53, ]
 
 resp.df[,1:2] <- week53_avg(resp.df[,1:2], resp.week53)
@@ -134,15 +137,17 @@ rm(j, temp.resp1, temp.resp2, season.1, season.2)
 #predictor data matrix
 #pred matrix [20x312] rows: years; columns: climate mode weeks
 
-pred.matrix <- matrix(NA, ncol = 312)
+pred.matrix <- matrix(NA, ncol = 364)
 colnames(pred.matrix) <- c(paste0("Nino_", 1:52), paste0("DMI_", 1:52), paste0("WTIO_", 1:52),
-                           paste0("ETIO_", 1:52), paste0("TSA_", 1:52), paste0("AAO_", 1:52))
+                           paste0("ETIO_", 1:52), paste0("TSA_", 1:52), paste0("AAO_", 1:52),
+                           paste0("OLR_", 1:52))
 
 for (k in season.years.pred[1:21]) {
   temp.pred <- pred.df[pred.df$year == k, ]
   pred.matrix <- rbind(pred.matrix, c(temp.pred$nino.anom, temp.pred$dmi.anom, 
                                       temp.pred$wtio.anom, temp.pred$etio.anom,
-                                      temp.pred$tsa.anom, temp.pred$aao.anom))
+                                      temp.pred$tsa.anom, temp.pred$aao.anom,
+                                      temp.pred$olr.anom))
 }
 
 pred.matrix <- pred.matrix[-1, ]

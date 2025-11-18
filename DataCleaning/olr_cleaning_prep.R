@@ -79,6 +79,10 @@ rm(i, j, i.new, j.new, k)
 olr.anom.df <- olr.df[which(olr.df$wday == 4), -5]
 olr.anom.df$olr.anom <- olr.wk.avg
 
+#update time range between 2000-01-05 and 
+olr.anom.df <- olr.anom.df[olr.anom.df$year >= 2000 & olr.anom.df$date <= "2021-04-07", ]
+
+
 #export data
 setwd("~/CO_AUS/AusCOmodeling/Data") 
 #write csv

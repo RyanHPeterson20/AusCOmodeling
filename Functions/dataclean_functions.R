@@ -52,7 +52,7 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
     etio.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
     tsa.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
     aao.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
-    #olr.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+    olr.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
     
     lag.vec <- c()
     for (j in 1:52) {
@@ -76,7 +76,7 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
       etio.lag <- cbind(etio.lag, lag.pred$etio.anom)
       tsa.lag <- cbind(tsa.lag, lag.pred$tsa.anom)
       aao.lag <- cbind(aao.lag, lag.pred$aao.anom)
-      #olr.lag <- cbind(olr.lag, lag.olr$olr.anom)
+      olr.lag <- cbind(olr.lag, lag.pred$olr.anom)
       
       lag.vec <- c(lag.vec, j)
     }
@@ -105,12 +105,12 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
     colnames(aao.lag) <- paste0("aao_lag", lag.vec[1:52])
     aao.lag <- scale(aao.lag, center = TRUE, scale = TRUE)
     
-    #olr.lag <- olr.lag[ ,-1]
-    #colnames(olr.lag) <- paste0("olr_lag", lag.vec[1:52])
-    #olr.lag <- scale(olr.lag, center = TRUE, scale = TRUE)
+    olr.lag <- olr.lag[ ,-1]
+    colnames(olr.lag) <- paste0("olr_lag", lag.vec[1:52])
+    olr.lag <- scale(olr.lag, center = TRUE, scale = TRUE)
     
-    NEweek.lag <- data.frame(NEdf.temp, nino.lag, dmi.lag, wtio.lag, etio.lag, tsa.lag, aao.lag)
-    SEweek.lag <- data.frame(SEdf.temp, nino.lag, dmi.lag, wtio.lag, etio.lag, tsa.lag, aao.lag)
+    NEweek.lag <- data.frame(NEdf.temp, nino.lag, dmi.lag, wtio.lag, etio.lag, tsa.lag, aao.lag, olr.lag)
+    SEweek.lag <- data.frame(SEdf.temp, nino.lag, dmi.lag, wtio.lag, etio.lag, tsa.lag, aao.lag, olr.lag)
     
     NE_laglist[[paste("Week ", i)]] <- NEweek.lag
     SE_laglist[[paste("Week ", i)]] <- SEweek.lag
