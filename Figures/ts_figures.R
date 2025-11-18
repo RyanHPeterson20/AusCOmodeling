@@ -395,6 +395,14 @@ aao.top[!over.aao] <- 0
 aao.bot <- aao.anom.std
 aao.bot[over.aao] <-0
 
+#olr
+over.olr <- olr.anom.std >= 0
+olr.top <- olr.anom.std
+olr.top[!over.olr] <- 0
+olr.bot <- olr.anom.std
+olr.bot[over.olr] <-0
+
+
 #TODO: add olr
 
 #individual plots
@@ -622,7 +630,42 @@ text(x = x.pred.reduced + months(6),
      cex = 1.67, col = "black", xpd = NA)
 dev.off()
 
-#TODO: add olr plot
+
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+#olr plot
+png(filename = "OLRonly_ts.png", width = 4800, height = 1200, res = 250)
+par(mar = c(0, 4, 0, 0))
+par(oma = c(1.5, 2, 0, 0))
+par(mgp = c(4, 1, 0))
+
+plot(time.pred.plot, olr.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly(W/m^2)", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.olr.ticks), bty = "n", cex.lab = 1.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 1.67, 
+     col = NA, line = 0.5,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = olr.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(olr.top)),
+             col = alpha(top.col, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = olr.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(olr.bot)),
+             col = alpha(bot.col, 0.67),
+             lineCol = NA)
+text(x = x.pred.reduced + months(6),
+     y = range(y.olr.ticks)[1]-0.2,
+     labels = year(x.pred.reduced),
+     cex = 1.67, col = "black", xpd = NA)
+dev.off()
 
 
 
@@ -734,7 +777,7 @@ dev.off()
 ##full pred plot: Nino, WTIO, ETIO, TSA, AAO (and OLR)
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 #full pred ts
-png(filename = "predictor_ts.png", width = 4800, height = 6000, res = 250)
+png(filename = "predictor_ts.png", width = 5400, height = 4800, res = 250)
 par(mfrow = c(5, 1))
 par(mar = c(0, 4, 0, 0))
 par(oma = c(1.5, 2, 0, 0))
@@ -894,8 +937,207 @@ legend(x = c(ymd("1999-09-01"), ymd("2000-01-01")),
 text(x = x.pred.reduced + months(6),
      y = range(y.aao.ticks)[1]-0.5,
      labels = year(x.pred.reduced),
-     cex = 2, col = "black", xpd = NA)
+     cex = 2.25, col = "black", xpd = NA)
 dev.off()
+
+
+
+##full pred plot: Nino, WTIO, ETIO, TSA, AAO (and OLR)
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+#full pred ts with OLR
+png(filename = "predictor_wOLR_ts.png", width = 5400, height = 4800, res = 250)
+par(mfrow = c(6, 1))
+par(mar = c(0, 4, 0, 0))
+par(oma = c(1.5, 2, 0, 0))
+par(mgp = c(4, 1, 0))
+
+#nino
+plot(time.pred.plot, nino.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly (\u00B0C)", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.nino.ticks), bty = "n", cex.lab = 1.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 1.67, 
+     col = NA, line = 0.5,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = nino.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(nino.top)),
+             col = alpha(top.col, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = nino.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(nino.bot)),
+             col = alpha(bot.col, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("1999-09-01"), ymd("2000-01-01")),
+       y = c(4, 4),
+       legend = "NINO",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey40", cex = 2.75)
+
+#wtio
+plot(time.pred.plot, wtio.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly (\u00B0C)", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.wtio.ticks), bty = "n", cex.lab = 1.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 1.67, 
+     col = NA, line = 0.5,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = wtio.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(wtio.top)),
+             col = alpha(top.col, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = wtio.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(wtio.bot)),
+             col = alpha(bot.col, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("1999-09-01"), ymd("2000-01-01")),
+       y = c(4, 4),
+       legend = "WTIO",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey40", cex = 2.75)
+
+#etio
+plot(time.pred.plot, etio.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly (\u00B0C)", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.etio.ticks), bty = "n", cex.lab = 1.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 1.67, 
+     col = NA, line = 0.5,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = etio.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(etio.top)),
+             col = alpha(top.col, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = etio.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(etio.bot)),
+             col = alpha(bot.col, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("1999-09-01"), ymd("2000-01-01")),
+       y = c(4, 3.5),
+       legend = "ETIO",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey40", cex = 2.75)
+
+#tsa
+plot(time.pred.plot, tsa.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly (\u00B0C)", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.tsa.ticks), bty = "n", cex.lab = 1.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 1.67, 
+     col = NA, line = 0.5,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = tsa.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(tsa.top)),
+             col = alpha(top.col, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = tsa.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(tsa.bot)),
+             col = alpha(bot.col, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("1999-09-01"), ymd("2000-01-01")),
+       y = c(4, 4),
+       legend = "TSA",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey40", cex = 2.75)
+
+#aao
+
+plot(time.pred.plot, aao.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.aao.ticks), bty = "n", cex.lab = 1.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 1.67, 
+     col = NA, line = 0.5,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = aao.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(aao.top)),
+             col = alpha(top.col, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = aao.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(aao.bot)),
+             col = alpha(bot.col, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("1999-09-01"), ymd("2000-01-01")),
+       y = c(4, 4),
+       legend = "SAM",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey40", cex = 2.75)
+
+
+plot(time.pred.plot, olr.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly (W/m^2)", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.olr.ticks), bty = "n", cex.lab = 1.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 1.67, 
+     col = NA, line = 0.5,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = olr.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(olr.top)),
+             col = alpha(top.col, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = olr.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(olr.bot)),
+             col = alpha(bot.col, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("1999-09-01"), ymd("2000-01-01")),
+       y = c(4, 4),
+       legend = "OLR",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey40", cex = 2.75)
+
+text(x = x.pred.reduced + months(6),
+     y = range(y.aao.ticks)[1]-0.5,
+     labels = year(x.pred.reduced),
+     cex = 2.25, col = "black", xpd = NA)
+dev.off()
+
 
 
 
