@@ -36,6 +36,8 @@ olr_nc_2019 <- nc_open('Data/OLR/olr-daily_v01r02_20190101_20191231.nc') #2019
 olr_nc_2020 <- nc_open('Data/OLR/olr-daily_v01r02_20200101_20201231.nc') #2020
 olr_nc_2021 <- nc_open('Data/OLR/olr-daily_v01r02_20210101_20211231.nc') #2021
 
+#TODO: create list that includes all above .nc objects, then rm() these objects
+
 setwd("~/CO_AUS/AusCOmodeling") 
 #load internal functions
 source("Functions/dataclean_functions.R") # functions 
@@ -79,7 +81,7 @@ olr_prep <- function(olr_nc, regional_lon, regional_lat){
   return(olr)
 }
 
-
+#TODO: convert this to a function that produces a dataframe
 #get data and time
 olr.1999 <- olr_prep(olr_nc_1999, lon.range, lat.range)
 time.1999 <- ncvar_get(olr_nc_1999, "time")
@@ -174,6 +176,82 @@ time.2021 <- ncvar_get(olr_nc_2021, "time")
 time.2021 <- as_datetime("1970-01-01 00:00:00") + days(time.2021-0.5)
 
 
+#get daily spatial averages
+olr.1999.df <- data.frame(olr.mean = apply(olr.1999, 3, mean), date = time.1999, 
+                          week = epiweek(time.1999), year = year(time.1999))
+olr.2000.df <- data.frame(olr.mean = apply(olr.2000, 3, mean), date = time.2000, 
+                          week = epiweek(time.2000), year = year(time.2000))
+olr.2001.df <- data.frame(olr.mean = apply(olr.2001, 3, mean), date = time.2001, 
+                          week = epiweek(time.2001), year = year(time.2001))
+olr.2002.df <- data.frame(olr.mean = apply(olr.2002, 3, mean), date = time.2002, 
+                          week = epiweek(time.2002), year = year(time.2002))
+olr.2003.df <- data.frame(olr.mean = apply(olr.2003, 3, mean), date = time.2003, 
+                          week = epiweek(time.2003), year = year(time.2003))
+olr.2004.df <- data.frame(olr.mean = apply(olr.2004, 3, mean), date = time.2004, 
+                          week = epiweek(time.2004), year = year(time.2004))
+olr.2005.df <- data.frame(olr.mean = apply(olr.2005, 3, mean), date = time.2005, 
+                          week = epiweek(time.2005), year = year(time.2005))
+olr.2006.df <- data.frame(olr.mean = apply(olr.2006, 3, mean), date = time.2006, 
+                          week = epiweek(time.2006), year = year(time.2006))
+olr.2007.df <- data.frame(olr.mean = apply(olr.2007, 3, mean), date = time.2007, 
+                          week = epiweek(time.2007), year = year(time.2007))
+olr.2008.df <- data.frame(olr.mean = apply(olr.2008, 3, mean), date = time.2008, 
+                          week = epiweek(time.2008), year = year(time.2008))
+olr.2009.df <- data.frame(olr.mean = apply(olr.2009, 3, mean), date = time.2009, 
+                          week = epiweek(time.2009), year = year(time.2009))
+olr.2010.df <- data.frame(olr.mean = apply(olr.2010, 3, mean), date = time.2010, 
+                          week = epiweek(time.2010), year = year(time.2010))
+olr.2011.df <- data.frame(olr.mean = apply(olr.2011, 3, mean), date = time.2011, 
+                          week = epiweek(time.2011), year = year(time.2011))
+olr.2012.df <- data.frame(olr.mean = apply(olr.2012, 3, mean), date = time.2012, 
+                          week = epiweek(time.2012), year = year(time.2012))
+olr.2013.df <- data.frame(olr.mean = apply(olr.2013, 3, mean), date = time.2013, 
+                          week = epiweek(time.2013), year = year(time.2013))
+olr.2014.df <- data.frame(olr.mean = apply(olr.2014, 3, mean), date = time.2014, 
+                          week = epiweek(time.2014), year = year(time.2014))
+olr.2015.df <- data.frame(olr.mean = apply(olr.2015, 3, mean), date = time.2015, 
+                          week = epiweek(time.2015), year = year(time.2015))
+olr.2016.df <- data.frame(olr.mean = apply(olr.2016, 3, mean), date = time.2016, 
+                          week = epiweek(time.2016), year = year(time.2016))
+olr.2017.df <- data.frame(olr.mean = apply(olr.2017, 3, mean), date = time.2017, 
+                          week = epiweek(time.2017), year = year(time.2017))
+olr.2018.df <- data.frame(olr.mean = apply(olr.2018, 3, mean), date = time.2018, 
+                          week = epiweek(time.2018), year = year(time.2018))
+olr.2019.df <- data.frame(olr.mean = apply(olr.2019, 3, mean), date = time.2019, 
+                          week = epiweek(time.2019), year = year(time.2019))
+olr.2020.df <- data.frame(olr.mean = apply(olr.2020, 3, mean), date = time.2020, 
+                          week = epiweek(time.2020), year = year(time.2020))
+olr.2021.df <- data.frame(olr.mean = apply(olr.2021, 3, mean), date = time.2021, 
+                          week = epiweek(time.2021), year = year(time.2021))
+
+#combine into a single df
+olr.daily.df <- rbind(olr.1999.df, olr.2000.df, olr.2001.df, olr.2002.df, olr.2003.df,
+                      olr.2004.df, olr.2005.df, olr.2006.df, olr.2007.df, olr.2008.df,
+                      olr.2009.df, olr.2010.df, olr.2011.df, olr.2012.df, olr.2013.df,
+                      olr.2014.df, olr.2015.df, olr.2016.df, olr.2017.df, olr.2018.df, 
+                      olr.2019.df, olr.2020.df, olr.2021.df)
+
+rm(olr.1999.df, olr.2000.df, olr.2001.df, olr.2002.df, olr.2003.df,
+   olr.2004.df, olr.2005.df, olr.2006.df, olr.2007.df, olr.2008.df,
+   olr.2009.df, olr.2010.df, olr.2011.df, olr.2012.df, olr.2013.df,
+   olr.2014.df, olr.2015.df, olr.2016.df, olr.2017.df, olr.2018.df, 
+   olr.2019.df, olr.2020.df, olr.2021.df)
+
+
+#get wedcen weekly average
+olr.daily.df$wday <- wday(olr.daily.df$date)
+
+##get total number of weeks
+n.weeks <- length(which(olr.daily.df$wday == 1))
+i <- 3 #first sun
+j <- 9 #first following sat
+
+olr.daily.df$olr.mean[i:j]
+
+#TODO: finalize wedcen weekly means, 'climatology' weekly mean, and anomalies
+
+
+#odler stuff below
 #temp olr for 2020 and 2021 
 time.prev <- time.2020
 time.current <- time.2021
@@ -199,7 +277,7 @@ sat.dates.prev[epiweek(sat.dates.prev) == 51] #index 354
 
 time.prev[348:354]
 
-
+mean(sapply(olr.2020[,,348:354], mean))
 
 #TODO: get full_agg function working, move 
 #goal is to spatial-temporal average and output as wedcen date
@@ -223,6 +301,9 @@ sat.dates <- time.current[which(wday(time.current) == 7)]
 epiweek(sun.dates)
 epiweek(wed.dates)
 epiweek(sat.dates)
+
+
+
 
 #wedcen average
 
