@@ -123,4 +123,33 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
 
 
 ## -- OLR prep functions -- ##
-
+olr_prep <- function(olr_nc, regional_lon, regional_lat){
+  lat_grid <- olr_nc[["dim"]][["lat"]][["vals"]]
+  lon_grid <- olr_nc[["dim"]][["lon"]][["vals"]]
+  
+  olr <-  ncvar_get(olr_nc, "olr")
+  
+  #adjust lon grid:
+  lon_grid[lon_grid >= 180] <- lon_grid[lon_grid >= 180] - 360
+  
+  lon_order <- order(lon_grid)
+  lon_grid <- lon_grid[lon_order]
+  
+  olr <- olr[lon_order, , ]
+  
+  #bound within given region
+  lon_min <- regional_lon[1]
+  lon_max <- regional_lon[2]
+  lat_min <- regional_lat[1]
+  lat_max <- regional_lat[2]
+  
+  reg_lon <- which(lon_grid >= lon_min & lon_grid <= lon_max)
+  reg_lat <- which(lat_grid >= lat_min & lat_grid <= lat_max)
+  
+  lon_grid <- lon_grid[reg_lon]
+  lat_grid <- lat_grid[reg_lat]
+  
+  olr <- olr[reg_lon, reg_lat, ]
+  
+  return(olr)
+}
