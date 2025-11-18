@@ -294,6 +294,8 @@ wtio.anom <- pred.raw$wtio.anom
 etio.anom <- pred.raw$etio.anom
 tsa.anom <- pred.raw$tsa.anom
 aao.anom <- pred.raw$aao.anom
+olr.anom <- pred.raw$olr.anom
+
 
 #anom scales
 nino.anom.std <- scale(nino.anom)
@@ -302,6 +304,7 @@ wtio.anom.std <- scale(wtio.anom)
 etio.anom.std <- scale(etio.anom)
 tsa.anom.std <- scale(tsa.anom)
 aao.anom.std <- scale(aao.anom)
+olr.anom.std <- scale(olr.anom)
 
 #temporal setup
 pred.time <- pred.raw$date
@@ -317,7 +320,7 @@ x.pred.reduced <- x.ticks.pred[1:21]
 time.pred.plot <- as.Date(pred.time)
 
 #get y.ticks and labels
-#TODO: update y.ticks for each pred
+#update y.ticks for each pred
 y.nino.max <- max(round(range(nino.anom.std)))
 y.nino.ticks <- seq(-y.nino.max, y.nino.max, by = 1)
 
@@ -337,6 +340,11 @@ y.tsa.ticks <- seq(-y.tsa.max, y.tsa.max, by = 1)
 #uses abs max
 y.aao.max <- max(abs(round(range(aao.anom.std))))
 y.aao.ticks <- seq(-y.aao.max, y.aao.max, by = 1)
+
+y.olr.max <- max(abs(round(range(olr.anom.std))))
+y.olr.ticks <- seq(-y.olr.max, y.olr.max, by = 1)
+
+
 
 #finalize with respect to a common range
 y.tick.max <- max(y.nino.max, y.dmi.max, y.wtio.max, y.etio.max, y.tsa.max, y.aao.max)
