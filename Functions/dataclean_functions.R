@@ -33,6 +33,7 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
   
   for (i in season.weeks) {
     
+    #response setup
     resp.temp <- resp.df[resp.df$week == i, ]
     
     if (i <= 14) {
@@ -46,6 +47,7 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
     min.year <- min(resp.temp$year)
     max.year <- max(resp.temp$year)
     
+    #predictor lag setup
     nino.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
     dmi.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
     wtio.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
@@ -62,13 +64,12 @@ pred_lags <- function(resp.df, pred.df, season.weeks, seasons){
         lag.week <- 52 + lag.week
         lag.year <- c(min.year - 1, max.year -1)
       } else {
-        lag.year <- min.year #what did I do here?
         lag.year <- c(min.year, max.year)
       }
       
       #get lagged predictors
       lag.pred <- pred.df[pred.df$week == lag.week, ]
-      lag.pred <- lag.pred[which((lag.pred$year >= lag.year[1] & lag.pred$year <= lag.year[2])),]
+      lag.pred <- lag.pred[which((lag.pred$year >= lag.year[1] & lag.pred$year <= lag.year[2])), ]
       
       nino.lag <- cbind(nino.lag, lag.pred$nino.anom)
       dmi.lag <- cbind(dmi.lag, lag.pred$dmi.anom)

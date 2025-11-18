@@ -16,7 +16,7 @@ nino.raw <- read.csv("Data/nino_weekly_anoms.csv", header = TRUE, stringsAsFacto
 iod.raw  <- read.csv("Data/iod_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 tsa.raw  <- read.csv("Data/tsa_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 aao.raw  <- read.csv("Data/aao_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
-#TODO: add in OLR
+#add in OLR
 olr.raw <- read.csv("Data/olr_weekly_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 
 #response data: MOPITT V9J WEDCEN for both regions
@@ -59,7 +59,6 @@ resp.alt.df <- resp.alt.df[which(resp.alt.df$date <= pred.max.date), ]
 pred.df <- pred.df[which(pred.df$date >= new.pred.min), ]
 pred.df <- data.frame(pred.df[,c(1:6)], olr.anom = olr.raw$olr.anom, pred.df[,c(7:9)] )
 
-
 rownames(resp.df) <- NULL
 rownames(resp.alt.df) <- NULL
 rownames(pred.df) <- NULL
@@ -70,7 +69,6 @@ setwd("~/CO_AUS/AusCOmodeling/Data")
 write.csv(pred.df, "pred_anoms.csv")
 write.csv(resp.df, "resp_anoms.csv")
 write.csv(resp.alt.df, "resp_alt_anoms.csv")
-
 
 #prepare data for use in modeling
 
@@ -84,7 +82,9 @@ pred.df <- pred.df[-pred.week53, ]
 resp.df[,1:2] <- week53_avg(resp.df[,1:2], resp.week53)
 resp.df <- resp.df[-resp.week53, ]
 
-#TODO: add in resp.alt.df
+#TODO: repeat for resp.alt.df
+
+
 rm( pred.week53, resp.week53)
 
 #setup season data
@@ -101,10 +101,61 @@ for (i in 1:(length(season.years)-1)) {
 }
 rm(i, temp.season)
 
+
+#TODO: temp pred lag work, delete when done
+#checking pred_lags(): internals from function; compare to NEAus.lag week 38
+i <- season.weeks[1]
+
+#response setup
+resp.temp <- resp.df[resp.df$week == i, ]
+NEdf.temp <- data.frame(seasons, NEAus.anom = resp.temp$NEAus.anom)
+
+#min/max year for response week i
+min.year <- min(resp.temp$year)
+#max.year <- max(resp.temp$year)
+max.year <- 2019
+
+##predictor lag setup
+nino.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
+
+lag.vec <- c()
+#j <- 1 #lag 1
+for (j in 1:52) {
+  lag.week <- i - j
+  
+  if (lag.week <= 0) {
+    lag.week <- 52 + lag.week
+    lag.year <- c(min.year - 1, max.year -1)
+  } else {
+    lag.year <- c(min.year, max.year)
+  }
+  
+  lag.pred <- pred.df[pred.df$week == lag.week, ]
+  
+  lag.pred$year >= lag.year[1]
+  lag.pred$year <= lag.year[2]
+  lag.pred <- lag.pred[which((lag.pred$year >= lag.year[1] & lag.pred$year <= lag.year[2])), ]
+  
+  nino.lag <- cbind(nino.lag, lag.pred$nino.anom)
+  
+  lag.vec <- c(lag.vec, j)
+}
+
+
+nino.lag <- nino.lag[,-1]
+colnames(nino.lag) <- paste0("nino_lag", lag.vec[1:52])
+nino.lag <- scale(nino.lag, center = TRUE, scale = TRUE)
+
+
+
 #get lags for data
 data.lags <- pred_lags(resp.df, pred.df, season.weeks, seasons)
 NEAus.lag <- data.lags$NElag
 SEAus.lag <- data.lags$SElag
+
+#output resp and pred dfs
+setwd("~/CO_AUS/AusCOmodeling/Data") 
+save(pred.df, resp.df, file = "modeldata.rda")
 
 #output lag data as .rda
 setwd("~/CO_AUS/AusCOmodeling/Data") 
