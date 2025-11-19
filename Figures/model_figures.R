@@ -53,6 +53,83 @@ summary(SE.vary.LM$`2019-2020`[[3]])
 
 #get 2019/2020 SE Aus prediction and 95% PI for base, const, and vary (3 figures)
 #setup
+pred.base.fit <- c(pred.base.early$fit[,1], pred.base.mid$fit[,1], pred.base.late$fit[,1])
+pred.base.lwr <- c(pred.base.early$fit[,2], pred.base.mid$fit[,2], pred.base.late$fit[,2])
+pred.base.upr <- c(pred.base.early$fit[,3], pred.base.mid$fit[,3], pred.base.late$fit[,3])
+
+pred.const.fit <- c(pred.const.early$fit[,1], pred.const.mid$fit[,1], pred.const.late$fit[,1])
+pred.const.lwr <- c(pred.const.early$fit[,2], pred.const.mid$fit[,2], pred.const.late$fit[,2])
+pred.const.upr <- c(pred.const.early$fit[,3], pred.const.mid$fit[,3], pred.const.late$fit[,3])
+
+pred.vary.fit <- c(pred.vary.early$fit[,1], pred.vary.mid$fit[,1], pred.vary.late$fit[,1])
+pred.vary.lwr <- c(pred.vary.early$fit[,2], pred.vary.mid$fit[,2], pred.vary.late$fit[,2])
+pred.vary.upr <- c(pred.vary.early$fit[,3], pred.vary.mid$fit[,3], pred.vary.late$fit[,3])
+
+base.range <- range(SE.2019.true, pred.base.fit, pred.base.lwr, pred.base.upr)
+const.range <- range(SE.2019.true, pred.const.fit, pred.const.lwr, pred.const.upr)
+vary.range <- range(SE.2019.true, pred.vary.fit, pred.vary.lwr, pred.vary.upr)
+all.range <- range(base.range, const.range, vary.range)
+
+
+
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+png(filename = "SEpreds_2019_new.png", width = 2750, height = 3000, res = 300)
+par(mfrow = c(3, 1), oma = c(2.5, 1, 1, 1), mar = c(2.5, 4, 4, 2))
+#par(mar = c(2,4,2,2), oma = c(2,2,1,0), mgp = c(4,1,0))
+#full model
+plot(1:29, SE.2019.true, type = "l", ylim = all.range, axes = FALSE, lwd = 1.52,
+     ylab = "", xlab = "", xlim = c(1.95, 28.05))
+box()
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.2)
+axis(2, cex.axis = 1.25)  
+lines(1:29, pred.base.fit, lty = 4, lwd = 1.75)
+lines(1:29, pred.base.lwr, lty = 2, lwd = 1.75, col = "royalblue3")
+lines(1:29, pred.base.upr, lty = 2, lwd = 1.75, col = "firebrick3")
+abline(h=0, lty =3)
+abline(v = c(13.5, 17.5), lty = 3)
+title("Full Model", adj = 0, cex.main = 1.25)
+legend("topright", 
+       legend = c("True",
+                  "Prediction",
+                  "Upper 95% PI",
+                  "Lower 95% PI"),
+       lty = c(1,4,2,2), 
+       lwd = 1.5,
+       cex = 1.25,
+       col = c("black", "black", 
+               "firebrick3", "royalblue3"),
+       xpd = TRUE)
+
+#const model
+plot(1:29, SE.2019.true, type = "l",  ylim = all.range, axes = FALSE, lwd = 1.52,
+     ylab = "", xlab = "", xlim = c(1.95, 28.05), cex.lab = 1.5)
+box()
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.2)
+axis(2, cex.axis = 1.25)  
+lines(1:29, pred.const.fit, lty = 4, lwd = 1.75)
+lines(1:29, pred.const.lwr, lty = 2, lwd = 1.75, col = "royalblue3")
+lines(1:29, pred.const.upr, lty = 2, lwd = 1.75, col = "firebrick3")
+abline(h=0, lty =3)
+abline(v = c(13.5, 17.5), lty = 3)
+title("Fixed Model", adj = 0, cex.main = 1.25)
+
+#vary model
+plot(1:29, SE.2019.true, type = "l", ylim = all.range, axes = FALSE, lwd = 1.52,
+     ylab = "", xlab = "", xlim = c(1.95, 28.05), cex.lab = 1.5)
+box()
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.2)
+axis(2, cex.axis = 1.25)  
+lines(1:29, pred.vary.fit, lty = 4, lwd = 1.75)
+lines(1:29, pred.vary.lwr, lty = 2, lwd = 1.75, col = "royalblue3")
+lines(1:29, pred.vary.upr, lty = 2, lwd = 1.75, col = "firebrick3")
+abline(h=0, lty =3)
+abline(v = c(13.5, 17.5), lty = 3)
+title("Non-Fixed Model", adj = 0, cex.main = 1.25)
+
+mtext("CO Anomaly (ppb)", side = 2, outer = TRUE, padj = 0.5)
+mtext("Week", side = 1, outer = TRUE, adj = 0.5)
+dev.off()
+
 
 
 ## ---- Coeff/Interaction Figures ---- ##
@@ -82,7 +159,7 @@ layout(matrix(c(1, 5,
                 2, 5,
                 3, 5,
                 4, 5), ncol = 2, byrow = TRUE),
-       widths = c(1.75, 1), heights = c(1, 1, 1, 1, 1))
+       widths = c(1.75, 1.25), heights = c(1, 1, 1, 1, 1))
 
 par(oma = c(1, 1, 1, 1))
 
@@ -170,21 +247,21 @@ links[[2]] <- list(
 # --- Plot 2: WTIO & ETIO ---
 par(mar = c(4, 4, 2, 1))
 
-plot(SE2_wtiolag-0.125, SE2_wtiocoef, pch = 22, col = "black",
-     bg =  alpha("magenta4",.95) , cex = 1.5, 
+plot(SE2_wtiolag-0.25, SE2_wtiocoef, pch = 22, col = "black",
+     bg =  alpha("magenta4",.95) , cex = 2, cex.axis = 1.2,
      xlim = c(1,52), 
      ylim = SEAus2_range,
      xlab = "", ylab = "")
-points(SE22_wtiolag, SE22_wtiocoef, pch = 22, col = "black",
-       bg =  alpha("palevioletred2",.65) , cex = 1.5)
-points(SE23_wtiolag+0.125, SE23_wtiocoef, pch = 24, col = "black",
-       bg =  alpha("palevioletred2",.65) , cex = 1.33)
+points(SE22_wtiolag+0.25, SE22_wtiocoef, pch = 22, col = "black",
+       bg =  alpha("palevioletred2",.65) , cex = 2)
+points(SE23_wtiolag, SE23_wtiocoef, pch = 24, col = "black",
+       bg =  alpha("palevioletred2",.65) , cex = 1.75)
 points(SE2_etiolag, SE2_etiocoef, pch = 22, 
-       col = "grey4", bg =  alpha("royalblue4",.95), cex = 1.5)
+       col = "grey4", bg =  alpha("royalblue4",.95), cex = 2)
 points(SE22_etiolag, SE22_etiocoef, pch = 22, col = "black",
-       bg =  alpha("royalblue2",.65) , cex = 1.5)
+       bg =  alpha("royalblue2",.65) , cex = 2)
 points(SE23_etiolag, SE23_etiocoef, pch = 24, col = "black",
-       bg =  alpha("royalblue2",.65) , cex = 1.33)
+       bg =  alpha("royalblue2",.65) , cex = 1.75)
 abline(h = 0, lty = 2)
 title("WTIO & ETIO", adj = 0)
 
@@ -222,14 +299,14 @@ links[[6]] <- list(
 # --- Plot 3: TSA ---
 par(mar = c(4, 4, 2, 1))
 
-plot(SE2_tsalag-0.33, SE2_tsacoef, pch = 22, col = "black",
-     bg =  alpha("darkorange3", 0.95), xlim = c(1,52), cex = 1.4,
-     ylim = SEAus2_range,
+plot(SE2_tsalag-0.25, SE2_tsacoef, pch = 22, col = "black",
+     bg =  alpha("darkorange3", 0.95), xlim = c(1,52), cex = 2,
+     ylim = SEAus2_range, cex.axis = 1.2,
      xlab = "", ylab = "", cex.lab = 1.33)
-points(SE22_tsalag+0.33, SE22_tsacoef, pch = 22, col = "black",
-       bg =  alpha("darkgoldenrod2",.55) , cex = 1.5)
+points(SE22_tsalag+0.25, SE22_tsacoef, pch = 22, col = "black",
+       bg =  alpha("darkgoldenrod2",.55) , cex = 2)
 points(SE23_tsalag, SE23_tsacoef, pch = 24, col = "black",
-       bg =  alpha("darkgoldenrod2",.65) , cex = 1.33)
+       bg =  alpha("darkgoldenrod2",.65) , cex = 1.75)
 abline(h = 0, lty = 2)
 title("TSA", adj = 0)
 
@@ -244,16 +321,16 @@ links[[7]] <- list(
 
 # --- Plot 4: SAM/AAO ---
 par(mar = c(4, 4, 2, 1))
-plot(SE2_aaolag-0.33, SE2_aaocoef, pch = 22,
+plot(SE2_aaolag-0.25, SE2_aaocoef, pch = 22,
      col = "grey4",
-     bg =  alpha("red3",.95), cex = 1.5,
-     xlim = c(1,52), 
+     bg =  alpha("red3",.95), cex = 2,
+     xlim = c(1,52),  cex.axis = 1.2, cex.lab = 1.33,
      ylim = SEAus2_range,
      xlab = "Lag", ylab = "")
-points(SE22_aaolag+0.33, SE22_aaocoef, pch = 22, col = "black",
-       bg =  alpha("coral2",.55) , cex = 1.5)
+points(SE22_aaolag+0.25, SE22_aaocoef, pch = 22, col = "black",
+       bg =  alpha("coral2",.55) , cex = 2)
 points(SE23_aaolag, SE23_aaocoef, pch = 24, col = "black",
-       bg =  alpha("coral2",.65) , cex = 1.33)
+       bg =  alpha("coral2",.65) , cex = 1.75)
 abline(h = 0, lty = 2)
 title("SAM (AAO)", adj = 0)
 
@@ -262,7 +339,7 @@ title("SAM (AAO)", adj = 0)
 par(mar = c(4, 4, 2, 2))
 
 plot(SE2.coef[1], 0, type = "n", main = "", 
-     ylim = c(0,1), xlim = SEAus2_range,
+     ylim = c(0,1), xlim = SEAus2_range, cex = 2, cex.axis = 1.2,
      xlab = "Coefficients", cex.lab = 1.33,
      yaxt = "n",  ylab = "")
 abline(v= 0, lty = 2)
@@ -281,28 +358,27 @@ int_7 <- grconvertY(links[[7]]$from_y, from = "ndc", to = "user") # tsa_lag31 ->
 #nino_lag40:etio_lag7
 ## base
 int_pt1 <- (int_2 + int_4)/2
-segments(SE2.coef[10], int_2, SE2.coef[10], int_pt1, col = "green4", lty = 2, lwd = 1.5)
-segments(SE2.coef[10], int_4, SE2.coef[10], int_pt1, col = "royalblue4", lty = 2, lwd = 1.5)
+segments(SE2.coef[10], int_2, SE2.coef[10], int_pt1, col = "green4", lty = 2, lwd = 1.75)
+segments(SE2.coef[10], int_4, SE2.coef[10], int_pt1, col = "royalblue4", lty = 2, lwd = 1.75)
 ## const
 int_pt2 <- (int_3 + int_5)/2
-segments(SE2.constcoef[10], int_3, SE2.constcoef[10], int_pt2, col = "chartreuse2", lty = 3, lwd = 1.5)
-segments(SE2.constcoef[10], int_5, SE2.constcoef[10], int_pt2, col = "royalblue2", lty = 3, lwd = 1.5)
+segments(SE2.constcoef[10], int_3, SE2.constcoef[10], int_pt2, col = "chartreuse2", lty = 2, lwd = 1.75)
+segments(SE2.constcoef[10], int_5, SE2.constcoef[10], int_pt2, col = "royalblue2", lty = 2, lwd = 1.75)
 ## etio_lag8:tsa_lag31
 ## vary
 int_pt3 <- (int_6 + int_7)/2
-segments(SE2.varycoef[8], int_6, SE2.varycoef[8], int_pt3, col = "royalblue2", lty = 3, lwd = 1.5)
-segments(SE2.varycoef[8], int_7, SE2.varycoef[8], int_pt3, col = "darkgoldenrod2", lty = 3, lwd = 1.5)
+segments(SE2.varycoef[8], int_6, SE2.varycoef[8], int_pt3, col = "royalblue2", lty = 3, lwd = 1.75)
+segments(SE2.varycoef[8], int_7, SE2.varycoef[8], int_pt3, col = "darkgoldenrod2", lty = 3, lwd = 1.75)
 
 #interaction points
 points(SE2.varycoef[7], int_1,  pch = 24, col = "grey4",
-       bg =  alpha("royalblue2",.65), cex = 1.33,) 
+       bg =  alpha("royalblue2",.65), cex = 1.75,) 
 points(SE2.coef[10], int_pt1,  pch = 22, col = "grey4",
-       bg =  alpha("slategray",.95), cex = 1.5,) 
+       bg =  alpha("slategray",.95), cex = 2,) 
 points(SE2.constcoef[10], int_pt2,  pch = 22, col = "grey4",
-       bg =  alpha("gray",.95), cex = 1.5,) 
+       bg =  alpha("gray",.95), cex = 2,) 
 points(SE2.varycoef[8], int_pt3,  pch = 24, col = "grey4",
-       bg =  alpha("gray",.95), cex = 1.33,) 
-
+       bg =  alpha("gray",.95), cex = 1.75,) 
 
 #link to x 
 links[[1]]$to_x <- grconvertX(SE2.coef[10], from = "user", to = "ndc")
@@ -320,17 +396,56 @@ for (i in 1:length(links)) {
 # --- Draw horizontal linking lines ---
 par(xpd = NA)  # allow drawing outside plot regions
 colors <- c("green4", "chartreuse2", "royalblue4", "royalblue2", "royalblue2", "royalblue2", "darkgoldenrod2")
-linetypes <- c(2,3,2, rep(3,4))
+linetypes <- c(rep(2,4), rep(3,3))
 
 
 for (i in 1:length(links)) {
   grid.lines(
     x = unit(c(links[[i]]$from_x, links[[i]]$to_x), "npc"),
     y = unit(c(links[[i]]$from_y, links[[i]]$to_y), "npc"),
-    gp = gpar(col = colors[i], lwd = 1, lty = linetypes[i])
+    gp = gpar(col = colors[i], lwd = 1.75, lty = linetypes[i])
   )
 }
 
 mtext("Coefficients", side = 2, outer = TRUE, padj = 0.5)
+
+#add legends
+par(xpd = NA)
+legend("topright", inset = c(0.00, 0.00),
+       title = "Ni\u00f1o", cex = 1.25,
+       legend = c("Full", "Fixed", "Non-Fixed"),
+       pch = c(22, 22, 24),
+       col = c("grey4", "grey4", "grey4"),
+       pt.bg = c("green4",  "chartreuse2", "chartreuse2"),
+       pt.cex = c(1.5, 1.5, 1.33))
+legend("topright", inset = c(0.00, 0.09),
+       title = "WTIO", cex = 1.25,
+       legend = c("Full", "Fixed", "Non-Fixed"),
+       pch = c(22, 22, 24),
+       col = c("grey4", "grey4", "grey4"),
+       pt.bg = c("magenta4",  "palevioletred2", "palevioletred2"),
+       pt.cex = c(1.5, 1.5, 1.33))
+legend("topright", inset = c(0.00, 0.18),
+       title = "ETIO", cex = 1.25,
+       legend = c("Full", "Fixed", "Non-Fixed"),
+       pch = c(22, 22, 24),
+       col = c("grey4", "grey4", "grey4"),
+       pt.bg = c("royalblue4",  "royalblue2", "royalblue2"),
+       pt.cex = c(1.5, 1.5, 1.33))
+legend("topright", inset = c(0.00, 0.27),
+       title = "TSA", cex = 1.25,
+       legend = c("Full", "Fixed", "Non-Fixed"),
+       pch = c(22, 22, 24),
+       col = c("grey4", "grey4", "grey4"),
+       pt.bg = c("darkorange3",  "darkgoldenrod2", "darkgoldenrod2"),
+       pt.cex = c(1.5, 1.5, 1.33))
+legend("topright", inset = c(0.00, 0.36),
+       title = "SAM (AAO)", cex = 1.25,
+       legend = c("Full", "Fixed", "Non-Fixed"),
+       pch = c(22, 22, 24),
+       col = c("grey4", "grey4", "grey4"),
+       pt.bg = c("red3",  "coral2", "coral2"),
+       pt.cex = c(1.5, 1.5, 1.33))
+
 
 dev.off()
