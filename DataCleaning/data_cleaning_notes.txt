@@ -20,6 +20,7 @@ Current notes for updating and consolidating code (delete when done.)
 -- lists of lag data for each response week.
 -- matrices for weekly data
 
-`olr_prep.R` prepares OLR data from .nc files
+`olr_cleaning_prep.R` prepares OLR data from .nc files
 - repeat work from `CO_OLR.rmd` and `co_olr.R` to redo OLR as a proxy for MJO (following Daniels et al, 2022)
-- clean 
+- OLR over MSEA as proxy for MJO, with MJO as a tropical weather pattern that has potential teleconnections
+-- TODO: review code and update documentation;  

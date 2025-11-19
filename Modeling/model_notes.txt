@@ -1,0 +1,3 @@
+model_notes:
+
+Using LASSO for interactions and quadratic effects that enforces strong hierarchy; applied with RAMP and lambda selected with BIC.
