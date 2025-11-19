@@ -459,11 +459,56 @@ for (i in 1:length(seasons)) {
     SE.var[[j]] <- SE.lm.vary
     
     #TODO: add in prediction and validation, as needed
+    #get predictions and pred intervals
+    
+    
   }
   SE.vary.terms[[seasons[i]]] <- SE.var.refit
   SE.const.LM[[seasons[i]]] <- SE.con
   SE.vary.LM[[seasons[i]]] <- SE.var
 }  
+
+
+#TODO: move inside for all years, only for 2019/2020 now
+SE1.valid.pred <- SE.pred.valid$`2019-2020`$early
+SE1.valid.resp <- SE.resp.valid$`2019-2020`$early
+
+SE2.valid.pred <- SE.pred.valid$`2019-2020`$mid
+SE2.valid.resp <- SE.resp.valid$`2019-2020`$mid
+
+SE3.valid.pred <- SE.pred.valid$`2019-2020`$late
+SE3.valid.resp <- SE.resp.valid$`2019-2020`$late
+
+X1.valid <- SE1.valid.pred[ ,c(1:52, 105:364)]
+X2.valid <- SE2.valid.pred[ ,c(1:52, 105:364)]
+X3.valid <- SE3.valid.pred[ ,c(1:52, 105:364)]
+
+SE.2019.true <- c(SE1.valid.resp, SE2.valid.resp, SE3.valid.resp)
+
+#base model
+pred.base.early <- predict(SEmodels[[1]],  X1.valid, se.fit = TRUE, interval = "prediction")
+pred.base.mid <- predict(SEmodels[[2]],  X2.valid, se.fit = TRUE, interval = "prediction")
+pred.base.late <- predict(SEmodels[[3]],  X3.valid, se.fit = TRUE, interval = "prediction")
+
+#const model
+pred.const.early <- predict(SE.const.LM$`2019-2020`[[1]],  X1.valid, se.fit = TRUE, interval = "prediction")
+pred.const.mid <- predict(SE.const.LM$`2019-2020`[[2]],  X2.valid, se.fit = TRUE, interval = "prediction")
+pred.const.late <- predict(SE.const.LM$`2019-2020`[[3]],  X3.valid, se.fit = TRUE, interval = "prediction")
+
+#vary model
+pred.vary.early <- predict(SE.vary.LM$`2019-2020`[[1]],  X1.valid, se.fit = TRUE, interval = "prediction")
+pred.vary.mid <- predict(SE.vary.LM$`2019-2020`[[2]],  X2.valid, se.fit = TRUE, interval = "prediction")
+pred.vary.late <- predict(SE.vary.LM$`2019-2020`[[3]],  X3.valid, se.fit = TRUE, interval = "prediction")
+
+#temp output, update LOYO loop for all years
+preds.2019.base <- list(pred.base.early, pred.base.mid, pred.base.late)
+preds.2019.const <- list(pred.const.early, pred.const.mid, pred.const.late )
+preds.2019.vary <- list(pred.vary.early, pred.vary.mid, pred.vary.late)
+setwd("~/CO_AUS/AusCOmodeling/Data") 
+save(preds.2019.base, preds.2019.const, 
+     preds.2019.vary, SE.2019.true, file = "preds_2019.rda")
+
+
 
 #output models
 NEmodels.loyo <- list(NE.vary.terms, NE.const.LM, NE.vary.LM)
