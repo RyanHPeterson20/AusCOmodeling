@@ -4,6 +4,8 @@
 #figure order:
 #1. prediction (2019-2020)
 #2. Coefficient/interaction plots
+#3. lag/son plots
+
 
 #libraries
 suppressMessages(library(grid)) #gridlines between plots
@@ -134,13 +136,17 @@ dev.off()
 
 ## ---- Coeff/Interaction Figures ---- ##
 ## setup
-
-
+SE1.coef <- coef(SE1.lm)
+SE1.constcoef <- coef(SE.const.LM$`2019-2020`[[1]])
+SE1.varycoef <- coef(SE.vary.LM$`2019-2020`[[1]])
 
 SE2.coef <- coef(SE2.lm)
 SE2.constcoef <- coef(SE.const.LM$`2019-2020`[[2]])
 SE2.varycoef <- coef(SE.vary.LM$`2019-2020`[[2]])
 
+SE3.coef <- coef(SE3.lm)
+SE3.constcoef <- coef(SE.const.LM$`2019-2020`[[3]])
+SE3.varycoef <- coef(SE.vary.LM$`2019-2020`[[3]])
 
 
 
@@ -447,5 +453,124 @@ legend("topright", inset = c(0.00, 0.36),
        pt.bg = c("red3",  "coral2", "coral2"),
        pt.cex = c(1.5, 1.5, 1.33))
 
+dev.off()
+
+## lag-overlap plot
+##SE Only
+
+#setup
+SE.early <- 38:50
+SE.mid <- c(51, 52, 1, 2)
+SE.late <- 3:14
+
+#ETIO
+SE2.coef[5:6]
+SE3.coef[4:5]
+
+#varying; non-fixed 
+SE1.varycoef[3:4]
+SE2.varycoef[5]
+SE3.varycoef[7:8]
+
+SEmid.lag7 <- sapply(SE.mid - 7, function(x) ifelse(x <=0, x + 52, x)) 
+SEmid.lag33 <- sapply(SE.mid - 33, function(x) ifelse(x <=0, x + 52, x)) 
+
+SElate.lag16 <- sapply(SE.late - 16 , function(x) ifelse(x <=0, x + 52, x)) 
+SElate.lag33 <- sapply(SE.late - 33 , function(x) ifelse(x <=0, x + 52, x)) 
+
+etio.lag.min <- c(min(SElate.lag33), min(SElate.lag16), min(SEmid.lag33), min(SEmid.lag7))
+etio.lag.max <- c(max(SElate.lag33), max(SElate.lag16), max(SEmid.lag33), max(SEmid.lag7))
+
+SEearly.lag2.vary <- sapply(SE.early - 2, function(x) ifelse(x <=0, x + 52, x)) 
+SEearly.lag42.vary <- sapply(SE.early - 42, function(x) ifelse(x <=0, x + 52, x))
+
+SEmid.lag8.vary <- sapply(SE.mid - 8, function(x) ifelse(x <=0, x + 52, x)) 
+
+SElate.lag16.vary <- sapply(SE.late - 16 , function(x) ifelse(x <=0, x + 52, x)) 
+SElate.lag19.vary <- sapply(SE.late - 19 , function(x) ifelse(x <=0, x + 52, x))
+
+#WTIO
+SE1.coef[3]
+SE2.coef[3:4]
+
+#varying; non-fixed 
+SE2.varycoef[2]
+SE3.varycoef[5:6]
+
+
+SEearly.lag5 <- sapply(SE.early - 5, function(x) ifelse(x <=0, x + 52, x)) 
+
+SEmid.lag14 <- sapply(SE.mid - 14, function(x) ifelse(x <=0, x + 52, x))
+SEmid.lag46 <- sapply(SE.mid - 46, function(x) ifelse(x <=0, x + 52, x))
+
+wtio.lag.min <- c(min(SEearly.lag5), min(SEmid.lag14), min(SEmid.lag46))
+wtio.lag.max <- c(max(SEearly.lag5), max(SEmid.lag14), max(SEmid.lag46))
+
+
+
+etio.lag <- c("Lag 7", "Lag 33", "Lag 16", "Lag 33")
+wtio.lag <- c("Lag 5", "Lag 14", "Lag 46")
+
+#base plot
+plot(NULL, xlim = c(1,66), ylim = c(0.5, 4.5),
+     yaxt = "n", xaxt = "n", xlab = "Week", ylab = "", main = "", bty = "l")
+axis(2, at = 1:length(etio.lag), labels = rev(etio.lag), las = 1)
+axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.67)
+segments(x0 = etio.lag.min, y0 = 1:length(etio.lag.min),
+         x1 = etio.lag.max, y1 = 1:length(etio.lag.max))
+abline(h = 1:length(etio.lag.max), lty = 3, col = "gray70")
+abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
+text(x =c(4.75, 16, 29, 42, 55 ), y = 0.5,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
+
+
+
+
+#alternate plot
+##single line for each model
+##TODO: finish to Include varying (non-fixed models)
+
+
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+png(filename = "IOD_lag.png", width = 3000, height = 2500, res = 300)
+par(mfrow = c(2, 1), oma = c(2.5, 1, 1, 1), mar = c(2, 3, 2.5, 2))
+
+#ETIO plot
+plot(NULL, xlim = c(1,66), ylim = c(0.5, 3.5),
+     yaxt = "n", xaxt = "n", xlab = "Week", ylab = "", main = "", bty = "l")
+axis(2, at = 1:3, labels = c("Late", "Middle", "Early"), las = 1)
+axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.75)
+segments(x0 = etio.lag.min, y0 = c(1,1,2,2),
+         x1 = etio.lag.max, y1 = c(1,1,2,2), lwd = 5)
+segments(x0 = min(SE.early), y0 = 2.969,
+         x1 = max(SE.early), y1 = 2.969, lwd = 5, col = "steelblue3")
+segments(x0 = 51, y0 = 1.969,
+         x1 = 54, y1 = 1.969, lwd = 5, col = "steelblue3")
+segments(x0 = 55, y0 = 0.969,
+         x1 = 66, y1 = 0.969, lwd = 5, col = "steelblue3")
+text(x=c(45.5, 19.5, 44.5, 27.5), y=c(2.09, 2.09, 1.09, 1.09), labels = etio.lag, col = "gray24", cex = 0.75)
+abline(h = 1:3, lty = 3, col = "gray70")
+abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
+text(x =c(4.75, 16, 29, 42, 55 ), y = 0.5,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
+text(x = 2, y = 3.5, labels = "ETIO", col = "gray36", cex = 1.25)
+
+#WTIO plot
+plot(NULL, xlim = c(1,66), ylim = c(0.5, 3.5),
+     yaxt = "n", xaxt = "n", xlab = "Week", ylab = "", main = "", bty = "l")
+axis(2, at = 1:3, labels = c("Late", "Middle", "Early"), las = 1)
+axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.75)
+segments(x0 = wtio.lag.min, y0 = c(3,2,2),
+         x1 = wtio.lag.max, y1 = c(3,2,2), lwd = 5)
+segments(x0 = min(SE.early), y0 = 2.969,
+         x1 = max(SE.early), y1 = 2.969, lwd = 5, col = "steelblue3")
+segments(x0 = 51, y0 = 1.969,
+         x1 = 54, y1 = 1.969, lwd = 5, col = "steelblue3")
+segments(x0 = 55, y0 = 0.969,
+         x1 = 66, y1 = 0.969, lwd = 5, col = "steelblue3")
+text(x=c(38.5, 38.5, 6.5), y=c(3.09, 2.09, 2.09), labels = wtio.lag, col = "gray24", cex = 0.75)
+abline(h = 1:3, lty = 3, col = "gray70")
+abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
+text(x =c(4.75, 16, 29, 42, 55 ), y = 0.5,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
+text(x = 2, y = 3.5, labels = "WTIO", col = "gray36", cex = 1.25)
+mtext("Week", side = 1, outer = TRUE, adj = 0.5)
 
 dev.off()
