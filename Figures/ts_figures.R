@@ -21,17 +21,20 @@ resp.alt.raw  <- read.csv("Data/resp_alt_anoms.csv", header = TRUE, stringsAsFac
 
 #setup (As needed)
 #color setup
-top.color <- "orange" #change to more red
-bottom.color <- "cyan" #change to more blue
 
-top.col <- "tomato2" #new red test
-bot.col <- "steelblue2" #new blue test
-
+#differing colors for response and predictor time series.
 #alternate colors (hex codes from rcartocolor: peach/teal)
-top.col <- "#EF6A4CFF"
-bot.col <- "#4F90A6FF"
 
-#response ts
+#response colors
+top.col.resp <- "#C71C1C"
+bot.col.resp <- "#2A5674FF"
+
+#predictor colors
+top.col.pred <- "#EF6A4CFF"
+bot.col.pred <- "#4F90A6FF"
+
+
+## response ts ##
 resp.raw <- resp.raw[resp.raw$date <= "2021-01-06", ]
 #resp.raw <- resp.raw[resp.raw$year <= 2020, ]
 
@@ -89,7 +92,7 @@ par(mgp = c(4,1,0))
 
 plot(time.plot, NE.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
-     yaxt = "n", ylab = "Anomaly CO", col.lab = "black", 
+     yaxt = "n", ylab = "CO Anomaly [ppb]", col.lab = "black", 
      xlim = c(as.Date(resp.time.range[1]) + months(7), as.Date(resp.time.range[2]) - months(7)),
      ylim = range(y.ticks), bty = "n", cex.lab = 1.25,  xpd = NA)
 #bottom figure labels
@@ -108,13 +111,13 @@ envelopePlot(x1 = time.plot,
              y1 = resp.top,
              x2 = time.plot,
              y2 = rep(0, length(resp.time)),
-             col = alpha(top.col, 0.67),
+             col = alpha(top.col.resp, 0.67),
              lineCol = NA)
 envelopePlot(x1 = time.plot,
              y1 = resp.bot,
              x2 = time.plot,
              y2 = rep(0, length(resp.time)),
-             col = alpha(bot.col, 0.67),
+             col = alpha(bot.col.resp, 0.67),
              lineCol = NA)
 dev.off()
 
@@ -145,7 +148,7 @@ par(mgp = c(4, 1, 0))
 
 plot(time.plot, SE.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
-     yaxt = "n", ylab = "Anomaly CO", col.lab = "black",
+     yaxt = "n", ylab = "CO Anomaly [ppb]", col.lab = "black",
      xlim = c(as.Date(resp.time.range[1]) + months(7), as.Date(resp.time.range[2]) - months(7)),
      ylim = range(y.ticks), bty = "n", cex.lab = 1.25,  xpd = NA)
 #bottom figure labels
@@ -163,13 +166,13 @@ envelopePlot(x1 = time.plot,
              y1 = resp.top,
              x2 = time.plot,
              y2 = rep(0, length(resp.time)),
-             col = alpha(top.col, 0.67),
+             col = alpha(top.col.resp, 0.67),
              lineCol = NA)
 envelopePlot(x1 = time.plot,
              y1 = resp.bot,
              x2 = time.plot,
              y2 = rep(0, length(resp.time)),
-             col = alpha(bot.col, 0.67),
+             col = alpha(bot.col.resp, 0.67),
              lineCol = NA)
 dev.off()
 
