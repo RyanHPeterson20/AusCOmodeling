@@ -529,8 +529,8 @@ wtio.lag <- c("Lag 5", "Lag 14", "Lag 46")
 etio.coef <- c(SE2.coef[5:6], SE3.coef[4:5])
 wtio.coef <- c(SE1.coef[3], SE2.coef[3:4])
 
-etio.mag <- abs(etio.coef*3)
-wtio.mag <- abs(wtio.coef*3)
+etio.mag <- ceiling(abs(etio.coef*3))
+wtio.mag <- ceiling(abs(wtio.coef*3))
 
 #alternate plot
 ##single line for each model
@@ -538,51 +538,83 @@ wtio.mag <- abs(wtio.coef*3)
 
 
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "IOD_lag.png", width = 3000, height = 2500, res = 300)
+png(filename = "IOD_lag2.png", width = 3000, height = 2500, res = 300)
 par(mfrow = c(2, 1), oma = c(2.5, 1, 1, 1), mar = c(2, 3, 2.5, 2))
 
 #ETIO plot
 plot(NULL, xlim = c(1,66), ylim = c(0.5, 3.5),
      yaxt = "n", xaxt = "n", xlab = "Week", ylab = "", main = "", bty = "l")
 axis(2, at = 1:3, labels = c("Late", "Peak", "Early"), las = 1)
-axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.75)
+axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.85)
 segments(x0 = etio.lag.min, y0 = c(1,1,2,2),
          x1 = etio.lag.max, y1 = c(1,1,2,2), 
          lwd = rev(etio.mag), col = "royalblue3", lend = 1)
-segments(x0 = min(SE.early), y0 = 2.85,
-         x1 = max(SE.early), y1 = 2.85, 
-         lwd = 2.5, lty =2, col = "gray12", lend = 1)
-arrows(x0 = c(min(SE.early)+0.5, max(SE.early)-0.5), y0 = 2.85, 
-       x1 = c(min(SE.early)-0.125, max(SE.early)+0.125), y1 = 2.85, 
+#early
+segments(x0 = min(SE.early), y0 = 2.9,
+         x1 = max(SE.early), y1 = 2.9, 
+         lwd = 2, lty =2, col = "gray12", lend = 1)
+arrows(x0 = c(min(SE.early)+0.5, max(SE.early)-0.5), y0 = 2.9, 
+       x1 = c(min(SE.early)-0.125, max(SE.early)+0.125), y1 = 2.9, 
        length = 0.125, lwd = 2, col = "gray12", lend = 1)
-segments(x0 = 51, y0 = 1.85,
-         x1 = 54, y1 = 1.85, 
-         lwd = 2.5, lty = 2, col = "gray12", lend = 1)
-arrows(x0 = c(51.5, 53.5), y0 = 1.85, 
-       x1 = c(51-0.125, 54+0.125), y1 = 1.85, 
+#peak
+segments(x0 = 51, y0 = 1.9,
+         x1 = 54, y1 = 1.9, 
+         lwd = 2, lty = 2, col = "gray12", lend = 1)
+arrows(x0 = c(51.5, 53.5), y0 = 1.9, 
+       x1 = c(51-0.125, 54+0.125), y1 = 1.9, 
        length = 0.125, lwd = 2, col = "gray12", lend = 1)
-segments(x0 = 55, y0 = 0.85,
-         x1 = 66, y1 = 0.85, lwd = 3.5, col = "gray12", lend = 1)
-text(x=c(45.5, 19.5, 44.5, 27.5), y=c(2.09, 2.09, 1.09, 1.09), labels = etio.lag, col = "gray24", cex = 0.75)
+#late
+segments(x0 = 55, y0 = 0.9,
+         x1 = 66, y1 = 0.9, 
+         lwd = 2, lty = 2, col = "gray12", lend = 1)
+arrows(x0 = c(55+0.5, 66-0.5), y0 = 0.9, 
+       x1 = c(55-0.125, 66+0.125), y1 = 0.9, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+text(x=c(45.5, 19.5, 44.5, 27.5), y=c(2.15, 2.12, 1.09, 1.09), labels = etio.lag, col = "gray24", cex = 1)
 abline(h = 1:3, lty = 3, col = "gray70")
 abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
 text(x =c(4.75, 16, 29, 42, 55 ), y = 0.5,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
 text(x = 2, y = 3.5, labels = "ETIO", col = "gray36", cex = 1.25)
+#TODO: add in legend (custom legend, not legend())
+#legend (manual)
+x0 <- 57
+y_vals <- c(3.5)
+arrows(x0, y_vals[1], x0 + 3, y_vals[1],
+       length = 0.125, lty= 2, code = 3, col = "gray12", lwd = 1)
+text(x0 + 5, y_vals[1], "Response", adj = 0)
+
+
 
 #WTIO plot
 plot(NULL, xlim = c(1,66), ylim = c(0.5, 3.5),
      yaxt = "n", xaxt = "n", xlab = "Week", ylab = "", main = "", bty = "l")
 axis(2, at = 1:3, labels = c("Late", "Peak", "Early"), las = 1)
-axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.75)
+axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.85)
 segments(x0 = wtio.lag.min, y0 = c(3,2,2),
-         x1 = wtio.lag.max, y1 = c(3,2,2), lwd =wtio.mag, col = c("firebrick1", "firebrick1", "royalblue3"))
-segments(x0 = min(SE.early), y0 = 2.85,
-         x1 = max(SE.early), y1 = 2.85, lwd = 3.5, col = "gray12")
-segments(x0 = 51, y0 = 1.85,
-         x1 = 54, y1 = 1.85, lwd = 3.5, col = "gray12")
-segments(x0 = 55, y0 = 0.85,
-         x1 = 66, y1 = 0.85, lwd = 3.5, col = "gray12")
-text(x=c(38.5, 38.5, 6.5), y=c(3.09, 2.09, 2.09), labels = wtio.lag, col = "gray24", cex = 0.75)
+         x1 = wtio.lag.max, y1 = c(3,2,2), 
+         lwd = wtio.mag, col = c("firebrick1", "firebrick1", "royalblue3"), lend = 1)
+#early
+segments(x0 = min(SE.early), y0 = 2.9,
+         x1 = max(SE.early), y1 = 2.9, 
+         lwd = 2, lty =2, col = "gray12", lend = 1)
+arrows(x0 = c(min(SE.early)+0.5, max(SE.early)-0.5), y0 = 2.9, 
+       x1 = c(min(SE.early)-0.125, max(SE.early)+0.125), y1 = 2.9, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+#peak
+segments(x0 = 51, y0 = 1.9,
+         x1 = 54, y1 = 1.9, 
+         lwd = 2, lty = 2, col = "gray12", lend = 1)
+arrows(x0 = c(51.5, 53.5), y0 = 1.9, 
+       x1 = c(51-0.125, 54+0.125), y1 = 1.9, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+#late
+segments(x0 = 55, y0 = 0.9,
+         x1 = 66, y1 = 0.9, 
+         lwd = 2, lty = 2, col = "gray12", lend = 1)
+arrows(x0 = c(55+0.5, 66-0.5), y0 = 0.9, 
+       x1 = c(55-0.125, 66+0.125), y1 = 0.9, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+text(x=c(38.5, 38.5, 6.5), y=c(3.09, 2.09, 2.09), labels = wtio.lag, col = "gray24", cex = 1)
 abline(h = 1:3, lty = 3, col = "gray70")
 abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
 text(x =c(4.75, 16, 29, 42, 55 ), y = 0.5,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
