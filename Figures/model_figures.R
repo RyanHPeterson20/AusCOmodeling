@@ -547,13 +547,22 @@ plot(NULL, xlim = c(1,66), ylim = c(0.5, 3.5),
 axis(2, at = 1:3, labels = c("Late", "Peak", "Early"), las = 1)
 axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.75)
 segments(x0 = etio.lag.min, y0 = c(1,1,2,2),
-         x1 = etio.lag.max, y1 = c(1,1,2,2), lwd = rev(etio.mag), col = "")
-segments(x0 = min(SE.early), y0 = 2.969,
-         x1 = max(SE.early), y1 = 2.969, lwd = 3.5, col = "steelblue3")
-segments(x0 = 51, y0 = 1.969,
-         x1 = 54, y1 = 1.969, lwd = 3.5, col = "steelblue3")
-segments(x0 = 55, y0 = 0.969,
-         x1 = 66, y1 = 0.969, lwd = 3.5, col = "steelblue3")
+         x1 = etio.lag.max, y1 = c(1,1,2,2), 
+         lwd = rev(etio.mag), col = "royalblue3", lend = 1)
+segments(x0 = min(SE.early), y0 = 2.85,
+         x1 = max(SE.early), y1 = 2.85, 
+         lwd = 2.5, lty =2, col = "gray12", lend = 1)
+arrows(x0 = c(min(SE.early)+0.5, max(SE.early)-0.5), y0 = 2.85, 
+       x1 = c(min(SE.early)-0.125, max(SE.early)+0.125), y1 = 2.85, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+segments(x0 = 51, y0 = 1.85,
+         x1 = 54, y1 = 1.85, 
+         lwd = 2.5, lty = 2, col = "gray12", lend = 1)
+arrows(x0 = c(51.5, 53.5), y0 = 1.85, 
+       x1 = c(51-0.125, 54+0.125), y1 = 1.85, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+segments(x0 = 55, y0 = 0.85,
+         x1 = 66, y1 = 0.85, lwd = 3.5, col = "gray12", lend = 1)
 text(x=c(45.5, 19.5, 44.5, 27.5), y=c(2.09, 2.09, 1.09, 1.09), labels = etio.lag, col = "gray24", cex = 0.75)
 abline(h = 1:3, lty = 3, col = "gray70")
 abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
@@ -566,13 +575,13 @@ plot(NULL, xlim = c(1,66), ylim = c(0.5, 3.5),
 axis(2, at = 1:3, labels = c("Late", "Peak", "Early"), las = 1)
 axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.75)
 segments(x0 = wtio.lag.min, y0 = c(3,2,2),
-         x1 = wtio.lag.max, y1 = c(3,2,2), lwd =wtio.mag, col = "")
-segments(x0 = min(SE.early), y0 = 2.969,
-         x1 = max(SE.early), y1 = 2.969, lwd = 3.5, col = "steelblue3")
-segments(x0 = 51, y0 = 1.969,
-         x1 = 54, y1 = 1.969, lwd = 3.5, col = "steelblue3")
-segments(x0 = 55, y0 = 0.969,
-         x1 = 66, y1 = 0.969, lwd = 3.5, col = "steelblue3")
+         x1 = wtio.lag.max, y1 = c(3,2,2), lwd =wtio.mag, col = c("firebrick1", "firebrick1", "royalblue3"))
+segments(x0 = min(SE.early), y0 = 2.85,
+         x1 = max(SE.early), y1 = 2.85, lwd = 3.5, col = "gray12")
+segments(x0 = 51, y0 = 1.85,
+         x1 = 54, y1 = 1.85, lwd = 3.5, col = "gray12")
+segments(x0 = 55, y0 = 0.85,
+         x1 = 66, y1 = 0.85, lwd = 3.5, col = "gray12")
 text(x=c(38.5, 38.5, 6.5), y=c(3.09, 2.09, 2.09), labels = wtio.lag, col = "gray24", cex = 0.75)
 abline(h = 1:3, lty = 3, col = "gray70")
 abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
