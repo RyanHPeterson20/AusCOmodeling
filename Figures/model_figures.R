@@ -18,6 +18,21 @@ load("Data/base_RAMPmodels.rda") #"base" model
 load("Data/loyo_models.rda") #leave one year out models/refits
 load("Data/preds_2019.rda") #2019 predictions 
 
+#setup from NEmodels, SEmodels
+NE1.lm <- NEmodels[[1]]
+NE2.lm <- NEmodels[[2]]
+NE3.lm <- NEmodels[[3]]
+
+SE1.lm <- SEmodels[[1]]
+SE2.lm <- SEmodels[[2]]
+SE3.lm <- SEmodels[[3]]
+
+#from NEmodels.loyo, SEmodels.loyo
+NE.const.LM <- NEmodels.loyo[[2]]
+NE.vary.LM <- NEmodels.loyo[[3]]
+
+SE.const.LM <- SEmodels.loyo[[2]]
+SE.vary.LM <- SEmodels.loyo[[3]]
 
 #model review
 #NE Aus Early (Group 1)
@@ -467,11 +482,6 @@ SE.late <- 3:14
 SE2.coef[5:6]
 SE3.coef[4:5]
 
-#varying; non-fixed 
-SE1.varycoef[3:4]
-SE2.varycoef[5]
-SE3.varycoef[7:8]
-
 SEmid.lag7 <- sapply(SE.mid - 7, function(x) ifelse(x <=0, x + 52, x)) 
 SEmid.lag33 <- sapply(SE.mid - 33, function(x) ifelse(x <=0, x + 52, x)) 
 
@@ -480,6 +490,11 @@ SElate.lag33 <- sapply(SE.late - 33 , function(x) ifelse(x <=0, x + 52, x))
 
 etio.lag.min <- c(min(SElate.lag33), min(SElate.lag16), min(SEmid.lag33), min(SEmid.lag7))
 etio.lag.max <- c(max(SElate.lag33), max(SElate.lag16), max(SEmid.lag33), max(SEmid.lag7))
+
+#varying; non-fixed 
+SE1.varycoef[3:4]
+SE2.varycoef[5]
+SE3.varycoef[7:8]
 
 SEearly.lag2.vary <- sapply(SE.early - 2, function(x) ifelse(x <=0, x + 52, x)) 
 SEearly.lag42.vary <- sapply(SE.early - 42, function(x) ifelse(x <=0, x + 52, x))
@@ -506,24 +521,16 @@ SEmid.lag46 <- sapply(SE.mid - 46, function(x) ifelse(x <=0, x + 52, x))
 wtio.lag.min <- c(min(SEearly.lag5), min(SEmid.lag14), min(SEmid.lag46))
 wtio.lag.max <- c(max(SEearly.lag5), max(SEmid.lag14), max(SEmid.lag46))
 
-
-
 etio.lag <- c("Lag 7", "Lag 33", "Lag 16", "Lag 33")
 wtio.lag <- c("Lag 5", "Lag 14", "Lag 46")
 
-#base plot
-plot(NULL, xlim = c(1,66), ylim = c(0.5, 4.5),
-     yaxt = "n", xaxt = "n", xlab = "Week", ylab = "", main = "", bty = "l")
-axis(2, at = 1:length(etio.lag), labels = rev(etio.lag), las = 1)
-axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.67)
-segments(x0 = etio.lag.min, y0 = 1:length(etio.lag.min),
-         x1 = etio.lag.max, y1 = 1:length(etio.lag.max))
-abline(h = 1:length(etio.lag.max), lty = 3, col = "gray70")
-abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
-text(x =c(4.75, 16, 29, 42, 55 ), y = 0.5,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
 
+#coef magnitude
+etio.coef <- c(SE2.coef[5:6], SE3.coef[4:5])
+wtio.coef <- c(SE1.coef[3], SE2.coef[3:4])
 
-
+etio.mag <- abs(etio.coef*3)
+wtio.mag <- abs(wtio.coef*3)
 
 #alternate plot
 ##single line for each model
@@ -537,16 +544,16 @@ par(mfrow = c(2, 1), oma = c(2.5, 1, 1, 1), mar = c(2, 3, 2.5, 2))
 #ETIO plot
 plot(NULL, xlim = c(1,66), ylim = c(0.5, 3.5),
      yaxt = "n", xaxt = "n", xlab = "Week", ylab = "", main = "", bty = "l")
-axis(2, at = 1:3, labels = c("Late", "Middle", "Early"), las = 1)
+axis(2, at = 1:3, labels = c("Late", "Peak", "Early"), las = 1)
 axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.75)
 segments(x0 = etio.lag.min, y0 = c(1,1,2,2),
-         x1 = etio.lag.max, y1 = c(1,1,2,2), lwd = 5)
+         x1 = etio.lag.max, y1 = c(1,1,2,2), lwd = rev(etio.mag), col = "")
 segments(x0 = min(SE.early), y0 = 2.969,
-         x1 = max(SE.early), y1 = 2.969, lwd = 5, col = "steelblue3")
+         x1 = max(SE.early), y1 = 2.969, lwd = 3.5, col = "steelblue3")
 segments(x0 = 51, y0 = 1.969,
-         x1 = 54, y1 = 1.969, lwd = 5, col = "steelblue3")
+         x1 = 54, y1 = 1.969, lwd = 3.5, col = "steelblue3")
 segments(x0 = 55, y0 = 0.969,
-         x1 = 66, y1 = 0.969, lwd = 5, col = "steelblue3")
+         x1 = 66, y1 = 0.969, lwd = 3.5, col = "steelblue3")
 text(x=c(45.5, 19.5, 44.5, 27.5), y=c(2.09, 2.09, 1.09, 1.09), labels = etio.lag, col = "gray24", cex = 0.75)
 abline(h = 1:3, lty = 3, col = "gray70")
 abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
@@ -556,16 +563,16 @@ text(x = 2, y = 3.5, labels = "ETIO", col = "gray36", cex = 1.25)
 #WTIO plot
 plot(NULL, xlim = c(1,66), ylim = c(0.5, 3.5),
      yaxt = "n", xaxt = "n", xlab = "Week", ylab = "", main = "", bty = "l")
-axis(2, at = 1:3, labels = c("Late", "Middle", "Early"), las = 1)
+axis(2, at = 1:3, labels = c("Late", "Peak", "Early"), las = 1)
 axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.75)
 segments(x0 = wtio.lag.min, y0 = c(3,2,2),
-         x1 = wtio.lag.max, y1 = c(3,2,2), lwd = 5)
+         x1 = wtio.lag.max, y1 = c(3,2,2), lwd =wtio.mag, col = "")
 segments(x0 = min(SE.early), y0 = 2.969,
-         x1 = max(SE.early), y1 = 2.969, lwd = 5, col = "steelblue3")
+         x1 = max(SE.early), y1 = 2.969, lwd = 3.5, col = "steelblue3")
 segments(x0 = 51, y0 = 1.969,
-         x1 = 54, y1 = 1.969, lwd = 5, col = "steelblue3")
+         x1 = 54, y1 = 1.969, lwd = 3.5, col = "steelblue3")
 segments(x0 = 55, y0 = 0.969,
-         x1 = 66, y1 = 0.969, lwd = 5, col = "steelblue3")
+         x1 = 66, y1 = 0.969, lwd = 3.5, col = "steelblue3")
 text(x=c(38.5, 38.5, 6.5), y=c(3.09, 2.09, 2.09), labels = wtio.lag, col = "gray24", cex = 0.75)
 abline(h = 1:3, lty = 3, col = "gray70")
 abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
