@@ -50,7 +50,6 @@ summary(NE3.lm)
 summary(NE.const.LM$`2019-2020`[[3]])
 summary(NE.vary.LM$`2019-2020`[[3]])
 
-
 #SE Aus Early (Group 1)
 summary(SE1.lm)
 summary(SE.const.LM$`2019-2020`[[1]])
@@ -164,11 +163,20 @@ SE3.constcoef <- coef(SE.const.LM$`2019-2020`[[3]])
 SE3.varycoef <- coef(SE.vary.LM$`2019-2020`[[3]])
 
 
+## SE Aus Early (Group 1)
+SE1.coef #full
+SE1.constcoef #fixed
+SE1.varycoef #non-fixed
 
-## SE Aus Middle (Group 2)
+## SE Aus Peak (Group 2)
 SE2.coef
 SE2.constcoef
 SE2.varycoef
+
+## SE Aus Late (Group 3)
+SE3.coef
+SE3.constcoef
+SE3.varycoef
 
 #non-OLR plot, LASSO does not select for OLR in any LOYO variation
 
@@ -247,7 +255,7 @@ plot(SE2_ninolag, SE2_ninocoef, pch = 22,
 points(SE22_ninolag, SE22_ninocoef, pch = 22, col = "black",
        bg =  alpha("chartreuse2",.65) , cex = 2)
 abline(h = 0, lty = 2)
-title("Ni\u00f1o", adj = 0, cex.main = 1.5)
+title("Ni\u00f1o 3.4", adj = 0, cex.main = 1.5)
 
 ## --- Nino Interaction
 ## nino_lag40:etio_lag7
@@ -470,6 +478,10 @@ legend("topright", inset = c(0.00, 0.36),
 
 dev.off()
 
+#TODO: repeat the above plot for SE Aus Early and Late
+
+
+
 ## lag-overlap plot
 ##SE Only
 
@@ -531,6 +543,7 @@ wtio.coef <- c(SE1.coef[3], SE2.coef[3:4])
 
 etio.mag <- ceiling(abs(etio.coef*3))
 wtio.mag <- ceiling(abs(wtio.coef*3))
+wtio.mag[2] <- 2
 
 #alternate plot
 ##single line for each model
@@ -578,11 +591,29 @@ text(x = 2, y = 3.5, labels = "ETIO", col = "gray36", cex = 1.25)
 #TODO: add in legend (custom legend, not legend())
 #legend (manual)
 x0 <- 57
-y_vals <- c(3.5)
-arrows(x0, y_vals[1], x0 + 3, y_vals[1],
-       length = 0.125, lty= 2, code = 3, col = "gray12", lwd = 1)
+y_vals <- c(3.5, 3.3, 3.1, 2.9, 2.7, 2.5, 2.3)
+arrows(c(x0, x0 + 3), y_vals[1], c(x0-0.1, x0 + 3.1), y_vals[1],
+       length = 0.125, lty= 1, col = "gray12", lwd = 2)
+segments(x0, y_vals[1], x0 + 3, y_vals[1], 
+         lwd = 2, lty = 2, col = "gray12", lend = 1)
 text(x0 + 5, y_vals[1], "Response", adj = 0)
+#add in pos/neg (red/blue)
+segments(x0, c(y_vals[2], y_vals[3]), x0 + 3, c(y_vals[2], y_vals[3]), 
+         lwd = 3.5, col = c("firebrick1", "royalblue3"), lend = 1)
+text(x0 + 5, c(y_vals[2], y_vals[3]), c("Positive Coef.", "Negative Coef."), adj = 0, xpd = TRUE)
+#add in coeff magnitude
+segments(x0, c(y_vals[4], y_vals[5], y_vals[6], y_vals[7]), 
+         x0 + 3, c(y_vals[4], y_vals[5], y_vals[6], y_vals[7]), 
+         lwd = c(2,4,6,15), col = "gray48", lend = 1)
+text(x0 + 5, c(y_vals[4], y_vals[5], y_vals[6], y_vals[7]), 
+     c("|Coef.| < 0.67", "|Coef.| < 1.33", "|Coef.| < 2", "|Coef.| < 5"), adj = 0, xpd = TRUE)
 
+#legend("topright", legend = c("Positive", "Negative"),
+#       lwd = 2, col = c("firebrick1", "royalblue3"), 
+#       title = "Coefficient")
+#legend("right", legend = c("2", "4", "6", "15"),
+#       lwd = c(2,4,6,15), col = "gray36", 
+#       title = "Magnitude ")
 
 
 #WTIO plot
