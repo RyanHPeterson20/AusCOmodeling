@@ -14,9 +14,23 @@ suppressMessages( library(scales)) #for adjusting opacity
 
 #data import
 setwd("~/CO_AUS/AusCOmodeling") 
+load("Data/modeldata.rda") #resp/pred data
 load("Data/base_RAMPmodels.rda") #"base" model
 load("Data/loyo_models.rda") #leave one year out models/refits
 load("Data/preds_2019.rda") #2019 predictions 
+
+#setup
+#season years/weeks
+season.weeks <- c(38:52, 1:14)
+season.years <- unique(resp.df$year) #TODO: update response df
+
+seasons <- c()
+for (i in 1:(length(season.years)-1)) {
+  temp_season <- paste0(season.years[i], "-", season.years[i+1])
+  #print(temp_season)  
+  seasons <- c(seasons, temp_season)
+}
+rm(i, temp_season)
 
 #setup from NEmodels, SEmodels
 NE1.lm <- NEmodels[[1]]
@@ -64,6 +78,20 @@ summary(SE.vary.LM$`2019-2020`[[2]])
 summary(SE3.lm)
 summary(SE.const.LM$`2019-2020`[[3]])
 summary(SE.vary.LM$`2019-2020`[[3]])
+
+
+#preds setup
+pred.base.early <- preds.2019.base[[1]]
+pred.base.mid <- preds.2019.base[[2]]
+pred.base.late <- preds.2019.base[[3]]
+
+pred.const.early <- preds.2019.const[[1]]
+pred.const.mid <- preds.2019.const[[2]]
+pred.const.late <- preds.2019.const[[3]]
+
+pred.vary.early <- preds.2019.vary[[1]]
+pred.vary.mid <- preds.2019.vary[[2]]
+pred.vary.late <- preds.2019.vary[[3]]
 
 ## --- Model Predictions --- ##
 
@@ -657,7 +685,7 @@ dev.off()
 
 
 #new interaction figure
-
+#fig 2a
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 png(filename = "SEcoefs_peak.png", width = 3000, height = 3000, res = 300)
 layout(matrix(c(1, 5,
@@ -923,12 +951,76 @@ legend("topright", inset = c(0.00, 0.00),
        col = "grey4",
        pt.bg = alpha("gray36",.65),
        pt.cex = c(2.25, 1.8, 1.8, 2.25, 2.25, 1.8))
-legend("topright", inset = c(0.01, 0.16),
+legend("topright", inset = c(0.004, 0.1775),
        title = "Model", cex = 1.5,
        legend = c("Full", "Fixed", "Non-Fixed"),
        pch = 15,
        col = c("forestgreen", "magenta4", "darkorange2"),
        pt.cex = 2)
+
+dev.off()
+
+
+#fig 2b
+#TODO: setup different y-points (-15, 0, 25, 50)
+
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+
+png(filename = "SEpreds_2019_newest.png", width = 3000, height = 3000, res = 300)
+par(mfrow = c(3, 1), oma = c(2.5, 1, 1, 1), mar = c(2.5, 4, 4, 2))
+#par(mar = c(2,4,2,2), oma = c(2,2,1,0), mgp = c(4,1,0))
+#full model
+plot(1:29, SE.2019.true, type = "l", ylim = all.range, axes = FALSE, lwd = 1.52,
+     ylab = "", xlab = "", xlim = c(1.95, 28.05))
+box()
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.4)
+axis(2, cex.axis = 1.25)  
+lines(1:29, pred.base.fit, lty = 2, lwd = 2, col = "forestgreen")
+lines(1:29, pred.base.lwr, lty = 2, lwd = 1.75, col = "royalblue4")
+lines(1:29, pred.base.upr, lty = 2, lwd = 1.75, col = "firebrick3")
+abline(h=0, lty =3)
+abline(v = c(13.5, 17.5), lty = 3)
+title("Full Model", adj = 0, cex.main = 1.65)
+legend("topright", 
+       legend = c("True",
+                  "Model Estimate",
+                  "Upper 95% PI",
+                  "Lower 95% PI"),
+       lty = c(1, 2, 2, 2), 
+       lwd = 1.5,
+       cex = 1.75,
+       col = c("black", "black", 
+               "firebrick3", "royalblue4"),
+       xpd = TRUE)
+
+#const model
+plot(1:29, SE.2019.true, type = "l",  ylim = all.range, axes = FALSE, lwd = 1.52,
+     ylab = "", xlab = "", xlim = c(1.95, 28.05), cex.lab = 1.5)
+box()
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.4)
+axis(2, cex.axis = 1.25)  
+lines(1:29, pred.const.fit, lty = 2, lwd = 2, col = "magenta3")
+lines(1:29, pred.const.lwr, lty = 2, lwd = 1.75, col = "royalblue4")
+lines(1:29, pred.const.upr, lty = 2, lwd = 1.75, col = "firebrick3")
+abline(h=0, lty =3)
+abline(v = c(13.5, 17.5), lty = 3)
+title("Fixed Model", adj = 0, cex.main = 1.65)
+
+#vary model
+plot(1:29, SE.2019.true, type = "l", ylim = all.range, axes = FALSE, lwd = 1.52,
+     ylab = "", xlab = "", xlim = c(1.95, 28.05), cex.lab = 1.5)
+box()
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.4)
+axis(2, cex.axis = 1.25)  
+lines(1:29, pred.vary.fit, lty = 2, lwd = 2, col = "darkorange2")
+lines(1:29, pred.vary.lwr, lty = 2, lwd = 1.75, col = "royalblue4")
+lines(1:29, pred.vary.upr, lty = 2, lwd = 1.75, col = "firebrick3")
+abline(h=0, lty =3)
+abline(v = c(13.5, 17.5), lty = 3)
+title("Non-Fixed Model", adj = 0, cex.main = 1.65)
+
+mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25)
+mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
 
 dev.off()
 

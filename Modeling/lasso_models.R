@@ -22,7 +22,6 @@ load("Data/modeldata.rda") #resp/pred data
 #load functions
 source("Functions/modeling_functions.R")
 
-
 #setup
 #season years/weeks
 season.weeks <- c(38:52, 1:14)
