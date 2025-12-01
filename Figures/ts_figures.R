@@ -7,8 +7,6 @@ suppressMessages( library(fields)) #envelope plot
 suppressMessages( library(scales)) #for alpha()
 suppressMessages( library(lubridate)) #for temporal data
 suppressMessages( library(rcartocolor)) #color choices
-#TODO: add in libraries as needed
-
 
 #load data
 setwd("~/CO_AUS/AusCOmodeling") 
@@ -18,13 +16,7 @@ pred.raw <- read.csv("Data/pred_anoms.csv", header = TRUE, stringsAsFactors = FA
 resp.raw  <- read.csv("Data/resp_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 resp.alt.raw  <- read.csv("Data/resp_alt_anoms.csv", header = TRUE, stringsAsFactors = FALSE)
 
-
-#setup (As needed)
 #color setup
-
-#differing colors for response and predictor time series.
-#alternate colors (hex codes from rcartocolor: peach/teal)
-
 #response colors
 top.col.resp <- "#C71C1C"
 bot.col.resp <- "#2A5674FF"
