@@ -116,64 +116,117 @@ all.range <- range(base.range, const.range, vary.range)
 
 
 
+
+
+#fig 2b
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "SEpreds_2019_new.png", width = 2750, height = 3000, res = 300)
-par(mfrow = c(3, 1), oma = c(2.5, 1, 1, 1), mar = c(2.5, 4, 4, 2))
-#par(mar = c(2,4,2,2), oma = c(2,2,1,0), mgp = c(4,1,0))
-#full model
-plot(1:29, SE.2019.true, type = "l", ylim = all.range, axes = FALSE, lwd = 1.52,
+
+png(filename = "SEpreds_2019_fig2b.png", width = 3000, height = 3000, res = 300)
+
+par(mfrow = c(3, 1), oma = c(3, 3.5, 1, 1), mar = c(3, 2, 1, 1))
+#update prediction figure (full model)
+plot(1:29, pred.base.fit, type = "l", ylim = all.range, axes = FALSE, 
+     lwd = 2, lty = 2, col = "forestgreen",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.2)
-axis(2, cex.axis = 1.25)  
-lines(1:29, pred.base.fit, lty = 4, lwd = 1.75)
-lines(1:29, pred.base.lwr, lty = 2, lwd = 1.75, col = "royalblue3")
-lines(1:29, pred.base.upr, lty = 2, lwd = 1.75, col = "firebrick3")
-abline(h=0, lty =3)
-abline(v = c(13.5, 17.5), lty = 3)
-title("Full Model", adj = 0, cex.main = 1.25)
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
+axis(2, at = c(-15, 0, 25, 50),  cex.axis = 1.45)
+#upper bound
+envelopePlot(x1 = 1:29,
+             y1 = pred.base.upr,
+             x2 = 1:29,
+             y2 = pred.base.fit,
+             col = alpha("springgreen3", 0.2),
+             lineCol = NA)
+lines(1:29, pred.base.upr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
+#lower bound
+envelopePlot(x1 = 1:29,
+             y1 = pred.base.lwr,
+             x2 = 1:29,
+             y2 = pred.base.fit,
+             col = alpha("springgreen3", 0.2),
+             lineCol = NA)
+lines(1:29, pred.base.lwr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
+lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
+abline(h=0, lty =3, col = "gray24", cex = 1)
+abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
 legend("topright", 
-       legend = c("True",
-                  "Prediction",
-                  "Upper 95% PI",
-                  "Lower 95% PI"),
-       lty = c(1,4,2,2), 
-       lwd = 1.5,
-       cex = 1.25,
-       col = c("black", "black", 
-               "firebrick3", "royalblue3"),
+       legend = c("Observed",
+                  "Full Model",
+                  "Fixed",
+                  "Non-Fixed"),
+       lty = c(1, 2, 2, 2), 
+       lwd = 1.75,
+       cex = 1.75,
+       col = c("grey5", 
+               "forestgreen", 
+               "magenta3", 
+               "darkorange2"),
        xpd = TRUE)
 
-#const model
-plot(1:29, SE.2019.true, type = "l",  ylim = all.range, axes = FALSE, lwd = 1.52,
-     ylab = "", xlab = "", xlim = c(1.95, 28.05), cex.lab = 1.5)
-box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.2)
-axis(2, cex.axis = 1.25)  
-lines(1:29, pred.const.fit, lty = 4, lwd = 1.75)
-lines(1:29, pred.const.lwr, lty = 2, lwd = 1.75, col = "royalblue3")
-lines(1:29, pred.const.upr, lty = 2, lwd = 1.75, col = "firebrick3")
-abline(h=0, lty =3)
-abline(v = c(13.5, 17.5), lty = 3)
-title("Fixed Model", adj = 0, cex.main = 1.25)
+text(x= 2.75, y = 47, labels = "Full Model", col = "gray5", cex = 1.65)
 
-#vary model
-plot(1:29, SE.2019.true, type = "l", ylim = all.range, axes = FALSE, lwd = 1.52,
-     ylab = "", xlab = "", xlim = c(1.95, 28.05), cex.lab = 1.5)
+#update prediction figure (fixed model)
+plot(1:29, pred.const.fit, type = "l", ylim = all.range, axes = FALSE, 
+     lwd = 2, lty = 2, col = "magenta3",
+     ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.2)
-axis(2, cex.axis = 1.25)  
-lines(1:29, pred.vary.fit, lty = 4, lwd = 1.75)
-lines(1:29, pred.vary.lwr, lty = 2, lwd = 1.75, col = "royalblue3")
-lines(1:29, pred.vary.upr, lty = 2, lwd = 1.75, col = "firebrick3")
-abline(h=0, lty =3)
-abline(v = c(13.5, 17.5), lty = 3)
-title("Non-Fixed Model", adj = 0, cex.main = 1.25)
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
+axis(2, at = c(-15, 0, 25, 50),  cex.axis = 1.45)
+#upper bound
+envelopePlot(x1 = 1:29,
+             y1 = pred.const.upr,
+             x2 = 1:29,
+             y2 = pred.const.fit,
+             col = alpha("orchid3", 0.2),
+             lineCol = NA)
+lines(1:29, pred.const.upr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
+#lower bound
+envelopePlot(x1 = 1:29,
+             y1 = pred.const.lwr,
+             x2 = 1:29,
+             y2 = pred.const.fit,
+             col = alpha("orchid3", 0.2),
+             lineCol = NA)
+lines(1:29, pred.const.lwr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
+lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
+abline(h=0, lty =3, col = "gray24", cex = 1)
+abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
+text(x= 3, y = 47, labels = "Fixed Model", col = "gray5", cex = 1.65)
 
-mtext("CO Anomaly (ppb)", side = 2, outer = TRUE, padj = 0.5)
-mtext("Week", side = 1, outer = TRUE, adj = 0.5)
+
+#update prediction figure (non-fixed model)
+plot(1:29, pred.vary.fit, type = "l", ylim = all.range, axes = FALSE, 
+     lwd = 2, lty = 2, col = "darkorange2",
+     ylab = "", xlab = "", xlim = c(1.95, 28.05))
+box()
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
+axis(2, at = c(-15, 0, 25, 50),  cex.axis = 1.45)
+#upper bound
+envelopePlot(x1 = 1:29,
+             y1 = pred.vary.upr,
+             x2 = 1:29,
+             y2 = pred.vary.fit,
+             col = alpha("orange2", 0.2),
+             lineCol = NA)
+lines(1:29, pred.vary.upr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
+#lower bound
+envelopePlot(x1 = 1:29,
+             y1 = pred.vary.lwr,
+             x2 = 1:29,
+             y2 = pred.vary.fit,
+             col = alpha("orange2", 0.2),
+             lineCol = NA)
+lines(1:29, pred.vary.lwr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
+lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
+abline(h=0, lty =3, col = "gray24", cex = 1)
+abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
+text(x= 3.75, y = 47, labels = "Non-Fixed Model", col = "gray5", cex = 1.65)
+
+mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25, line = 2)
+mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
+
 dev.off()
-
 
 
 
@@ -240,11 +293,88 @@ etio.mag <- ceiling(abs(etio.coef*3))
 wtio.mag <- ceiling(abs(wtio.coef*3))
 wtio.mag[2] <- 2
 
+#updated figure
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+
+png(filename = "IODlag_fig3a.png", width = 3000, height = 2400, res = 300)
+par(mfrow = c(2, 1), oma = c(2.5, 1, 1, 1), mar = c(2.5, 3, 1, 1))
+plot(NULL, xlim = c(2.4, 64.3), ylim = c(0.60, 3.40),
+     yaxt = "n", xaxt = "n", xlab = "", ylab = "", main = "", bty = "l")
+#abline(h = 1:3, lty = 3, col = "gray70") #temp line guide
+rect(0, 0.5, 67, 1.5, col = alpha("gray75",0.5), border = NA)
+rect(0, 2.5, 67, 3.5, col = alpha("gray75",0.5), border = NA)
+axis(2, at = 1:3, labels = c("Late", "Peak", "Early"), las = 1)
+axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.76)
+segments(x0 = etio.lag.min, y0 = c(1,1,2,2),
+         x1 = etio.lag.max, y1 = c(1,1,2,2), 
+         lwd = rev(etio.mag), col = "royalblue3", lend = 1)
+text(x=c(45.5, 19.5, 44.5, 27.5), y=c(2.17, 2.14, 1.12, 1.1), labels = etio.lag, col = "gray24", cex = 1)
+#early
+segments(x0 = min(SE.early), y0 = 3.1,
+         x1 = max(SE.early), y1 = 3.1, 
+         lwd = 2, lty =2, col = "gray12", lend = 1)
+arrows(x0 = c(min(SE.early)+0.5, max(SE.early)-0.5), y0 = 3.1, 
+       x1 = c(min(SE.early)-0.125, max(SE.early)+0.125), y1 = 3.1, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+#peak
+segments(x0 = 51, y0 = 2.1,
+         x1 = 54, y1 = 2.1, 
+         lwd = 2, lty = 2, col = "gray12", lend = 1)
+arrows(x0 = c(51.5, 53.5), y0 = 2.1, 
+       x1 = c(51-0.125, 54+0.125), y1 = 2.1, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+#late
+segments(x0 = 55, y0 = 1.1,
+         x1 = 66, y1 = 1.1, 
+         lwd = 2, lty = 2, col = "gray12", lend = 1)
+arrows(x0 = c(55+0.5, 66-0.5), y0 = 1.1, 
+       x1 = c(55-0.125, 66+0.125), y1 = 1.1, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray38")
+text(x =c(4.75, 16, 29, 42, 55 ), y = 0.65,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
+text(x = 3, y = 3.25, labels = "ETIO", col = "gray24", cex = 1.25)
+
+plot(NULL, xlim = c(2.4, 64.3), ylim = c(0.60, 3.40),
+     yaxt = "n", xaxt = "n", xlab = "", ylab = "", main = "", bty = "l")
+#abline(h = 1:3, lty = 3, col = "gray70") #temp line guide
+rect(0, 0.5, 67, 1.5, col = alpha("gray75",0.5), border = NA)
+rect(0, 2.5, 67, 3.5, col = alpha("gray75",0.5), border = NA)
+axis(2, at = 1:3, labels = c("Late", "Peak", "Early"), las = 1)
+axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.76)
+segments(x0 = wtio.lag.min, y0 = c(3,2,2),
+         x1 = wtio.lag.max, y1 = c(3,2,2), 
+         lwd = wtio.mag, col = c("firebrick1", "firebrick1", "royalblue3"), lend = 1)
+text(x=c(38.5, 38.5, 6.5), y=c(2.88, 1.89, 1.85), labels = wtio.lag, col = "gray24", cex = 1)
+#early
+segments(x0 = min(SE.early), y0 = 3.1,
+         x1 = max(SE.early), y1 = 3.1, 
+         lwd = 2, lty =2, col = "gray12", lend = 1)
+arrows(x0 = c(min(SE.early)+0.5, max(SE.early)-0.5), y0 = 3.1, 
+       x1 = c(min(SE.early)-0.125, max(SE.early)+0.125), y1 = 3.1, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+#peak
+segments(x0 = 51, y0 = 2.1,
+         x1 = 54, y1 = 2.1, 
+         lwd = 2, lty = 2, col = "gray12", lend = 1)
+arrows(x0 = c(51.5, 53.5), y0 = 2.1, 
+       x1 = c(51-0.125, 54+0.125), y1 = 2.1, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+#late
+segments(x0 = 55, y0 = 1.1,
+         x1 = 66, y1 = 1.1, 
+         lwd = 2, lty = 2, col = "gray12", lend = 1)
+arrows(x0 = c(55+0.5, 66-0.5), y0 = 1.1, 
+       x1 = c(55-0.125, 66+0.125), y1 = 1.1, 
+       length = 0.125, lwd = 2, col = "gray12", lend = 1)
+abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray38")
+text(x =c(4.75, 16, 29, 42, 55 ), y = 0.65,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
+text(x = 3, y = 3.25, labels = "WTIO", col = "gray24", cex = 1.25)
+mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
+dev.off()
+
+
 #alternate plot
 ##single line for each model
-##TODO: finish to Include varying (non-fixed models)
-
-
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 png(filename = "IOD_lag2.png", width = 3000, height = 2500, res = 300)
 par(mfrow = c(2, 1), oma = c(2.5, 1, 1, 1), mar = c(2, 3, 2.5, 2))
@@ -346,138 +476,6 @@ abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray48")
 text(x =c(4.75, 16, 29, 42, 55 ), y = 0.5,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
 text(x = 2, y = 3.5, labels = "WTIO", col = "gray36", cex = 1.25)
 mtext("Week", side = 1, outer = TRUE, adj = 0.5)
-
-dev.off()
-
-
-
-
-#fig 2b
-#TODO: setup different y-points (-15, 0, 25, 50)
-
-
-#TODO: create test plot for new prediction figures
-#update prediction figure (full model)
-plot(1:29, pred.base.fit, type = "l", ylim = all.range, axes = FALSE, 
-     lwd = 2, lty = 2, col = "forestgreen",
-     ylab = "", xlab = "", xlim = c(1.95, 28.05))
-box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.4)
-axis(2, at = c(-15, 0, 25, 50),  cex.axis = 1.25)
-#upper bound
-envelopePlot(x1 = 1:29,
-             y1 = pred.base.upr,
-             x2 = 1:29,
-             y2 = pred.base.fit,
-             col = alpha("springgreen4", 0.25),
-             lineCol = NA)
-lines(1:29, pred.base.upr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
-#lower bound
-envelopePlot(x1 = 1:29,
-             y1 = pred.base.lwr,
-             x2 = 1:29,
-             y2 = pred.base.fit,
-             col = alpha("springgreen4", 0.25),
-             lineCol = NA)
-lines(1:29, pred.base.lwr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
-lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
-abline(h=0, lty =3, col = "gray24", cex = 1)
-abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
-
-
-
-#update prediction figure (fixed model)
-plot(1:29, pred.const.fit, type = "l", ylim = all.range, axes = FALSE, 
-     lwd = 2, lty = 2, col = "magenta3",
-     ylab = "", xlab = "", xlim = c(1.95, 28.05))
-box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.4)
-axis(2, at = c(-15, 0, 25, 50),  cex.axis = 1.25)
-#upper bound
-envelopePlot(x1 = 1:29,
-             y1 = pred.const.upr,
-             x2 = 1:29,
-             y2 = pred.const.fit,
-             col = alpha("orchid3", 0.25),
-             lineCol = NA)
-lines(1:29, pred.const.upr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
-#lower bound
-envelopePlot(x1 = 1:29,
-             y1 = pred.const.lwr,
-             x2 = 1:29,
-             y2 = pred.const.fit,
-             col = alpha("orchid3", 0.25),
-             lineCol = NA)
-lines(1:29, pred.const.lwr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
-lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
-abline(h=0, lty =3, col = "gray24", cex = 1)
-abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
-
-
-
-
-#update prediction figure (non-fixed model)
-
-
-
-
-setwd("~/CO_AUS/AusCOmodeling/Figures")
-
-png(filename = "SEpreds_2019_fig2b.png", width = 3000, height = 3000, res = 300)
-par(mfrow = c(3, 1), oma = c(2.5, 1, 1, 1), mar = c(2.5, 4, 4, 2))
-#par(mar = c(2,4,2,2), oma = c(2,2,1,0), mgp = c(4,1,0))
-#full model
-plot(1:29, SE.2019.true, type = "l", ylim = all.range, axes = FALSE, lwd = 1.52,
-     ylab = "", xlab = "", xlim = c(1.95, 28.05))
-box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.4)
-axis(2, cex.axis = 1.25)  
-lines(1:29, pred.base.fit, lty = 2, lwd = 2, col = "forestgreen")
-lines(1:29, pred.base.lwr, lty = 2, lwd = 1.75, col = "royalblue4")
-lines(1:29, pred.base.upr, lty = 2, lwd = 1.75, col = "firebrick3")
-abline(h=0, lty =3)
-abline(v = c(13.5, 17.5), lty = 3)
-title("Full Model", adj = 0, cex.main = 1.65)
-legend("topright", 
-       legend = c("True",
-                  "Model Estimate",
-                  "Upper 95% PI",
-                  "Lower 95% PI"),
-       lty = c(1, 2, 2, 2), 
-       lwd = 1.5,
-       cex = 1.75,
-       col = c("black", "black", 
-               "firebrick3", "royalblue4"),
-       xpd = TRUE)
-
-#const model
-plot(1:29, SE.2019.true, type = "l",  ylim = all.range, axes = FALSE, lwd = 1.52,
-     ylab = "", xlab = "", xlim = c(1.95, 28.05), cex.lab = 1.5)
-box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.4)
-axis(2, cex.axis = 1.25)  
-lines(1:29, pred.const.fit, lty = 2, lwd = 2, col = "magenta3")
-lines(1:29, pred.const.lwr, lty = 2, lwd = 1.75, col = "royalblue4")
-lines(1:29, pred.const.upr, lty = 2, lwd = 1.75, col = "firebrick3")
-abline(h=0, lty =3)
-abline(v = c(13.5, 17.5), lty = 3)
-title("Fixed Model", adj = 0, cex.main = 1.65)
-
-#vary model
-plot(1:29, SE.2019.true, type = "l", ylim = all.range, axes = FALSE, lwd = 1.52,
-     ylab = "", xlab = "", xlim = c(1.95, 28.05), cex.lab = 1.5)
-box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.4)
-axis(2, cex.axis = 1.25)  
-lines(1:29, pred.vary.fit, lty = 2, lwd = 2, col = "darkorange2")
-lines(1:29, pred.vary.lwr, lty = 2, lwd = 1.75, col = "royalblue4")
-lines(1:29, pred.vary.upr, lty = 2, lwd = 1.75, col = "firebrick3")
-abline(h=0, lty =3)
-abline(v = c(13.5, 17.5), lty = 3)
-title("Non-Fixed Model", adj = 0, cex.main = 1.65)
-
-mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25)
-mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
 
 dev.off()
 
