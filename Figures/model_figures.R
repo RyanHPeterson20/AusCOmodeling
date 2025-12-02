@@ -8,8 +8,8 @@
 
 
 #libraries
-suppressMessages(library(grid)) #gridlines between plots
 suppressMessages( library(scales)) #for adjusting opacity
+suppressMessages( library(fields)) #for envelope plot
 
 
 #data import
@@ -355,9 +355,75 @@ dev.off()
 #fig 2b
 #TODO: setup different y-points (-15, 0, 25, 50)
 
+
+#TODO: create test plot for new prediction figures
+#update prediction figure (full model)
+plot(1:29, pred.base.fit, type = "l", ylim = all.range, axes = FALSE, 
+     lwd = 2, lty = 2, col = "forestgreen",
+     ylab = "", xlab = "", xlim = c(1.95, 28.05))
+box()
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.4)
+axis(2, at = c(-15, 0, 25, 50),  cex.axis = 1.25)
+#upper bound
+envelopePlot(x1 = 1:29,
+             y1 = pred.base.upr,
+             x2 = 1:29,
+             y2 = pred.base.fit,
+             col = alpha("springgreen4", 0.25),
+             lineCol = NA)
+lines(1:29, pred.base.upr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
+#lower bound
+envelopePlot(x1 = 1:29,
+             y1 = pred.base.lwr,
+             x2 = 1:29,
+             y2 = pred.base.fit,
+             col = alpha("springgreen4", 0.25),
+             lineCol = NA)
+lines(1:29, pred.base.lwr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
+lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
+abline(h=0, lty =3, col = "gray24", cex = 1)
+abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
+
+
+
+#update prediction figure (fixed model)
+plot(1:29, pred.const.fit, type = "l", ylim = all.range, axes = FALSE, 
+     lwd = 2, lty = 2, col = "magenta3",
+     ylab = "", xlab = "", xlim = c(1.95, 28.05))
+box()
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.4)
+axis(2, at = c(-15, 0, 25, 50),  cex.axis = 1.25)
+#upper bound
+envelopePlot(x1 = 1:29,
+             y1 = pred.const.upr,
+             x2 = 1:29,
+             y2 = pred.const.fit,
+             col = alpha("orchid3", 0.25),
+             lineCol = NA)
+lines(1:29, pred.const.upr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
+#lower bound
+envelopePlot(x1 = 1:29,
+             y1 = pred.const.lwr,
+             x2 = 1:29,
+             y2 = pred.const.fit,
+             col = alpha("orchid3", 0.25),
+             lineCol = NA)
+lines(1:29, pred.const.lwr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
+lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
+abline(h=0, lty =3, col = "gray24", cex = 1)
+abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
+
+
+
+
+#update prediction figure (non-fixed model)
+
+
+
+
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-png(filename = "SEpreds_2019_newest.png", width = 3000, height = 3000, res = 300)
+png(filename = "SEpreds_2019_fig2b.png", width = 3000, height = 3000, res = 300)
 par(mfrow = c(3, 1), oma = c(2.5, 1, 1, 1), mar = c(2.5, 4, 4, 2))
 #par(mar = c(2,4,2,2), oma = c(2,2,1,0), mgp = c(4,1,0))
 #full model
