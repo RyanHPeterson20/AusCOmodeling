@@ -201,7 +201,6 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")), #adjust according to final .
        xpd = NA, text.col = "grey30", cex = 3.25)
 
 #predictor data figures
-#TODO: fill in-between
 #nino sub-figure
 plot(time.pred.plot, nino.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
@@ -228,9 +227,9 @@ envelopePlot(x1 = time.pred.plot,
              lineCol = NA)
 legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
-       legend = "Nino 3.4",
+       legend = "Ni\u00f1o 3.4",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 2.75)
+       xpd = NA, text.col = "grey30", cex = 3)
 
 #wtio sub-figure
 plot(time.pred.plot, wtio.anom.std, type = "l", col = "black", lwd = 2,
@@ -260,7 +259,7 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
        legend = "WTIO",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 2.75)
+       xpd = NA, text.col = "grey30", cex = 3)
 
 #etio sub-figure
 plot(time.pred.plot, etio.anom.std, type = "l", col = "black", lwd = 2,
@@ -290,7 +289,7 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
        legend = "ETIO",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 2.75)
+       xpd = NA, text.col = "grey30", cex = 3)
 
 #tsa sub-figure
 plot(time.pred.plot, tsa.anom.std, type = "l", col = "black", lwd = 2,
@@ -320,7 +319,7 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
        legend = "TSA",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 2.75)
+       xpd = NA, text.col = "grey30", cex = 3)
 
 #aao (sam) sub-figure
 plot(time.pred.plot, aao.anom.std, type = "l", col = "black", lwd = 2,
@@ -350,7 +349,7 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
        legend = "SAM",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 2.75)
+       xpd = NA, text.col = "grey30", cex = 3)
 
 
 #olr sub-figure
