@@ -395,15 +395,25 @@ dev.off()
 ## we need wide (long) resp only ts and pred only ts
 
 
+
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+
+png(filename = "SEresp_ts.png", width = 5200, height = 1000, res = 250)
+
+par(mar = c(1, 7, 1, 0))
+#par(oma = c(2, 1, 1, 0))
+#par(mgp = c(4,1,0))
+
 #response (SE Aus) plot
 plot(time.resp.plot, SE.anom, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
-     yaxt = "n", ylab = "CO Anomaly [ppb]", col.lab = "black",
+     yaxt = "n", ylab = "", col.lab = "black",
      xlim = c(as.Date(resp.time.range[1]) + months(7), as.Date(resp.time.range[2]) - months(7)),
-     ylim = range(y.SE.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+     ylim = range(y.SE.ticks), bty = "n", cex.lab = 2.25,  xpd = NA)
 axis(side = 2, at = y.SE.ticks, cex.axis = 2.25, 
      col = NA, line = 0,
      col.ticks = "black", col.axis = "black", las =1)
+mtext("CO Anomaly [ppb]", side = 2, line = 4,  cex = 2)
 abline(v = x.ticks.resp[1:(length(x.ticks.resp))],
        lty = 2, col = "grey", lwd = 2)
 abline(h = 0, lty = 1, col = "grey", lwd = 1)
@@ -419,17 +429,219 @@ envelopePlot(x1 = time.resp.plot,
              y2 = rep(0, length(seaus.bot)),
              col = alpha(bot.col.resp, 0.67),
              lineCol = NA)
-legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")), #adjust according to final .png output
-       y = c(52, 52),
-       legend = "SE Aus", #change to Southeast Australia (or nothing)
+legend(x = ymd("2000-10-01"), #adjust according to final .png output
+       y = c(56),
+       legend = "Southeast Australia", #change to Southeast Australia (or nothing)
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 3.25)
+       xpd = NA, text.col = "grey30", cex = 2)
+text(x = x.pred.reduced + months(6),
+     y = range(y.SE.ticks)[1]-0.5,
+     labels = year(x.pred.reduced),
+     cex = 2.25, col = "black", xpd = NA)
 
-#TODO: add years to this plot
+dev.off()
 
 
 
 
+
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+
+png(filename = "SEpred_ts.png", width = 5200, height = 6000, res = 250)
+par(mfrow = c(6, 1))
+
+par(mar = c(0, 5, 0, 0))
+par(oma = c(2, 3.5, 1, 0))
+par(mgp = c(4,1,0))
+
+#predictor data figures
+#nino sub-figure
+plot(time.pred.plot, nino.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.nino.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
+     col = NA, line = 0,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = nino.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(nino.top)),
+             col = alpha(top.col.pred, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = nino.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(nino.bot)),
+             col = alpha(bot.col.pred, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
+       y = c(4, 4),
+       legend = "Ni\u00f1o 3.4",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey30", cex = 3)
+
+#wtio sub-figure
+plot(time.pred.plot, wtio.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.wtio.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
+     col = NA, line = 0,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = wtio.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(wtio.top)),
+             col = alpha(top.col.pred, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = wtio.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(wtio.bot)),
+             col = alpha(bot.col.pred, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
+       y = c(4, 4),
+       legend = "WTIO",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey30", cex = 3)
+
+#etio sub-figure
+plot(time.pred.plot, etio.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.etio.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
+     col = NA, line = 0,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = etio.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(etio.top)),
+             col = alpha(top.col.pred, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = etio.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(etio.bot)),
+             col = alpha(bot.col.pred, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
+       y = c(4, 4),
+       legend = "ETIO",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey30", cex = 3)
+
+#tsa sub-figure
+plot(time.pred.plot, tsa.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.tsa.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
+     col = NA, line = 0,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = tsa.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(tsa.top)),
+             col = alpha(top.col.pred, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = tsa.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(tsa.bot)),
+             col = alpha(bot.col.pred, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
+       y = c(4, 4),
+       legend = "TSA",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey30", cex = 3)
+
+#aao (sam) sub-figure
+plot(time.pred.plot, aao.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.aao.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
+     col = NA, line = 0,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = aao.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(aao.top)),
+             col = alpha(top.col.pred, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = aao.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(aao.bot)),
+             col = alpha(bot.col.pred, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
+       y = c(4, 4),
+       legend = "SAM",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey30", cex = 3)
+
+
+#olr sub-figure
+plot(time.pred.plot, olr.anom.std, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
+     xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     ylim = range(y.olr.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
+     col = NA, line = 0,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = olr.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(olr.top)),
+             col = alpha(top.col.pred, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = olr.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(olr.bot)),
+             col = alpha(bot.col.pred, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
+       y = c(4, 4),
+       legend = "OLR",
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey30", cex = 3)
+
+text(x = x.pred.reduced + months(6),
+     y = range(y.olr.ticks)[1]-0.5,
+     labels = year(x.pred.reduced),
+     cex = 3, col = "black", xpd = NA)
+
+dev.off()
 
 
 #TODO: previous (old) figures, move everything below to a new file (e.g. SI ts figures) or delete

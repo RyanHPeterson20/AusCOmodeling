@@ -126,7 +126,7 @@ png(filename = "SEpreds_2019_fig2b.png", width = 3000, height = 3000, res = 300)
 par(mfrow = c(3, 1), oma = c(3, 3.5, 1, 1), mar = c(3, 2, 1, 1))
 #update prediction figure (full model)
 plot(1:29, pred.base.fit, type = "l", ylim = all.range, axes = FALSE, 
-     lwd = 2, lty = 2, col = "forestgreen",
+     lwd = 3, lty = 2, col = "forestgreen",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
@@ -138,7 +138,7 @@ envelopePlot(x1 = 1:29,
              y2 = pred.base.fit,
              col = alpha("springgreen3", 0.2),
              lineCol = NA)
-lines(1:29, pred.base.upr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
+#lines(1:29, pred.base.upr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
 #lower bound
 envelopePlot(x1 = 1:29,
              y1 = pred.base.lwr,
@@ -146,29 +146,27 @@ envelopePlot(x1 = 1:29,
              y2 = pred.base.fit,
              col = alpha("springgreen3", 0.2),
              lineCol = NA)
-lines(1:29, pred.base.lwr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
+#lines(1:29, pred.base.lwr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
 lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
 abline(h=0, lty =3, col = "gray24", cex = 1)
 abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
 legend("topright", 
        legend = c("Observed",
-                  "Full Model",
-                  "Fixed",
-                  "Non-Fixed"),
-       lty = c(1, 2, 2, 2), 
-       lwd = 1.75,
+                  "Full Model Predictions",
+                  "95% Prediction Interval"),
+       lty = c(1, 2, 1), 
+       lwd = c(1.75, 1.75, 10 ),
        cex = 1.75,
        col = c("grey5", 
-               "forestgreen", 
-               "magenta3", 
-               "darkorange2"),
+               "forestgreen",
+               alpha("springgreen3", 0.3)),
        xpd = TRUE)
 
 text(x= 2.75, y = 47, labels = "Full Model", col = "gray5", cex = 1.65)
 
 #update prediction figure (fixed model)
 plot(1:29, pred.const.fit, type = "l", ylim = all.range, axes = FALSE, 
-     lwd = 2, lty = 2, col = "magenta3",
+     lwd = 3, lty = 2, col = "magenta3",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
@@ -180,7 +178,7 @@ envelopePlot(x1 = 1:29,
              y2 = pred.const.fit,
              col = alpha("orchid3", 0.2),
              lineCol = NA)
-lines(1:29, pred.const.upr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
+#lines(1:29, pred.const.upr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
 #lower bound
 envelopePlot(x1 = 1:29,
              y1 = pred.const.lwr,
@@ -188,16 +186,27 @@ envelopePlot(x1 = 1:29,
              y2 = pred.const.fit,
              col = alpha("orchid3", 0.2),
              lineCol = NA)
-lines(1:29, pred.const.lwr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
+#lines(1:29, pred.const.lwr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
 lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
 abline(h=0, lty =3, col = "gray24", cex = 1)
 abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
+legend("topright", 
+       legend = c("Observed",
+                  "Fixed Model Predictions",
+                  "95% Prediction Interval"),
+       lty = c(1, 2, 1), 
+       lwd = c(1.75, 1.75, 10 ),
+       cex = 1.75,
+       col = c("grey5",
+               "magenta3",
+               alpha("orchid3", 0.3)),
+       xpd = TRUE)
 text(x= 3, y = 47, labels = "Fixed Model", col = "gray5", cex = 1.65)
 
 
 #update prediction figure (non-fixed model)
 plot(1:29, pred.vary.fit, type = "l", ylim = all.range, axes = FALSE, 
-     lwd = 2, lty = 2, col = "darkorange2",
+     lwd = 3, lty = 2, col = "darkorange2",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
@@ -209,7 +218,7 @@ envelopePlot(x1 = 1:29,
              y2 = pred.vary.fit,
              col = alpha("orange2", 0.2),
              lineCol = NA)
-lines(1:29, pred.vary.upr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
+#lines(1:29, pred.vary.upr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
 #lower bound
 envelopePlot(x1 = 1:29,
              y1 = pred.vary.lwr,
@@ -217,10 +226,21 @@ envelopePlot(x1 = 1:29,
              y2 = pred.vary.fit,
              col = alpha("orange2", 0.2),
              lineCol = NA)
-lines(1:29, pred.vary.lwr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
+#lines(1:29, pred.vary.lwr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
 lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
 abline(h=0, lty =3, col = "gray24", cex = 1)
 abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
+legend("topright", 
+       legend = c("Observed",
+                  "Non-Fixed  Model Predictions",
+                  "95% Prediction Interval"),
+       lty = c(1, 2, 1), 
+       lwd = c(1.75, 1.75, 10 ),
+       cex = 1.75,
+       col = c("grey5",  
+               "darkorange2",
+               alpha("orange2", 0.3)),
+       xpd = TRUE)
 text(x= 3.75, y = 47, labels = "Non-Fixed Model", col = "gray5", cex = 1.65)
 
 mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25, line = 2)
@@ -304,7 +324,7 @@ plot(NULL, xlim = c(2.4, 64.3), ylim = c(0.60, 3.40),
 rect(0, 0.5, 67, 1.5, col = alpha("gray75",0.5), border = NA)
 rect(0, 2.5, 67, 3.5, col = alpha("gray75",0.5), border = NA)
 axis(2, at = 1:3, labels = c("Late", "Peak", "Early"), las = 1)
-axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.76)
+#axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.76)
 segments(x0 = etio.lag.min, y0 = c(1,1,2,2),
          x1 = etio.lag.max, y1 = c(1,1,2,2), 
          lwd = rev(etio.mag), col = "royalblue3", lend = 1)
@@ -340,7 +360,7 @@ plot(NULL, xlim = c(2.4, 64.3), ylim = c(0.60, 3.40),
 rect(0, 0.5, 67, 1.5, col = alpha("gray75",0.5), border = NA)
 rect(0, 2.5, 67, 3.5, col = alpha("gray75",0.5), border = NA)
 axis(2, at = 1:3, labels = c("Late", "Peak", "Early"), las = 1)
-axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.76)
+#axis(1, at = 1:66, labels = c(1:52, 1:14), cex.axis = 0.76)
 segments(x0 = wtio.lag.min, y0 = c(3,2,2),
          x1 = wtio.lag.max, y1 = c(3,2,2), 
          lwd = wtio.mag, col = c("firebrick1", "firebrick1", "royalblue3"), lend = 1)
