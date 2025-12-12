@@ -391,6 +391,42 @@ dev.off()
 
 
 #TODO: repeat above for unique resp and pred ts
+#update figures as vertically stacked full page:
+## we need wide (long) resp only ts and pred only ts
+
+
+#response (SE Aus) plot
+plot(time.resp.plot, SE.anom, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "CO Anomaly [ppb]", col.lab = "black",
+     xlim = c(as.Date(resp.time.range[1]) + months(7), as.Date(resp.time.range[2]) - months(7)),
+     ylim = range(y.SE.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+axis(side = 2, at = y.SE.ticks, cex.axis = 2.25, 
+     col = NA, line = 0,
+     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.resp[1:(length(x.ticks.resp))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.resp.plot,
+             y1 = seaus.top,
+             x2 = time.resp.plot,
+             y2 = rep(0, length(seaus.top)),
+             col = alpha(top.col.resp, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.resp.plot,
+             y1 = seaus.bot,
+             x2 = time.resp.plot,
+             y2 = rep(0, length(seaus.bot)),
+             col = alpha(bot.col.resp, 0.67),
+             lineCol = NA)
+legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")), #adjust according to final .png output
+       y = c(52, 52),
+       legend = "SE Aus", #change to Southeast Australia (or nothing)
+       box.col = NA, bg = NA,
+       xpd = NA, text.col = "grey30", cex = 3.25)
+
+#TODO: add years to this plot
+
 
 
 
