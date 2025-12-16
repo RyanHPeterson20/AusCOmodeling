@@ -2,7 +2,10 @@
 #using RAMP to fit models 
 
 #notes:
-##
+## uses response data for SE Aus and NE Aus
+## uses predictor data for Nino 3.4, WTIO, ETIO, TSA, SAM (AAO), OLR (MJO)
+## includes model variation refits 
+
 
 #libraries
 suppressMessages( library(RAMP)) #Lasso with efficient solution path.
