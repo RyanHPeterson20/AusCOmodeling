@@ -41,6 +41,8 @@ SE3.constcoef <- coef(SE.const.LM$`2019-2020`[[3]])
 SE3.varycoef <- coef(SE.vary.LM$`2019-2020`[[3]])
 
 
+#TODO: get updated figure with split WTIO and ETIO
+#notes for updated figures: increase height, update layout, new plot for ETIO, ensure alignment
 
 #new interaction figure
 #fig 2a
@@ -135,6 +137,7 @@ links[[2]] <- list(
   from_y = grconvertY(SE22_ninocoef[1], from = "user", to = "ndc")
 )
 
+#TODO: seperate this into WTIO and ETIO plots
 # --- Plot 2: WTIO & ETIO ---
 par(mar = c(4, 4, 2, 1))
 #wtio pch 24, etio pch 25
@@ -186,6 +189,10 @@ links[[6]] <- list(
   from_x = grconvertX(SE23_etiolag[1], from = "user", to = "ndc"),
   from_y = grconvertY(SE23_etiocoef[1], from = "user", to = "ndc")
 )
+
+# --- Plot 3: ETIO
+
+
 
 # --- Plot 3: TSA ---
 par(mar = c(4, 4, 2, 1))
@@ -317,6 +324,52 @@ legend("topright", inset = c(0.004, 0.1775),
        pt.cex = 2)
 
 dev.off()
+
+
+
+#new interaction figure
+
+#fig SI - early group
+SE1.coef
+SE1.constcoef
+SE1.varycoef
+
+
+# --- Data Setup --- #
+## Nino
+SE1_ninolag <- c(33)
+SE1_ninocoef <- SE1.coef[2]
+SE12_ninolag <- c(33)
+SE12_ninocoef <- SE1.constcoef[2]
+SE22_ninolag <- c(40)
+SE22_ninocoef <- SE1.varycoef[2]
+
+## WTIO
+
+
+
+
+
+
+
+
+#fig SI - late group
+SE3.coef
+SE3.constcoef
+SE3.varycoef
+
+
+# --- Data Setup --- #
+## Nino
+SE3_ninolag <- c(25,47)
+SE3_ninocoef <- SE3.coef[2:3]
+SE32_ninolag <- c(25, 47)
+SE32_ninocoef <- SE3.constcoef[2:3]
+SE32_ninolag <- c(16, 25, 35)
+SE32_ninocoef <- SE3.varycoef[2:4]
+
+## WTIO
+
 
 
 #old style coef/inter plot (doesn't use colors to differentiate )
