@@ -189,8 +189,9 @@ save(NEmodels, SEmodels,
      NErefits, SErefits, file = "base_RAMPmodels.rda")
 
 
-#Models without OLR
+#TODO: remove the without OLR section before relase
 
+#Models without OLR
 #NE Aus Early (Group 1)
 y.1 <- as.numeric(NE.resp[[1]]) #co response
 X.1 <- cbind(as.matrix(NE.pred[[1]][ ,c(1:52, 105:312)])) #preds without DMI and OLR
