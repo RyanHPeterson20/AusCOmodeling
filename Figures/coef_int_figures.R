@@ -1,3 +1,4 @@
+
 #coefficient/interaction plots
 
 ## (these plots are unique enough to use their own .R file)
@@ -40,19 +41,19 @@ SE3.coef <- coef(SE3.lm)
 SE3.constcoef <- coef(SE.const.LM$`2019-2020`[[3]])
 SE3.varycoef <- coef(SE.vary.LM$`2019-2020`[[3]])
 
-
 #TODO: get updated figure with split WTIO and ETIO
 #notes for updated figures: increase height, update layout, new plot for ETIO, ensure alignment
 
 #new interaction figure
-#fig 2a
+#fig 2a - `peak` group
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "SEcoefs_peak.png", width = 3000, height = 3000, res = 300)
-layout(matrix(c(1, 5,
-                2, 5,
-                3, 5,
-                4, 5), ncol = 2, byrow = TRUE),
-       widths = c(1.75, 1.25), heights = c(1, 1, 1, 1, 1))
+png(filename = "SEcoefs_peak_new.png", width = 3000, height = 4000, res = 300)
+layout(matrix(c(1, 6,
+                2, 6,
+                3, 6,
+                4, 6,
+                5, 6), ncol = 2, byrow = TRUE),
+       widths = c(1.75, 1.25), heights = c(1, 1, 1, 1, 1, 1))
 
 par(oma = c(1, 1, 1, 1))
 
@@ -138,9 +139,9 @@ links[[2]] <- list(
 )
 
 #TODO: seperate this into WTIO and ETIO plots
-# --- Plot 2: WTIO & ETIO ---
+# --- Plot 2: WTIO ---
 par(mar = c(4, 4, 2, 1))
-#wtio pch 24, etio pch 25
+#wtio pch 24
 plot(SE2_wtiolag-0.25, SE2_wtiocoef, pch = 24, col = "black",
      bg =  alpha("forestgreen",.5), cex = 1.8, cex.axis = 1.6,
      xlim = c(1,52), 
@@ -150,14 +151,25 @@ points(SE22_wtiolag+0.25, SE22_wtiocoef, pch = 24, col = "black",
        bg =  alpha("magenta4",.65) , cex = 1.8)
 points(SE23_wtiolag, SE23_wtiocoef, pch = 24, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 1.8)
-points(SE2_etiolag, SE2_etiocoef, pch = 25, 
-       col = "grey4", bg =  alpha("forestgreen",.5), cex = 1.8)
+abline(h = 0, lty = 2)
+title("WTIO", adj = 0, cex.main = 1.5)
+
+
+# --- Plot 3: ETIO
+par(mar = c(4, 4, 2, 1))
+#etio pch 25
+plot(SE2_etiolag, SE2_etiocoef, pch = 25, col = "grey4",
+     bg =  alpha("forestgreen",.5), cex = 1.8, cex.axis = 1.6,
+     xlim = c(1,52), 
+     ylim = SEAus2_range,
+     xlab = "", ylab = "")
 points(SE22_etiolag, SE22_etiocoef, pch = 25, col = "black",
        bg =  alpha("magenta4",.65) , cex = 1.8)
 points(SE23_etiolag, SE23_etiocoef, pch = 25, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 1.8)
 abline(h = 0, lty = 2)
-title("WTIO & ETIO", adj = 0, cex.main = 1.5)
+title("ETIO", adj = 0, cex.main = 1.5)
+
 
 ## --- ETIO Interaction
 ## nino_lag40:etio_lag7
@@ -190,11 +202,8 @@ links[[6]] <- list(
   from_y = grconvertY(SE23_etiocoef[1], from = "user", to = "ndc")
 )
 
-# --- Plot 3: ETIO
 
-
-
-# --- Plot 3: TSA ---
+# --- Plot 4: TSA ---
 par(mar = c(4, 4, 2, 1))
 #tsa pch 22
 plot(SE2_tsalag-0.25, SE2_tsacoef, pch = 22, col = "black",
@@ -217,7 +226,7 @@ links[[7]] <- list(
   from_y = grconvertY(SE23_tsacoef[1], from = "user", to = "ndc")
 )
 
-# --- Plot 4: SAM/AAO ---
+# --- Plot 5: SAM/AAO ---
 par(mar = c(4, 4, 2, 1))
 #sam pch 23
 plot(SE2_aaolag-0.25, SE2_aaocoef, pch = 23,
@@ -233,7 +242,7 @@ points(SE23_aaolag, SE23_aaocoef, pch = 23, col = "black",
 abline(h = 0, lty = 2)
 title("SAM", adj = 0, cex.main = 1.5)
 
-# --- Plot 5: Interaction Effects ---
+# --- Plot 6: Interaction Effects ---
 par(mar = c(4, 4, 2, 2))
 
 plot(SE2.coef[1], 0, type = "n", main = "", 
@@ -341,12 +350,131 @@ SE1_ninolag <- c(33)
 SE1_ninocoef <- SE1.coef[2]
 SE12_ninolag <- c(33)
 SE12_ninocoef <- SE1.constcoef[2]
-SE22_ninolag <- c(40)
-SE22_ninocoef <- SE1.varycoef[2]
+SE13_ninolag <- c(40)
+SE13_ninocoef <- SE1.varycoef[2]
 
 ## WTIO
+SE1_wtiolag <- c(5)
+SE1_wtiocoef <- SE1.coef[3]
+SE12_wtiolag <- c(5)
+SE12_wtiocoef <- SE1.constcoef[3]
 
+## ETIO
+SE13_etiolag <- c(2, 42)
+SE13_etiocoef <- SE1.varycoef[3:4]
 
+## TSA
+SE1_tsalag <- c(12,14)
+SE1_tsacoef <- SE1.coef[4:5]
+SE12_tsalag <- c(12,14)
+SE12_tsacoef <- SE1.constcoef[4:5]
+SE13_tsalag <- c(12,16,19)
+SE13_tsacoef <- SE1.varycoef[5:7]
+
+## SAM (AAO)
+SE1_aaolag <- c(24,28,29,33,41)
+SE1_aaocoef <- SE1.coef[6:10]
+SE12_aaolag <- c(24,28,29,33,41)
+SE12_aaocoef <- SE1.constcoef[6:10]
+SE13_aaolag <- c(24,29)
+SE13_aaocoef <- SE1.varycoef[8:9]
+
+## OLR (MJO)
+SE1_olrlag <- c(2, 14)
+SE1_olrcoef <- SE1.coef[11:12]
+SE12_olrlag <- c(2, 14)
+SE12_olrcoef <- SE1.constcoef[11:12]
+SE13_olrlag <- c(2, 14)
+SE13_olrcoef <- SE1.varycoef[10:11]
+
+# --- Range ---
+SEAus1_absmax <- max(abs(range(SE1.coef,
+                               SE1.constcoef,
+                               SE1.varycoef)))
+SEAus1_range <- c(-SEAus1_absmax, SEAus1_absmax)
+
+# --- Plot 1: Nino ---
+par(mar = c(4, 4, 2, 1))
+#nino pch 21
+plot(SE1_ninolag, SE1_ninocoef, pch = 21, 
+     col = "grey4", bg =  alpha("forestgreen",.5), cex = 2.25,
+     xlim = c(1,52), cex.axis = 1.6, 
+     ylim = SEAus1_range,
+     xlab = "", ylab = "")
+points(SE12_ninolag, SE12_ninocoef, pch = 21, col = "black",
+       bg =  alpha("magenta4",.65), cex = 2.25)
+points(SE13_ninolag, SE13_ninocoef, pch = 21, col = "black",
+       bg =  alpha("darkorange2",.65) , cex = 2.25)
+abline(h = 0, lty = 2)
+title("Ni\u00f1o 3.4", adj = 0, cex.main = 1.5)
+
+# --- Plot 2: WTIO & ETIO ---
+par(mar = c(4, 4, 2, 1))
+#wtio pch 24, etio pch 25
+plot(SE1_wtiolag, SE1_wtiocoef, pch = 24, col = "black",
+     bg =  alpha("forestgreen",.5), cex = 1.8, cex.axis = 1.6,
+     xlim = c(1,52), 
+     ylim = SEAus1_range,
+     xlab = "", ylab = "")
+points(SE12_wtiolag, SE12_wtiocoef, pch = 24, col = "black",
+       bg =  alpha("magenta4",.65) , cex = 1.8)
+points(SE13_etiolag, SE13_etiocoef, pch = 25, col = "black",
+       bg =  alpha("darkorange2",.65) , cex = 1.8)
+abline(h = 0, lty = 2)
+title("WTIO & ETIO", adj = 0, cex.main = 1.5)
+
+# --- Plot 3: TSA ---
+par(mar = c(4, 4, 2, 1))
+#tsa pch 22
+plot(SE1_tsalag, SE1_tsacoef, pch = 22, col = "black",
+     bg =  alpha("forestgreen", 0.5), xlim = c(1,52), cex = 2.25,
+     ylim = SEAus1_range, cex.axis = 1.6,
+     xlab = "", ylab = "")
+points(SE12_tsalag, SE12_tsacoef, pch = 22, col = "black",
+       bg =  alpha("magenta4",.65) , cex = 2.25)
+points(SE13_tsalag, SE13_tsacoef, pch = 22, col = "black",
+       bg =  alpha("darkorange2",.65) , cex = 2.25)
+abline(h = 0, lty = 2)
+title("TSA", adj = 0, cex.main = 1.5)
+
+# --- Plot 4: SAM/AAO ---
+par(mar = c(4, 4, 2, 1))
+#sam pch 23
+plot(SE1_aaolag+0.25, SE1_aaocoef, pch = 23,
+     col = "grey4",
+     bg =  alpha("forestgreen",.5), cex = 2.25,
+     xlim = c(1,52),  cex.axis = 1.6, cex.lab = 1.75,
+     ylim = SEAus1_range,
+     xlab = "", ylab = "")
+points(SE12_aaolag-0.25, SE12_aaocoef, pch = 23, col = "black",
+       bg =  alpha("magenta4",.65) , cex = 2.25)
+points(SE13_aaolag, SE13_aaocoef, pch = 23, col = "black",
+       bg =  alpha("darkorange2",.65) , cex = 2.25)
+abline(h = 0, lty = 2)
+title("SAM", adj = 0, cex.main = 1.5)
+
+# --- Plot 5: OLR ---
+par(mar = c(4, 4, 2, 1))
+#olr pch ??
+plot(SE1_olrlag+0.15, SE1_olrcoef, pch = 19,
+     col = alpha("forestgreen",.5), cex = 2,
+     xlim = c(1,52),  cex.axis = 1.6, cex.lab = 1.75,
+     ylim = SEAus1_range,
+     xlab = "Lag", ylab = "")
+points(SE1_olrlag+0.15, SE1_olrcoef, pch = 10, col = "black",
+       #bg =  alpha("magenta4",.65), 
+       cex = 2)
+points(SE12_olrlag+0.25, SE12_olrcoef, pch = 19,
+       col =  alpha("magenta4",.65), 
+       cex = 2)
+points(SE12_olrlag+0.25, SE12_olrcoef, pch = 10, col = "black",
+       cex = 2)
+points(SE13_olrlag-0.30, SE13_olrcoef, pch = 19, col = alpha("darkorange2",.65),
+       cex = 2)
+points(SE13_olrlag-0.30, SE13_olrcoef, pch = 10, col = "black",
+       cex = 2)
+abline(h = 0, lty = 2)
+title("OLR", adj = 0, cex.main = 1.5)
 
 
 
