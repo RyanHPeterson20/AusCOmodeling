@@ -343,6 +343,20 @@ SE1.coef
 SE1.constcoef
 SE1.varycoef
 
+#fig SI
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+png(filename = "SEcoefs_early.png", width = 3000, height = 3500, res = 300)
+layout(matrix(c(1, 6,
+                2, 6,
+                3, 6,
+                4, 6,
+                5, 6), ncol = 2, byrow = TRUE),
+       widths = c(1.75, 1.25), heights = c(1, 1, 1, 1, 1, 1))
+
+par(oma = c(1, 1, 1, 1))
+
+# Store links
+links <- list()
 
 # --- Data Setup --- #
 ## Nino
@@ -408,6 +422,53 @@ points(SE13_ninolag, SE13_ninocoef, pch = 21, col = "black",
 abline(h = 0, lty = 2)
 title("Ni\u00f1o 3.4", adj = 0, cex.main = 1.5)
 
+## --- Nino Interaction
+## I(nino_lag33^2) 
+## base
+links[[1]] <- list(
+  y_val = SE1_ninocoef[1],
+  from_x = grconvertX(SE1_ninolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE1_ninocoef[1], from = "user", to = "ndc")
+)
+
+## constant
+links[[2]] <- list(
+  y_val = SE12_ninocoef[1],
+  from_x = grconvertX(SE12_ninolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE12_ninocoef[1], from = "user", to = "ndc")
+)
+
+## nino_lag33:tsa_lag12
+## base
+links[[3]] <- list(
+  y_val = SE1_ninocoef[1],
+  from_x = grconvertX(SE1_ninolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE1_ninocoef[1], from = "user", to = "ndc")
+)
+
+## constant
+links[[4]] <- list(
+  y_val = SE12_ninocoef[1],
+  from_x = grconvertX(SE12_ninolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE12_ninocoef[1], from = "user", to = "ndc")
+)
+
+## nino_lag40:etio_lag42 
+## varying
+links[[5]] <- list(
+  y_val = SE13_ninocoef[1],
+  from_x = grconvertX(SE13_ninolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE13_ninocoef[1], from = "user", to = "ndc")
+)
+
+## nino_lag40:tsa_lag12
+## varying
+links[[6]] <- list(
+  y_val = SE13_ninocoef[1],
+  from_x = grconvertX(SE13_ninolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE13_ninocoef[1], from = "user", to = "ndc")
+)
+
 # --- Plot 2: WTIO & ETIO ---
 par(mar = c(4, 4, 2, 1))
 #wtio pch 24, etio pch 25
@@ -422,6 +483,16 @@ points(SE13_etiolag, SE13_etiocoef, pch = 25, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 1.8)
 abline(h = 0, lty = 2)
 title("WTIO & ETIO", adj = 0, cex.main = 1.5)
+
+## --- ETIO Interaction
+## etio_lag2:aao_lag29  
+## varying
+
+## etio_lag2:etio_lag42 
+## varying
+
+## nino_lag40:etio_lag42
+## varying
 
 # --- Plot 3: TSA ---
 par(mar = c(4, 4, 2, 1))
@@ -477,6 +548,22 @@ abline(h = 0, lty = 2)
 title("OLR", adj = 0, cex.main = 1.5)
 
 
+# --- Plot 6: Interaction Effects ---
+par(mar = c(4, 4, 2, 2))
+
+plot(SE1.coef[1], 0, type = "n", main = "", 
+     ylim = c(0,1), xlim = SEAus1_range, cex = 2, cex.axis = 1.6,
+     xlab = "Coefficients", cex.lab = 1.75,
+     yaxt = "n",  ylab = "")
+abline(v= 0, lty = 2)
+
+
+
+mtext("Coefficients", side = 2, outer = TRUE, padj = 0.5, cex = 1.25)
+
+dev.off()
+
+
 
 
 
@@ -497,6 +584,10 @@ SE32_ninolag <- c(16, 25, 35)
 SE32_ninocoef <- SE3.varycoef[2:4]
 
 ## WTIO
+
+
+
+
 
 
 
