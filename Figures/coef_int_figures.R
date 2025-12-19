@@ -487,12 +487,36 @@ title("WTIO & ETIO", adj = 0, cex.main = 1.5)
 ## --- ETIO Interaction
 ## etio_lag2:aao_lag29  
 ## varying
+links[[7]] <- list(
+  y_val = SE13_etiocoef[1],
+  from_x = grconvertX(SE13_etiolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE13_etiocoef[1], from = "user", to = "ndc")
+)
 
 ## etio_lag2:etio_lag42 
 ## varying
+links[[8]] <- list(
+  y_val = SE13_etiocoef[1],
+  from_x = grconvertX(SE13_etiolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE13_etiocoef[1], from = "user", to = "ndc")
+)
+
+## etio_lag2:etio_lag42 
+## varying
+links[[9]] <- list(
+  y_val = SE13_etiocoef[2],
+  from_x = grconvertX(SE13_etiolag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE13_etiocoef[2], from = "user", to = "ndc")
+)
 
 ## nino_lag40:etio_lag42
 ## varying
+links[[10]] <- list(
+  y_val = SE13_etiocoef[2],
+  from_x = grconvertX(SE13_etiolag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE13_etiocoef[2], from = "user", to = "ndc")
+)
+
 
 # --- Plot 3: TSA ---
 par(mar = c(4, 4, 2, 1))
@@ -507,6 +531,47 @@ points(SE13_tsalag, SE13_tsacoef, pch = 22, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 2.25)
 abline(h = 0, lty = 2)
 title("TSA", adj = 0, cex.main = 1.5)
+
+## --- TSA Interaction
+## tsa_lag14:aao_lag33 
+## base
+links[[11]] <- list(
+  y_val = SE1_tsacoef[2],
+  from_x = grconvertX(SE1_tsalag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE1_tsacoef[2], from = "user", to = "ndc")
+)
+
+## tsa_lag14:aao_lag33 
+## constant
+links[[12]] <- list(
+  y_val = SE12_tsacoef[2],
+  from_x = grconvertX(SE12_tsalag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE12_tsacoef[2], from = "user", to = "ndc")
+)
+
+## nino_lag33:tsa_lag12 
+## base
+links[[13]] <- list(
+  y_val = SE1_tsacoef[1],
+  from_x = grconvertX(SE1_tsalag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE1_tsacoef[1], from = "user", to = "ndc")
+)
+
+## nino_lag33:tsa_lag12 
+## constant
+links[[14]] <- list(
+  y_val = SE12_tsacoef[1],
+  from_x = grconvertX(SE12_tsalag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE12_tsacoef[1], from = "user", to = "ndc")
+)
+
+## nino_lag40:tsa_lag12
+## varying
+links[[15]] <- list(
+  y_val = SE13_tsacoef[1],
+  from_x = grconvertX(SE13_tsalag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE13_tsacoef[1], from = "user", to = "ndc")
+)
 
 # --- Plot 4: SAM/AAO ---
 par(mar = c(4, 4, 2, 1))
@@ -523,6 +588,39 @@ points(SE13_aaolag, SE13_aaocoef, pch = 23, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 2.25)
 abline(h = 0, lty = 2)
 title("SAM", adj = 0, cex.main = 1.5)
+
+## --- SAM Interaction
+## tsa_lag14:aao_lag33
+## base
+links[[16]] <- list(
+  y_val = SE1_aaocoef[4],
+  from_x = grconvertX(SE1_aaolag[4], from = "user", to = "ndc"),
+  from_y = grconvertY(SE1_aaocoef[4], from = "user", to = "ndc")
+)
+
+## tsa_lag14:aao_lag33
+## constant
+links[[17]] <- list(
+  y_val = SE12_aaocoef[4],
+  from_x = grconvertX(SE12_aaolag[4], from = "user", to = "ndc"),
+  from_y = grconvertY(SE12_aaocoef[4], from = "user", to = "ndc")
+)
+
+## I(aao_lag24^2)
+## varying
+links[[18]] <- list(
+  y_val = SE13_aaocoef[1],
+  from_x = grconvertX(SE13_aaolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE13_aaocoef[1], from = "user", to = "ndc")
+)
+
+## etio_lag2:aao_lag29
+## varying
+links[[19]] <- list(
+  y_val = SE13_aaocoef[2],
+  from_x = grconvertX(SE13_aaolag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE13_aaocoef[2], from = "user", to = "ndc")
+)
 
 # --- Plot 5: OLR ---
 par(mar = c(4, 4, 2, 1))
@@ -557,7 +655,80 @@ plot(SE1.coef[1], 0, type = "n", main = "",
      yaxt = "n",  ylab = "")
 abline(v= 0, lty = 2)
 
+#square terms
+int_1 <- grconvertY(links[[1]]$from_y, from = "ndc", to = "user") #I(nino_lag33^2) (base)
+int_2 <- grconvertY(links[[2]]$from_y, from = "ndc", to = "user") #I(nino_lag33^2) (const)
+int_3 <- grconvertY(links[[18]]$from_y, from = "ndc", to = "user")  #I(aao_lag24^2) (vary)
 
+#interactions
+int_4 <- grconvertY(links[[3]]$from_y, from = "ndc", to = "user") # nino_lag33 -> tsa_lag12 #base
+int_5 <- grconvertY(links[[4]]$from_y, from = "ndc", to = "user") # nino_lag33 -> tsa_lag12 #const
+int_6 <- grconvertY(links[[5]]$from_y, from = "ndc", to = "user") # nino_lag40 -> etio_lag42 #vary
+int_7 <- grconvertY(links[[6]]$from_y, from = "ndc", to = "user") # nino_lag40 -> tsa_lag12 #vary
+int_8 <- grconvertY(links[[7]]$from_y, from = "ndc", to = "user") # etio_lag2 -> aao_lag29 #vary
+int_9 <- grconvertY(links[[8]]$from_y, from = "ndc", to = "user")  # etio_lag2 -> etio_lag42 #vary
+int_10 <- grconvertY(links[[9]]$from_y, from = "ndc", to = "user")  # etio_lag42 -> etio_lag2 #vary
+int_11 <- grconvertY(links[[10]]$from_y, from = "ndc", to = "user") # etio_lag42 -> nino_lag40 #vary
+int_12 <- grconvertY(links[[11]]$from_y, from = "ndc", to = "user")  # tsa_lag14 -> aao_lag33 #base
+int_13 <- grconvertY(links[[12]]$from_y, from = "ndc", to = "user")  # tsa_lag14 -> aao_lag33 #const
+int_14 <- grconvertY(links[[13]]$from_y, from = "ndc", to = "user")  # tsa_lag12 -> nino_lag33 #base
+int_15 <- grconvertY(links[[14]]$from_y, from = "ndc", to = "user")  # tsa_lag12 -> nino_lag33 #const
+int_16 <- grconvertY(links[[15]]$from_y, from = "ndc", to = "user") # tsa_lag12 -> nino_lag40 #vary
+int_17 <- grconvertY(links[[16]]$from_y, from = "ndc", to = "user")  # aao_lag33 -> tsa_lag14 #base
+int_18 <- grconvertY(links[[17]]$from_y, from = "ndc", to = "user")  # aao_lag33 -> tsa_lag14 #const
+int_19 <- grconvertY(links[[19]]$from_y, from = "ndc", to = "user") # aao_lag29 -> etio_lag2 #vary
+
+# nino_lag33 : tsa_lag12
+# base
+int_pt1 <- (int_4 + int_14)/2
+segments(SE1.coef[15], int_4, SE1.coef[15], int_pt1, col = "forestgreen", lty = 2, lwd = 2)
+segments(SE1.coef[15], int_14, SE1.coef[15], int_pt1, col = "forestgreen", lty = 2, lwd = 2)
+# constant
+int_pt2 <- (int_5 + int_15)/2
+segments(SE1.constcoef[15], int_5, SE1.constcoef[15], int_pt2, col = "magenta4", lty = 2, lwd = 2)
+segments(SE1.constcoef[15], int_15, SE1.constcoef[15], int_pt2, col = "magenta4", lty = 2, lwd = 2)
+# nino_lag40 : etio_lag42
+# varying
+int_pt3 <- (int_6 + int_11)/2
+segments(SE1.varycoef[15], int_6, SE1.varycoef[15], int_pt3, col = "darkorange2", lty = 2, lwd = 2)
+segments(SE1.varycoef[15], int_11, SE1.varycoef[15], int_pt3, col = "darkorange2", lty = 2, lwd = 2)
+# nino_lag40 : tsa_lag12
+# varying
+int_pt4 <- (int_7 + int_16)/2
+segments(SE1.varycoef[16], int_7, SE1.varycoef[16], int_pt4, col = "darkorange2", lty = 2, lwd = 2)
+segments(SE1.varycoef[16], int_16, SE1.varycoef[16], int_pt4, col = "darkorange2", lty = 2, lwd = 2)
+# etio_lag2 : aao_lag29
+# varying
+int_pt5 <- (int_8 + int_19)/2
+segments(SE1.varycoef[13], int_8, SE1.varycoef[13], int_pt5, col = "darkorange2", lty = 2, lwd = 2)
+segments(SE1.varycoef[13], int_19, SE1.varycoef[13], int_pt5, col = "darkorange2", lty = 2, lwd = 2)
+# etio_lag2 : etio_lag42
+# varying
+int_pt6 <- (int_9 + int_10)/2
+segments(SE1.varycoef[14], int_9, SE1.varycoef[14], int_pt6, col = "darkorange2", lty = 2, lwd = 2)
+segments(SE1.varycoef[14], int_10, SE1.varycoef[14], int_pt6, col = "darkorange2", lty = 2, lwd = 2)
+# tsa_lag14 : aao_lag33
+# base
+int_pt7 <- (int_12 + int_17)/2
+segments(SE1.coef[14], int_12, SE1.coef[14], int_pt7, col = "forestgreen", lty = 2, lwd = 2)
+segments(SE1.coef[14], int_17, SE1.coef[14], int_pt7, col = "forestgreen", lty = 2, lwd = 2)
+# constant
+int_pt8 <- (int_13 + int_18)/2
+segments(SE1.constcoef[14], int_13, SE1.constcoef[14], int_pt13, col = "magenta4", lty = 2, lwd = 2)
+segments(SE1.constcoef[14], int_18, SE1.constcoef[14], int_pt18, col = "magenta4", lty = 2, lwd = 2)
+
+#quad points
+points(SE1.coef[13], int_1,  pch = 21, col = "grey4",
+       bg = alpha("forestgreen",.65), cex = 2) 
+points(SE1.constcoef[13], int_1,  pch = 21, col = "grey4",
+       bg = alpha("forestgreen",.65), cex = 2) 
+#interaction points
+points(SE2.coef[10], int_pt1,  pch = 11, col = alpha("forestgreen",.99),
+       bg = alpha("forestgreen",.95), cex = 1.9) 
+points(SE2.constcoef[10], int_pt2,  pch = 11, col = alpha("magenta4",.99),
+       bg = alpha("magenta4",.95), cex = 1.9) 
+points(SE2.varycoef[8], int_pt3,  pch = 11, col = alpha("darkorange3",.99),
+       bg = alpha("darkorange2",.95), cex = 1.9) 
 
 mtext("Coefficients", side = 2, outer = TRUE, padj = 0.5, cex = 1.25)
 
@@ -573,6 +744,21 @@ SE3.coef
 SE3.constcoef
 SE3.varycoef
 
+
+#fig SI
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+png(filename = "SEcoefs_late.png", width = 3000, height = 3500, res = 300)
+layout(matrix(c(1, 6,
+                2, 6,
+                3, 6,
+                4, 6,
+                5, 6), ncol = 2, byrow = TRUE),
+       widths = c(1.75, 1.25), heights = c(1, 1, 1, 1, 1, 1))
+
+par(oma = c(1, 1, 1, 1))
+
+# Store links
+links <- list()
 
 # --- Data Setup --- #
 ## Nino
@@ -629,12 +815,12 @@ SEAus3_range <- c(-SEAus3_absmax, SEAus3_absmax)
 # --- Plot 1: Nino ---
 par(mar = c(4, 4, 2, 1))
 #nino pch 21
-plot(SE3_ninolag, SE3_ninocoef, pch = 21, 
+plot(SE3_ninolag+0.25, SE3_ninocoef, pch = 21, 
      col = "grey4", bg =  alpha("forestgreen",.5), cex = 2.25,
      xlim = c(1,52), cex.axis = 1.6, 
      ylim = SEAus3_range,
      xlab = "", ylab = "")
-points(SE32_ninolag, SE32_ninocoef, pch = 21, col = "black",
+points(SE32_ninolag-0.25, SE32_ninocoef, pch = 21, col = "black",
        bg =  alpha("magenta4",.65), cex = 2.25)
 points(SE33_ninolag, SE33_ninocoef, pch = 21, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 2.25)
@@ -649,9 +835,9 @@ plot(SE33_wtiolag, SE33_wtiocoef, pch = 24, col = "black",
      xlim = c(1,52), 
      ylim = SEAus3_range,
      xlab = "", ylab = "")
-points(SE3_etiolag, SE3_etiocoef, pch = 25, col = "black",
+points(SE3_etiolag+0.25, SE3_etiocoef, pch = 25, col = "black",
        bg =  alpha("forestgreen",.5) , cex = 1.8)
-points(SE32_etiolag, SE32_etiocoef, pch = 25, col = "black",
+points(SE32_etiolag-0.25, SE32_etiocoef, pch = 25, col = "black",
        bg =  alpha("magenta4",.65) , cex = 1.8)
 points(SE33_etiolag, SE33_etiocoef, pch = 25, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 1.8)
@@ -662,11 +848,11 @@ title("WTIO & ETIO", adj = 0, cex.main = 1.5)
 # --- Plot 3: TSA ---
 par(mar = c(4, 4, 2, 1))
 #tsa pch 22
-plot(SE3_tsalag, SE3_tsacoef, pch = 22, col = "black",
+plot(SE3_tsalag+0.25, SE3_tsacoef, pch = 22, col = "black",
      bg =  alpha("forestgreen", 0.5), xlim = c(1,52), cex = 2.25,
      ylim = SEAus3_range, cex.axis = 1.6,
      xlab = "", ylab = "")
-points(SE32_tsalag, SE32_tsacoef, pch = 22, col = "black",
+points(SE32_tsalag-0.25, SE32_tsacoef, pch = 22, col = "black",
        bg =  alpha("magenta4",.65) , cex = 2.25)
 points(SE33_tsalag, SE33_tsacoef, pch = 22, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 2.25)
@@ -676,13 +862,13 @@ title("TSA", adj = 0, cex.main = 1.5)
 # --- Plot 4: SAM/AAO ---
 par(mar = c(4, 4, 2, 1))
 #sam pch 23
-plot(SE3_aaolag, SE3_aaocoef, pch = 23,
+plot(SE3_aaolag+0.25, SE3_aaocoef, pch = 23,
      col = "grey4",
      bg =  alpha("forestgreen",.5), cex = 2.25,
      xlim = c(1,52),  cex.axis = 1.6, cex.lab = 1.75,
      ylim = SEAus3_range,
      xlab = "", ylab = "")
-points(SE32_aaolag, SE32_aaocoef, pch = 23, col = "black",
+points(SE32_aaolag-0.25, SE32_aaocoef, pch = 23, col = "black",
        bg =  alpha("magenta4",.65) , cex = 2.25)
 points(SE33_aaolag, SE33_aaocoef, pch = 23, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 2.25)
@@ -693,12 +879,12 @@ title("SAM", adj = 0, cex.main = 1.5)
 # --- Plot 5: OLR ---
 par(mar = c(4, 4, 2, 1))
 #olr pch ??
-plot(SE3_olrlag, SE3_olrcoef, pch = 9,
+plot(SE3_olrlag+0.25, SE3_olrcoef, pch = 9,
      col = "forestgreen", cex = 2,
      xlim = c(1,52),  cex.axis = 1.6, cex.lab = 1.75,
      ylim = SEAus3_range,
      xlab = "Lag", ylab = "")
-points(SE32_olrlag, SE32_olrcoef, pch = 9,
+points(SE32_olrlag-0.25, SE32_olrcoef, pch = 9,
        col =  "magenta4", 
        cex = 2)
 points(SE33_olrlag, SE33_olrcoef, pch = 9, col = "darkorange2",
@@ -707,6 +893,20 @@ abline(h = 0, lty = 2)
 title("OLR", adj = 0, cex.main = 1.5)
 
 
+# --- Plot 6: Interaction Effects ---
+par(mar = c(4, 4, 2, 2))
+
+plot(SE1.coef[1], 0, type = "n", main = "", 
+     ylim = c(0,1), xlim = SEAus1_range, cex = 2, cex.axis = 1.6,
+     xlab = "Coefficients", cex.lab = 1.75,
+     yaxt = "n",  ylab = "")
+abline(v= 0, lty = 2)
+
+
+
+mtext("Coefficients", side = 2, outer = TRUE, padj = 0.5, cex = 1.25)
+
+dev.off()
 
 
 
