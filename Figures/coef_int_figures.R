@@ -714,21 +714,75 @@ segments(SE1.coef[14], int_12, SE1.coef[14], int_pt7, col = "forestgreen", lty =
 segments(SE1.coef[14], int_17, SE1.coef[14], int_pt7, col = "forestgreen", lty = 2, lwd = 2)
 # constant
 int_pt8 <- (int_13 + int_18)/2
-segments(SE1.constcoef[14], int_13, SE1.constcoef[14], int_pt13, col = "magenta4", lty = 2, lwd = 2)
-segments(SE1.constcoef[14], int_18, SE1.constcoef[14], int_pt18, col = "magenta4", lty = 2, lwd = 2)
+segments(SE1.constcoef[14], int_13, SE1.constcoef[14], int_pt8, col = "magenta4", lty = 2, lwd = 2)
+segments(SE1.constcoef[14], int_18, SE1.constcoef[14], int_pt8, col = "magenta4", lty = 2, lwd = 2)
 
 #quad points
 points(SE1.coef[13], int_1,  pch = 21, col = "grey4",
        bg = alpha("forestgreen",.65), cex = 2) 
-points(SE1.constcoef[13], int_1,  pch = 21, col = "grey4",
-       bg = alpha("forestgreen",.65), cex = 2) 
+points(SE1.constcoef[13], int_2,  pch = 21, col = "grey4",
+       bg = alpha("magenta4",.65), cex = 2) 
+points(SE1.varycoef[12], int_3,  pch = 23, col = "grey4",
+       bg = alpha("darkorange2",.65), cex = 2) 
 #interaction points
-points(SE2.coef[10], int_pt1,  pch = 11, col = alpha("forestgreen",.99),
+points(SE1.coef[15], int_pt1,  pch = 11, col = alpha("forestgreen",.99),
        bg = alpha("forestgreen",.95), cex = 1.9) 
-points(SE2.constcoef[10], int_pt2,  pch = 11, col = alpha("magenta4",.99),
+points(SE1.constcoef[15], int_pt2,  pch = 11, col = alpha("magenta4",.99),
        bg = alpha("magenta4",.95), cex = 1.9) 
-points(SE2.varycoef[8], int_pt3,  pch = 11, col = alpha("darkorange3",.99),
+points(SE1.varycoef[15], int_pt3,  pch = 11, col = alpha("darkorange3",.99),
        bg = alpha("darkorange2",.95), cex = 1.9) 
+points(SE1.varycoef[16], int_pt4,  pch = 11, col = alpha("darkorange3",.99),
+       bg = alpha("darkorange2",.95), cex = 1.9) 
+points(SE1.varycoef[13], int_pt5,  pch = 11, col = alpha("darkorange3",.99),
+       bg = alpha("darkorange2",.95), cex = 1.9) 
+points(SE1.varycoef[14], int_pt6,  pch = 11, col = alpha("darkorange3",.99),
+       bg = alpha("darkorange2",.95), cex = 1.9) 
+points(SE1.coef[14], int_pt7,  pch = 11, col = alpha("forestgreen",.99),
+       bg = alpha("forestgreen",.95), cex = 1.9) 
+points(SE1.constcoef[14], int_pt8,  pch = 11, col = alpha("magenta4",.99),
+       bg = alpha("magenta4",.95), cex = 1.9) 
+
+#link to x 
+links[[1]]$to_x <- grconvertX(SE1.coef[13], from = "user", to = "ndc")
+links[[2]]$to_x <- grconvertX(SE1.constcoef[13], from = "user", to = "ndc")
+links[[3]]$to_x <- grconvertX(SE1.coef[15], from = "user", to = "ndc")
+links[[4]]$to_x <- grconvertX(SE1.constcoef[15], from = "user", to = "ndc")
+links[[5]]$to_x <- grconvertX(SE1.varycoef[15], from = "user", to = "ndc")
+links[[6]]$to_x <- grconvertX(SE1.varycoef[16], from = "user", to = "ndc")
+links[[7]]$to_x <- grconvertX(SE1.varycoef[13], from = "user", to = "ndc")
+links[[8]]$to_x <- grconvertX(SE1.varycoef[14], from = "user", to = "ndc")
+links[[9]]$to_x <- grconvertX(SE1.varycoef[14], from = "user", to = "ndc")
+links[[10]]$to_x <- grconvertX(SE1.varycoef[15], from = "user", to = "ndc")
+links[[11]]$to_x <- grconvertX(SE1.coef[14], from = "user", to = "ndc")
+links[[12]]$to_x <- grconvertX(SE1.constcoef[14], from = "user", to = "ndc")
+links[[13]]$to_x <- grconvertX(SE1.coef[15], from = "user", to = "ndc")
+links[[14]]$to_x <- grconvertX(SE1.constcoef[15], from = "user", to = "ndc")
+links[[15]]$to_x <- grconvertX(SE1.varycoef[16], from = "user", to = "ndc")
+links[[16]]$to_x <- grconvertX(SE1.coef[14], from = "user", to = "ndc")
+links[[17]]$to_x <- grconvertX(SE1.constcoef[14], from = "user", to = "ndc")
+links[[18]]$to_x <- grconvertX(SE1.varycoef[12], from = "user", to = "ndc")
+links[[19]]$to_x <- grconvertX(SE1.varycoef[13], from = "user", to = "ndc")
+
+for (i in 1:length(links)) {
+  links[[i]]$to_y <- links[[i]]$from_y  # same y to keep it horizontal
+}
+
+# --- Draw horizontal linking lines ---
+par(xpd = NA)  # allow drawing outside plot regions
+colors <- c("forestgreen", "magenta4", "forestgreen", "magenta4", rep( "darkorange2", 6),
+            "forestgreen", "magenta4", "forestgreen", "magenta4", "darkorange2", 
+            "forestgreen", "magenta4", "darkorange2", "darkorange2")
+linetypes <- rep(2,19)
+
+
+for (i in 1:length(links)) {
+  grid.lines(
+    x = unit(c(links[[i]]$from_x, links[[i]]$to_x), "npc"),
+    y = unit(c(links[[i]]$from_y, links[[i]]$to_y), "npc"),
+    gp = gpar(col = colors[i], lwd = 1.75, lty = linetypes[i])
+  )
+}
+
 
 mtext("Coefficients", side = 2, outer = TRUE, padj = 0.5, cex = 1.25)
 
@@ -827,6 +881,13 @@ points(SE33_ninolag, SE33_ninocoef, pch = 21, col = "black",
 abline(h = 0, lty = 2)
 title("Ni\u00f1o 3.4", adj = 0, cex.main = 1.5)
 
+## --- Nino Interaction
+## nino_lag25:aao_lag50
+## base
+
+## nino_lag25:aao_lag50
+## constant
+
 # --- Plot 2: WTIO & ETIO ---
 par(mar = c(4, 4, 2, 1))
 #wtio pch 24, etio pch 25
@@ -844,6 +905,31 @@ points(SE33_etiolag, SE33_etiocoef, pch = 25, col = "black",
 abline(h = 0, lty = 2)
 title("WTIO & ETIO", adj = 0, cex.main = 1.5)
 
+## --- WTIO Interactions
+## wtio_lag38:aao_lag37 
+## varying
+
+## --- ETIO Interactions
+## etio_lag16:aao_lag1
+## base
+
+
+## etio_lag16:aao_lag1
+## constat
+
+
+##  etio_lag33:tsa_lag22
+## base
+
+
+## etio_lag33:tsa_lag22
+## constant
+
+
+## I(etio_lag16^2)
+## varying
+
+
 
 # --- Plot 3: TSA ---
 par(mar = c(4, 4, 2, 1))
@@ -858,6 +944,14 @@ points(SE33_tsalag, SE33_tsacoef, pch = 22, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 2.25)
 abline(h = 0, lty = 2)
 title("TSA", adj = 0, cex.main = 1.5)
+
+## --- TSA Interactions
+## tsa_lag22:aao_lag1
+## base
+
+## tsa_lag22:aao_lag1
+## constant
+
 
 # --- Plot 4: SAM/AAO ---
 par(mar = c(4, 4, 2, 1))
