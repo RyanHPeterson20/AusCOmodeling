@@ -79,7 +79,6 @@ summary(SE3.lm)
 summary(SE.const.LM$`2019-2020`[[3]])
 summary(SE.vary.LM$`2019-2020`[[3]])
 
-
 #preds setup
 pred.base.early <- preds.2019.base[[1]]
 pred.base.mid <- preds.2019.base[[2]]

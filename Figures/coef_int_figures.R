@@ -580,10 +580,134 @@ SE3_ninolag <- c(25,47)
 SE3_ninocoef <- SE3.coef[2:3]
 SE32_ninolag <- c(25, 47)
 SE32_ninocoef <- SE3.constcoef[2:3]
-SE32_ninolag <- c(16, 25, 35)
-SE32_ninocoef <- SE3.varycoef[2:4]
+SE33_ninolag <- c(16, 25, 35)
+SE33_ninocoef <- SE3.varycoef[2:4]
 
 ## WTIO
+SE33_wtiolag <- c(38,51)
+SE33_wtiocoef <- SE3.varycoef[5:6]
+
+## ETIO
+SE3_etiolag <- c(16,33)
+SE3_etiocoef <- SE3.coef[4:5]
+SE32_etiolag <- c(16,33)
+SE32_etiocoef <- SE3.constcoef[4:5]
+SE33_etiolag <- c(16,19)
+SE33_etiocoef <- SE3.varycoef[7:8]
+
+## TSA
+SE3_tsalag <- c(22)
+SE3_tsacoef <- SE3.coef[6]
+SE32_tsalag <- c(22)
+SE32_tsacoef <- SE3.constcoef[6]
+SE33_tsalag <- c(22)
+SE33_tsacoef <- SE3.varycoef[9]
+
+## SAM (AAO)
+SE3_aaolag <- c(1,50)
+SE3_aaocoef <- SE3.coef[7:8]
+SE32_aaolag <- c(1,50)
+SE32_aaocoef <- SE3.constcoef[7:8]
+SE33_aaolag <- c(37)
+SE33_aaocoef <- SE3.varycoef[10]
+
+## OLR
+SE3_olrlag <- c(6)
+SE3_olrcoef <- SE3.coef[9]
+SE32_olrlag <- c(6)
+SE32_olrcoef <- SE3.constcoef[9]
+SE33_olrlag <- c(6, 9)
+SE33_olrcoef <- SE3.varycoef[11:12]
+
+
+# --- Range ---
+SEAus3_absmax <- max(abs(range(SE3.coef,
+                               SE3.constcoef,
+                               SE3.varycoef)))
+SEAus3_range <- c(-SEAus3_absmax, SEAus3_absmax)
+
+# --- Plot 1: Nino ---
+par(mar = c(4, 4, 2, 1))
+#nino pch 21
+plot(SE3_ninolag, SE3_ninocoef, pch = 21, 
+     col = "grey4", bg =  alpha("forestgreen",.5), cex = 2.25,
+     xlim = c(1,52), cex.axis = 1.6, 
+     ylim = SEAus3_range,
+     xlab = "", ylab = "")
+points(SE32_ninolag, SE32_ninocoef, pch = 21, col = "black",
+       bg =  alpha("magenta4",.65), cex = 2.25)
+points(SE33_ninolag, SE33_ninocoef, pch = 21, col = "black",
+       bg =  alpha("darkorange2",.65) , cex = 2.25)
+abline(h = 0, lty = 2)
+title("Ni\u00f1o 3.4", adj = 0, cex.main = 1.5)
+
+# --- Plot 2: WTIO & ETIO ---
+par(mar = c(4, 4, 2, 1))
+#wtio pch 24, etio pch 25
+plot(SE33_wtiolag, SE33_wtiocoef, pch = 24, col = "black",
+     bg =  alpha("darkorange2",.65), cex = 1.8, cex.axis = 1.6,
+     xlim = c(1,52), 
+     ylim = SEAus3_range,
+     xlab = "", ylab = "")
+points(SE3_etiolag, SE3_etiocoef, pch = 25, col = "black",
+       bg =  alpha("forestgreen",.5) , cex = 1.8)
+points(SE32_etiolag, SE32_etiocoef, pch = 25, col = "black",
+       bg =  alpha("magenta4",.65) , cex = 1.8)
+points(SE33_etiolag, SE33_etiocoef, pch = 25, col = "black",
+       bg =  alpha("darkorange2",.65) , cex = 1.8)
+abline(h = 0, lty = 2)
+title("WTIO & ETIO", adj = 0, cex.main = 1.5)
+
+
+# --- Plot 3: TSA ---
+par(mar = c(4, 4, 2, 1))
+#tsa pch 22
+plot(SE3_tsalag, SE3_tsacoef, pch = 22, col = "black",
+     bg =  alpha("forestgreen", 0.5), xlim = c(1,52), cex = 2.25,
+     ylim = SEAus3_range, cex.axis = 1.6,
+     xlab = "", ylab = "")
+points(SE32_tsalag, SE32_tsacoef, pch = 22, col = "black",
+       bg =  alpha("magenta4",.65) , cex = 2.25)
+points(SE33_tsalag, SE33_tsacoef, pch = 22, col = "black",
+       bg =  alpha("darkorange2",.65) , cex = 2.25)
+abline(h = 0, lty = 2)
+title("TSA", adj = 0, cex.main = 1.5)
+
+# --- Plot 4: SAM/AAO ---
+par(mar = c(4, 4, 2, 1))
+#sam pch 23
+plot(SE3_aaolag, SE3_aaocoef, pch = 23,
+     col = "grey4",
+     bg =  alpha("forestgreen",.5), cex = 2.25,
+     xlim = c(1,52),  cex.axis = 1.6, cex.lab = 1.75,
+     ylim = SEAus3_range,
+     xlab = "", ylab = "")
+points(SE32_aaolag, SE32_aaocoef, pch = 23, col = "black",
+       bg =  alpha("magenta4",.65) , cex = 2.25)
+points(SE33_aaolag, SE33_aaocoef, pch = 23, col = "black",
+       bg =  alpha("darkorange2",.65) , cex = 2.25)
+abline(h = 0, lty = 2)
+title("SAM", adj = 0, cex.main = 1.5)
+
+
+# --- Plot 5: OLR ---
+par(mar = c(4, 4, 2, 1))
+#olr pch ??
+plot(SE3_olrlag, SE3_olrcoef, pch = 9,
+     col = "forestgreen", cex = 2,
+     xlim = c(1,52),  cex.axis = 1.6, cex.lab = 1.75,
+     ylim = SEAus3_range,
+     xlab = "Lag", ylab = "")
+points(SE32_olrlag, SE32_olrcoef, pch = 9,
+       col =  "magenta4", 
+       cex = 2)
+points(SE33_olrlag, SE33_olrcoef, pch = 9, col = "darkorange2",
+       cex = 2)
+abline(h = 0, lty = 2)
+title("OLR", adj = 0, cex.main = 1.5)
+
+
+
 
 
 
