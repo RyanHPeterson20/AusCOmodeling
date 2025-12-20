@@ -790,13 +790,12 @@ dev.off()
 
 
 
-
-
-
 #fig SI - late group
 SE3.coef
 SE3.constcoef
 SE3.varycoef
+
+
 
 
 #fig SI
@@ -884,9 +883,19 @@ title("Ni\u00f1o 3.4", adj = 0, cex.main = 1.5)
 ## --- Nino Interaction
 ## nino_lag25:aao_lag50
 ## base
+links[[1]] <- list(
+  y_val = SE3_ninocoef[1],
+  from_x = grconvertX(SE3_ninolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_ninocoef[1], from = "user", to = "ndc")
+)
 
 ## nino_lag25:aao_lag50
 ## constant
+links[[2]] <- list(
+  y_val = SE32_ninocoef[1],
+  from_x = grconvertX(SE32_ninolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_ninocoef[1], from = "user", to = "ndc")
+)
 
 # --- Plot 2: WTIO & ETIO ---
 par(mar = c(4, 4, 2, 1))
@@ -908,27 +917,52 @@ title("WTIO & ETIO", adj = 0, cex.main = 1.5)
 ## --- WTIO Interactions
 ## wtio_lag38:aao_lag37 
 ## varying
+links[[3]] <- list(
+  y_val = SE33_wtiocoef[1],
+  from_x = grconvertX(SE33_wtiolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE33_wtiocoef[1], from = "user", to = "ndc")
+)
 
 ## --- ETIO Interactions
 ## etio_lag16:aao_lag1
 ## base
-
+links[[4]] <- list(
+  y_val = SE3_etiocoef[1],
+  from_x = grconvertX(SE3_etiolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_etiocoef[1], from = "user", to = "ndc")
+)
 
 ## etio_lag16:aao_lag1
-## constat
-
+## constant
+links[[5]] <- list(
+  y_val = SE32_etiocoef[1],
+  from_x = grconvertX(SE32_etiolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_etiocoef[1], from = "user", to = "ndc")
+)
 
 ##  etio_lag33:tsa_lag22
 ## base
-
+links[[6]] <- list(
+  y_val = SE3_etiocoef[2],
+  from_x = grconvertX(SE3_etiolag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_etiocoef[2], from = "user", to = "ndc")
+)
 
 ## etio_lag33:tsa_lag22
 ## constant
-
+links[[7]] <- list(
+  y_val = SE32_etiocoef[2],
+  from_x = grconvertX(SE32_etiolag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_etiocoef[2], from = "user", to = "ndc")
+)
 
 ## I(etio_lag16^2)
 ## varying
-
+links[[8]] <- list(
+  y_val = SE33_etiocoef[1],
+  from_x = grconvertX(SE33_etiolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE33_etiocoef[1], from = "user", to = "ndc")
+)
 
 
 # --- Plot 3: TSA ---
@@ -948,10 +982,59 @@ title("TSA", adj = 0, cex.main = 1.5)
 ## --- TSA Interactions
 ## tsa_lag22:aao_lag1
 ## base
+links[[9]] <- list(
+  y_val = SE3_tsacoef[1],
+  from_x = grconvertX(SE3_tsalag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_tsacoef[1], from = "user", to = "ndc")
+)
 
 ## tsa_lag22:aao_lag1
 ## constant
+links[[10]] <- list(
+  y_val = SE32_tsacoef[1],
+  from_x = grconvertX(SE32_tsalag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_tsacoef[1], from = "user", to = "ndc")
+)
 
+## etio_lag33:tsa_lag22
+## base
+links[[11]] <- list(
+  y_val = SE3_tsacoef[1],
+  from_x = grconvertX(SE3_tsalag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_tsacoef[1], from = "user", to = "ndc")
+)
+
+## etio_lag33:tsa_lag22
+## constant
+links[[12]] <- list(
+  y_val = SE32_tsacoef[1],
+  from_x = grconvertX(SE32_tsalag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_tsacoef[1], from = "user", to = "ndc")
+)
+
+## tsa_lag22:olr_lag6
+## base
+links[[13]] <- list(
+  y_val = SE3_tsacoef[1],
+  from_x = grconvertX(SE3_tsalag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_tsacoef[1], from = "user", to = "ndc")
+)
+
+## tsa_lag22:olr_lag6
+## constant
+links[[14]] <- list(
+  y_val = SE32_tsacoef[1],
+  from_x = grconvertX(SE32_tsalag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_tsacoef[1], from = "user", to = "ndc")
+)
+
+## tsa_lag22:aao_lag37
+## varying
+links[[15]] <- list(
+  y_val = SE33_tsacoef[1],
+  from_x = grconvertX(SE33_tsalag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE33_tsacoef[1], from = "user", to = "ndc")
+)
 
 # --- Plot 4: SAM/AAO ---
 par(mar = c(4, 4, 2, 1))
@@ -969,6 +1052,86 @@ points(SE33_aaolag, SE33_aaocoef, pch = 23, col = "black",
 abline(h = 0, lty = 2)
 title("SAM", adj = 0, cex.main = 1.5)
 
+## --- SAM(AAO) Interactions
+## tsa_lag22:aao_lag1
+## base
+links[[16]] <- list(
+  y_val = SE3_aaocoef[1],
+  from_x = grconvertX(SE3_aaolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_aaocoef[1], from = "user", to = "ndc")
+)
+
+## tsa_lag22:aao_lag1
+## constant
+links[[17]] <- list(
+  y_val = SE32_aaocoef[1],
+  from_x = grconvertX(SE32_aaolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_aaocoef[1], from = "user", to = "ndc")
+)
+
+## etio_lag16:aao_lag1
+## base
+links[[18]] <- list(
+  y_val = SE3_aaocoef[1],
+  from_x = grconvertX(SE3_aaolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_aaocoef[1], from = "user", to = "ndc")
+)
+
+## etio_lag16:aao_lag1
+## constant
+links[[19]] <- list(
+  y_val = SE32_aaocoef[1],
+  from_x = grconvertX(SE32_aaolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_aaocoef[1], from = "user", to = "ndc")
+)
+
+## nino_lag25:aao_lag50
+## base
+links[[20]] <- list(
+  y_val = SE3_aaocoef[2],
+  from_x = grconvertX(SE3_aaolag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_aaocoef[2], from = "user", to = "ndc")
+)
+
+## nino_lag25:aao_lag50
+## constant
+links[[21]] <- list(
+  y_val = SE32_aaocoef[2],
+  from_x = grconvertX(SE32_aaolag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_aaocoef[2], from = "user", to = "ndc")
+)
+
+## aao_lag50:olr_lag6
+## base
+links[[22]] <- list(
+  y_val = SE3_aaocoef[2],
+  from_x = grconvertX(SE3_aaolag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_aaocoef[2], from = "user", to = "ndc")
+)
+
+## aao_lag50:olr_lag6
+## constant
+links[[23]] <- list(
+  y_val = SE32_aaocoef[2],
+  from_x = grconvertX(SE32_aaolag[2], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_aaocoef[2], from = "user", to = "ndc")
+)
+
+## tsa_lag22:aao_lag37
+## varying
+links[[24]] <- list(
+  y_val = SE33_aaocoef[1],
+  from_x = grconvertX(SE33_aaolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE33_aaocoef[1], from = "user", to = "ndc")
+)
+
+## wtio_lag38:aao_lag37
+## varying
+links[[25]] <- list(
+  y_val = SE33_aaocoef[1],
+  from_x = grconvertX(SE33_aaolag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE33_aaocoef[1], from = "user", to = "ndc")
+)
 
 # --- Plot 5: OLR ---
 par(mar = c(4, 4, 2, 1))
@@ -986,6 +1149,38 @@ points(SE33_olrlag, SE33_olrcoef, pch = 9, col = "darkorange2",
 abline(h = 0, lty = 2)
 title("OLR", adj = 0, cex.main = 1.5)
 
+## --- OLR Interaction
+## aao_lag50:olr_lag6
+## base
+links[[26]] <- list(
+  y_val = SE3_olrcoef[1],
+  from_x = grconvertX(SE3_olrlag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_olrcoef[1], from = "user", to = "ndc")
+)
+
+## aao_lag50:olr_lag6
+## constant
+links[[27]] <- list(
+  y_val = SE32_olrcoef[1],
+  from_x = grconvertX(SE32_olrlag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_olrcoef[1], from = "user", to = "ndc")
+)
+
+## tsa_lag22:olr_lag6
+## base
+links[[28]] <- list(
+  y_val = SE3_olrcoef[1],
+  from_x = grconvertX(SE3_olrlag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE3_olrcoef[1], from = "user", to = "ndc")
+)
+
+## tsa_lag22:olr_lag6
+## constant
+links[[29]] <- list(
+  y_val = SE32_olrcoef[1],
+  from_x = grconvertX(SE32_olrlag[1], from = "user", to = "ndc"),
+  from_y = grconvertY(SE32_olrcoef[1], from = "user", to = "ndc")
+)
 
 # --- Plot 6: Interaction Effects ---
 par(mar = c(4, 4, 2, 2))
@@ -996,6 +1191,12 @@ plot(SE1.coef[1], 0, type = "n", main = "",
      yaxt = "n",  ylab = "")
 abline(v= 0, lty = 2)
 
+## quadratic
+#int_1 <- 
+
+## interactions
+int_1 <-  grconvertY(links[[1]]$from_y, from = "ndc", to = "user") # nino_lag25 -> aao_lag50 # base
+int_2 <-  grconvertY(links[[2]]$from_y, from = "ndc", to = "user") # nino_lag25 -> aao_lag50 # constant
 
 
 mtext("Coefficients", side = 2, outer = TRUE, padj = 0.5, cex = 1.25)
