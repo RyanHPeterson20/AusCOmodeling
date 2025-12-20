@@ -47,7 +47,7 @@ SE3.varycoef <- coef(SE.vary.LM$`2019-2020`[[3]])
 #new interaction figure
 #fig 2a - `peak` group
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "SEcoefs_peak_new.png", width = 3000, height = 4000, res = 300)
+png(filename = "SEcoefs_peak_new.png", width = 3200, height = 4000, res = 300)
 layout(matrix(c(1, 6,
                 2, 6,
                 3, 6,
@@ -194,10 +194,11 @@ links[[5]] <- list(
   from_x = grconvertX(SE23_etiolag[1], from = "user", to = "ndc"),
   from_y = grconvertY(SE23_etiocoef[1], from = "user", to = "ndc")
 )
+#TODO: jitter this line down a little
 ## etio_lag8:tsa_lag31
 ## vary
 links[[6]] <- list(
-  y_val = SE23_etiocoef[1],
+  y_val = SE23_etiocoef[1], #small shift down here.
   from_x = grconvertX(SE23_etiolag[1], from = "user", to = "ndc"),
   from_y = grconvertY(SE23_etiocoef[1], from = "user", to = "ndc")
 )
@@ -343,9 +344,10 @@ SE1.coef
 SE1.constcoef
 SE1.varycoef
 
+
 #fig SI
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "SEcoefs_early.png", width = 3000, height = 3500, res = 300)
+png(filename = "SEcoefs_early.png", width = 3600, height = 3600, res = 300)
 layout(matrix(c(1, 6,
                 2, 6,
                 3, 6,
@@ -650,7 +652,7 @@ title("OLR", adj = 0, cex.main = 1.5)
 par(mar = c(4, 4, 2, 2))
 
 plot(SE1.coef[1], 0, type = "n", main = "", 
-     ylim = c(0,1), xlim = SEAus1_range, cex = 2, cex.axis = 1.6,
+     ylim = c(0,1), xlim = c(-2, 2), cex = 2, cex.axis = 1.6,
      xlab = "Coefficients", cex.lab = 1.75,
      yaxt = "n",  ylab = "")
 abline(v= 0, lty = 2)
@@ -800,7 +802,7 @@ SE3.varycoef
 
 #fig SI
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "SEcoefs_late.png", width = 3000, height = 3500, res = 300)
+png(filename = "SEcoefs_late.png", width = 3600, height = 3600, res = 300)
 layout(matrix(c(1, 6,
                 2, 6,
                 3, 6,
@@ -1186,7 +1188,7 @@ links[[29]] <- list(
 par(mar = c(4, 4, 2, 2))
 
 plot(SE1.coef[1], 0, type = "n", main = "", 
-     ylim = c(0,1), xlim = SEAus1_range, cex = 2, cex.axis = 1.6,
+     ylim = c(0,1), xlim = SEAus3_range, cex = 2, cex.axis = 1.6,
      xlab = "Coefficients", cex.lab = 1.75,
      yaxt = "n",  ylab = "")
 abline(v= 0, lty = 2)
@@ -1327,39 +1329,57 @@ points(SE3.constcoef[14], int_pt14,  pch = 11, col = alpha("magenta4",.99),
 #link to x 
 links[[1]]$to_x <- grconvertX(SE3.coef[13], from = "user", to = "ndc")
 links[[2]]$to_x <- grconvertX(SE3.constcoef[13], from = "user", to = "ndc")
-links[[3]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
-links[[4]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
-links[[5]]$to_x <- grconvertX(SE3.varycoef[7], from = "user", to = "ndc")
-links[[6]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
-links[[7]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
-links[[8]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
-links[[9]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
-links[[10]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
-links[[11]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
-links[[12]]$to_x <- grconvertX(SE3.varycoef[7], from = "user", to = "ndc")
-links[[13]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
-links[[14]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
-links[[15]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
-links[[16]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
-links[[17]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
-links[[18]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
-links[[19]]$to_x <- grconvertX(SE3.varycoef[7], from = "user", to = "ndc")
-links[[20]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
-links[[21]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
-links[[22]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
-links[[23]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
-links[[24]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
-links[[25]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
-links[[26]]$to_x <- grconvertX(SE3.varycoef[7], from = "user", to = "ndc")
-links[[27]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
-links[[28]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
-links[[28]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
+links[[3]]$to_x <- grconvertX(SE3.varycoef[15], from = "user", to = "ndc")
+links[[4]]$to_x <- grconvertX(SE3.coef[11], from = "user", to = "ndc")
+links[[5]]$to_x <- grconvertX(SE3.constcoef[11], from = "user", to = "ndc")
+links[[6]]$to_x <- grconvertX(SE3.coef[12], from = "user", to = "ndc")
+links[[7]]$to_x <- grconvertX(SE3.constcoef[12], from = "user", to = "ndc")
+links[[8]]$to_x <- grconvertX(SE3.varycoef[13], from = "user", to = "ndc")
+links[[9]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
+links[[10]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
+links[[11]]$to_x <- grconvertX(SE3.coef[12], from = "user", to = "ndc")
+links[[12]]$to_x <- grconvertX(SE3.constcoef[12], from = "user", to = "ndc")
+links[[13]]$to_x <- grconvertX(SE3.coef[15], from = "user", to = "ndc")
+links[[14]]$to_x <- grconvertX(SE3.constcoef[15], from = "user", to = "ndc")
+links[[15]]$to_x <- grconvertX(SE3.varycoef[14], from = "user", to = "ndc")
+links[[16]]$to_x <- grconvertX(SE3.coef[14], from = "user", to = "ndc")
+links[[17]]$to_x <- grconvertX(SE3.constcoef[14], from = "user", to = "ndc")
+links[[18]]$to_x <- grconvertX(SE3.coef[11], from = "user", to = "ndc")
+links[[19]]$to_x <- grconvertX(SE3.constcoef[11], from = "user", to = "ndc")
+links[[20]]$to_x <- grconvertX(SE3.coef[13], from = "user", to = "ndc")
+links[[21]]$to_x <- grconvertX(SE3.constcoef[13], from = "user", to = "ndc")
+links[[22]]$to_x <- grconvertX(SE3.coef[14], from = "user", to = "ndc")
+links[[23]]$to_x <- grconvertX(SE3.constcoef[14], from = "user", to = "ndc")
+links[[24]]$to_x <- grconvertX(SE3.varycoef[14], from = "user", to = "ndc")
+links[[25]]$to_x <- grconvertX(SE3.varycoef[15], from = "user", to = "ndc")
+links[[26]]$to_x <- grconvertX(SE3.coef[14], from = "user", to = "ndc")
+links[[27]]$to_x <- grconvertX(SE3.constcoef[14], from = "user", to = "ndc")
+links[[28]]$to_x <- grconvertX(SE3.coef[15], from = "user", to = "ndc")
+links[[29]]$to_x <- grconvertX(SE3.constcoef[15], from = "user", to = "ndc")
 
 
 for (i in 1:length(links)) {
   links[[i]]$to_y <- links[[i]]$from_y  # same y to keep it horizontal
 }
 
+
+# --- Draw horizontal linking lines ---
+par(xpd = NA)  # allow drawing outside plot regions
+colors <- c("forestgreen", "magenta4", "darkorange2", 
+            rep( c("forestgreen", "magenta4"), 2), "darkorange2",
+            rep( c("forestgreen", "magenta4"), 3), "darkorange2",
+            rep( c("forestgreen", "magenta4"), 4), "darkorange2", "darkorange2",
+            rep( c("forestgreen", "magenta4"), 2))
+linetypes <- rep(2, 29)
+
+
+for (i in 1:length(links)) {
+  grid.lines(
+    x = unit(c(links[[i]]$from_x, links[[i]]$to_x), "npc"),
+    y = unit(c(links[[i]]$from_y, links[[i]]$to_y), "npc"),
+    gp = gpar(col = colors[i], lwd = 1.75, lty = linetypes[i])
+  )
+}
 
 mtext("Coefficients", side = 2, outer = TRUE, padj = 0.5, cex = 1.25)
 
