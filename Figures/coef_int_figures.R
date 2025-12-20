@@ -1192,11 +1192,173 @@ plot(SE1.coef[1], 0, type = "n", main = "",
 abline(v= 0, lty = 2)
 
 ## quadratic
-#int_1 <- 
+int_8 <- grconvertY(links[[8]]$from_y, from = "ndc", to = "user") # I(etio_lag16^2) # varying  SE3.varycoef[13]
 
 ## interactions
-int_1 <-  grconvertY(links[[1]]$from_y, from = "ndc", to = "user") # nino_lag25 -> aao_lag50 # base
-int_2 <-  grconvertY(links[[2]]$from_y, from = "ndc", to = "user") # nino_lag25 -> aao_lag50 # constant
+int_1 <- grconvertY(links[[1]]$from_y, from = "ndc", to = "user") # nino_lag25 -> aao_lag50 # base  SE3.coef[13]
+int_2 <- grconvertY(links[[2]]$from_y, from = "ndc", to = "user") # nino_lag25 -> aao_lag50 # constant  SE3.constcoef[13]
+int_3 <- grconvertY(links[[3]]$from_y, from = "ndc", to = "user") # wtio_lag38 -> aao_lag37 # varying  SE3.varycoef[15]
+int_4 <- grconvertY(links[[4]]$from_y, from = "ndc", to = "user") # etio_lag16 -> aao_lag1 # base  SE3.coef[11]
+int_5 <- grconvertY(links[[5]]$from_y, from = "ndc", to = "user") # etio_lag16 -> aao_lag1 # constant  SE3.constcoef[11]
+int_6 <- grconvertY(links[[6]]$from_y, from = "ndc", to = "user") # etio_lag33 -> tsa_lag22 # base  SE3.coef[12]
+int_7 <- grconvertY(links[[7]]$from_y, from = "ndc", to = "user") # etio_lag33 -> tsa_lag22 # constant  SE3.constcoef[12]
+
+int_9 <- grconvertY(links[[9]]$from_y, from = "ndc", to = "user") # tsa_lag22 -> aao_lag1 # base   SE3.coef[10]
+int_10 <- grconvertY(links[[10]]$from_y, from = "ndc", to = "user") # tsa_lag22 -> aao_lag1 # constant  SE3.constcoef[10]
+int_11 <- grconvertY(links[[11]]$from_y, from = "ndc", to = "user") # tsa_lag22 -> etio_lag33 # base  SE3.coef[12]
+int_12 <- grconvertY(links[[12]]$from_y, from = "ndc", to = "user") # tsa_lag22 -> etio_lag33 # constant  SE3.constcoef[12]
+int_13 <- grconvertY(links[[13]]$from_y, from = "ndc", to = "user") # tsa_lag22 -> olr_lag6 # base  SE3.coef[15]
+int_14 <- grconvertY(links[[14]]$from_y, from = "ndc", to = "user") # tsa_lag22 -> olr_lag6 # constant   SE3.constcoef[15]
+int_15 <- grconvertY(links[[15]]$from_y, from = "ndc", to = "user") # tsa_lag22 -> aao_lag37 # varying  SE3.varycoef[14]
+int_16 <- grconvertY(links[[16]]$from_y, from = "ndc", to = "user") # aao_lag1 -> tsa_lag22 # base  SE3.coef[10]
+int_17 <- grconvertY(links[[17]]$from_y, from = "ndc", to = "user") # aao_lag1 -> tsa_lag22 # constant  SE3.constcoef[10]
+int_18 <- grconvertY(links[[18]]$from_y, from = "ndc", to = "user") # aao_lag1 -> etio_lag16 # base  SE3.coef[11]
+int_19 <- grconvertY(links[[19]]$from_y, from = "ndc", to = "user") # aao_lag1 -> etio_lag16 # constant  SE3.constcoef[11]
+int_20 <- grconvertY(links[[20]]$from_y, from = "ndc", to = "user") # aao_lag50 -> nino_lag25 # base  SE3.coef[13]
+int_21 <- grconvertY(links[[21]]$from_y, from = "ndc", to = "user") # aao_lag50 -> nino_lag25 # constant  SE3.constcoef[13]
+int_22 <- grconvertY(links[[22]]$from_y, from = "ndc", to = "user") # aao_lag50 -> olr_lag6 # base  SE3.coef[14]
+int_23 <- grconvertY(links[[23]]$from_y, from = "ndc", to = "user") # aao_lag50 -> olr_lag6 # constant   SE3.constcoef[14]
+int_24 <- grconvertY(links[[24]]$from_y, from = "ndc", to = "user") # aao_lag37 -> tsa_lag22 # varying  SE3.varycoef[14]
+int_25 <- grconvertY(links[[25]]$from_y, from = "ndc", to = "user") # aao_lag37 -> wtio_lag38 # varying  SE3.varycoef[15]
+int_26 <- grconvertY(links[[26]]$from_y, from = "ndc", to = "user") # olr_lag6 -> aao_lag50 # base   SE3.coef[14]
+int_27 <- grconvertY(links[[27]]$from_y, from = "ndc", to = "user") # olr_lag6 -> aao_lag50 # constant  SE3.constcoef[14]
+int_28 <- grconvertY(links[[28]]$from_y, from = "ndc", to = "user") # olr_lag6 -> tsa_lag22 # base  SE3.coef[15]
+int_29 <- grconvertY(links[[29]]$from_y, from = "ndc", to = "user") # olr_lag6 -> tsa_lag22 # constant  SE3.constcoef[15]
+
+## segments
+# nino_lag25 : aao_lag50
+# base
+int_pt1 <- (int_1 + int_20)/2
+segments(SE3.coef[13], int_1, SE3.coef[13], int_pt1, col = "forestgreen", lty = 2, lwd = 2)
+segments(SE3.coef[13], int_20, SE3.coef[13], int_pt1, col = "forestgreen", lty = 2, lwd = 2)
+# constant
+int_pt2 <- (int_2 + int_21)/2
+segments(SE3.constcoef[13], int_2, SE3.constcoef[13], int_pt2, col = "magenta4", lty = 2, lwd = 2)
+segments(SE3.constcoef[13], int_21, SE3.constcoef[13], int_pt2, col = "magenta4", lty = 2, lwd = 2)
+# wtio_lag38 : aao_lag37 
+# varying
+int_pt3 <- (int_3 + int_25)/2
+segments(SE3.varycoef[15], int_3, SE3.varycoef[15], int_pt3, col = "darkorange2", lty = 2, lwd = 2)
+segments(SE3.varycoef[15], int_25, SE3.varycoef[15], int_pt3, col = "darkorange2", lty = 2, lwd = 2)
+# etio_lag16 : aao_lag1
+# base
+int_pt4 <- (int_4 + int_18)/2
+segments(SE3.coef[11], int_4, SE3.coef[11], int_pt4, col = "forestgreen", lty = 2, lwd = 2)
+segments(SE3.coef[11], int_18, SE3.coef[11], int_pt4, col = "forestgreen", lty = 2, lwd = 2)
+# constant
+int_pt5 <- (int_5 + int_19)/2
+segments(SE3.constcoef[11], int_5, SE3.constcoef[11], int_pt5, col = "magenta4", lty = 2, lwd = 2)
+segments(SE3.constcoef[11], int_19, SE3.constcoef[11], int_pt5, col = "magenta4", lty = 2, lwd = 2)
+# etio_lag33 : tsa_lag22 
+# base
+int_pt6 <- (int_6 + int_11)/2
+segments(SE3.coef[12], int_6, SE3.coef[12], int_pt6, col = "forestgreen", lty = 2, lwd = 2)
+segments(SE3.coef[12], int_11, SE3.coef[12], int_pt6, col = "forestgreen", lty = 2, lwd = 2)
+# constant
+int_pt7 <- (int_7 + int_12)/2
+segments(SE3.constcoef[12], int_7, SE3.constcoef[12], int_pt7, col = "magenta4", lty = 2, lwd = 2)
+segments(SE3.constcoef[12], int_12, SE3.constcoef[12], int_pt7, col = "magenta4", lty = 2, lwd = 2)
+# tsa_lag22 : aao_lag1
+# base
+int_pt8 <- (int_9 + int_16)/2
+segments(SE3.coef[10], int_9, SE3.coef[10], int_pt8, col = "forestgreen", lty = 2, lwd = 2)
+segments(SE3.coef[10], int_16, SE3.coef[10], int_pt8, col = "forestgreen", lty = 2, lwd = 2)
+# constant
+int_pt9 <- (int_10 + int_17)/2
+segments(SE3.constcoef[10], int_10, SE3.constcoef[10], int_pt9, col = "magenta4", lty = 2, lwd = 2)
+segments(SE3.constcoef[10], int_17, SE3.constcoef[10], int_pt9, col = "magenta4", lty = 2, lwd = 2)
+# tsa_lag22 : olr_lag6 
+# base
+int_pt10 <- (int_13 + int_28)/2
+segments(SE3.coef[15], int_13, SE3.coef[15], int_pt10, col = "forestgreen", lty = 2, lwd = 2)
+segments(SE3.coef[15], int_28, SE3.coef[15], int_pt10, col = "forestgreen", lty = 2, lwd = 2)
+# constant
+int_pt11 <- (int_14 + int_29)/2
+segments(SE3.constcoef[15], int_13, SE3.constcoef[15], int_pt11, col = "magenta4", lty = 2, lwd = 2)
+segments(SE3.constcoef[15], int_29, SE3.constcoef[15], int_pt11, col = "magenta4", lty = 2, lwd = 2)
+# tsa_lag22 : aao_lag37 
+# varying
+int_pt12 <- (int_15 + int_24)/2
+segments(SE3.varycoef[14], int_15, SE3.varycoef[14], int_pt12, col = "darkorange2", lty = 2, lwd = 2)
+segments(SE3.varycoef[14], int_24, SE3.varycoef[14], int_pt12, col = "darkorange2", lty = 2, lwd = 2)
+# aao_lag50 : olr_lag6 
+# base
+int_pt13 <- (int_22 + int_26)/2
+segments(SE3.coef[14], int_22, SE3.coef[14], int_pt13, col = "forestgreen", lty = 2, lwd = 2)
+segments(SE3.coef[14], int_26, SE3.coef[14], int_pt13, col = "forestgreen", lty = 2, lwd = 2)
+# constant
+int_pt14 <- (int_23 + int_27)/2
+segments(SE3.constcoef[14], int_23, SE3.constcoef[14], int_pt14, col = "magenta4", lty = 2, lwd = 2)
+segments(SE3.constcoef[14], int_27, SE3.constcoef[14], int_pt14, col = "magenta4", lty = 2, lwd = 2)
+
+# quad points
+points(SE3.varycoef[13], int_8,  pch = 25, col = "grey4",
+       bg = alpha("darkorange2",.65), cex = 2) 
+# interaction points
+points(SE3.coef[13], int_pt1,  pch = 11, col = alpha("forestgreen",.99),
+       bg = alpha("forestgreen",.95), cex = 1.9) 
+points(SE3.constcoef[13], int_pt2,  pch = 11, col = alpha("magenta4",.99),
+       bg = alpha("magenta4",.95), cex = 1.9) 
+points(SE3.varycoef[15], int_pt3,  pch = 11, col = alpha("darkorange2",.99),
+       bg = alpha("darkorange2",.95), cex = 1.9) 
+points(SE3.coef[11], int_pt4,  pch = 11, col = alpha("forestgreen",.99),
+       bg = alpha("forestgreen",.95), cex = 1.9) 
+points(SE3.constcoef[11], int_pt5,  pch = 11, col = alpha("magenta4",.99),
+       bg = alpha("magenta4",.95), cex = 1.9) 
+points(SE3.coef[12], int_pt6,  pch = 11, col = alpha("forestgreen",.99),
+       bg = alpha("forestgreen",.95), cex = 1.9) 
+points(SE3.constcoef[12], int_pt7,  pch = 11, col = alpha("magenta4",.99),
+       bg = alpha("magenta4",.95), cex = 1.9) 
+points(SE3.coef[10], int_pt8,  pch = 11, col = alpha("forestgreen",.99),
+       bg = alpha("forestgreen",.95), cex = 1.9) 
+points(SE3.constcoef[10], int_pt9,  pch = 11, col = alpha("magenta4",.99),
+       bg = alpha("magenta4",.95), cex = 1.9) 
+points(SE3.coef[15], int_pt10,  pch = 11, col = alpha("forestgreen",.99),
+       bg = alpha("forestgreen",.95), cex = 1.9) 
+points(SE3.constcoef[15], int_pt11,  pch = 11, col = alpha("magenta4",.99),
+       bg = alpha("magenta4",.95), cex = 1.9) 
+points(SE3.varycoef[14], int_pt12,  pch = 11, col = alpha("darkorange2",.99),
+       bg = alpha("darkorange2",.95), cex = 1.9) 
+points(SE3.coef[14], int_pt13,  pch = 11, col = alpha("forestgreen",.99),
+       bg = alpha("forestgreen",.95), cex = 1.9) 
+points(SE3.constcoef[14], int_pt14,  pch = 11, col = alpha("magenta4",.99),
+       bg = alpha("magenta4",.95), cex = 1.9) 
+
+#link to x 
+links[[1]]$to_x <- grconvertX(SE3.coef[13], from = "user", to = "ndc")
+links[[2]]$to_x <- grconvertX(SE3.constcoef[13], from = "user", to = "ndc")
+links[[3]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
+links[[4]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
+links[[5]]$to_x <- grconvertX(SE3.varycoef[7], from = "user", to = "ndc")
+links[[6]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
+links[[7]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
+links[[8]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
+links[[9]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
+links[[10]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
+links[[11]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
+links[[12]]$to_x <- grconvertX(SE3.varycoef[7], from = "user", to = "ndc")
+links[[13]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
+links[[14]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
+links[[15]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
+links[[16]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
+links[[17]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
+links[[18]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
+links[[19]]$to_x <- grconvertX(SE3.varycoef[7], from = "user", to = "ndc")
+links[[20]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
+links[[21]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
+links[[22]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
+links[[23]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
+links[[24]]$to_x <- grconvertX(SE3.coef[10], from = "user", to = "ndc")
+links[[25]]$to_x <- grconvertX(SE3.constcoef[10], from = "user", to = "ndc")
+links[[26]]$to_x <- grconvertX(SE3.varycoef[7], from = "user", to = "ndc")
+links[[27]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
+links[[28]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
+links[[28]]$to_x <- grconvertX(SE3.varycoef[8], from = "user", to = "ndc")
+
+
+for (i in 1:length(links)) {
+  links[[i]]$to_y <- links[[i]]$from_y  # same y to keep it horizontal
+}
 
 
 mtext("Coefficients", side = 2, outer = TRUE, padj = 0.5, cex = 1.25)
