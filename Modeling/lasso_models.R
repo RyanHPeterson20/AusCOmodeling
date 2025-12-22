@@ -503,6 +503,61 @@ pred.vary.early <- predict(SE.vary.LM$`2019-2020`[[1]],  X1.valid, se.fit = TRUE
 pred.vary.mid <- predict(SE.vary.LM$`2019-2020`[[2]],  X2.valid, se.fit = TRUE, interval = "prediction")
 pred.vary.late <- predict(SE.vary.LM$`2019-2020`[[3]],  X3.valid, se.fit = TRUE, interval = "prediction")
 
+
+#TODO: move this elsewhere
+#Get RMSE here: 
+early.mat <- matrix(NA, ncol = 4)
+mid.mat <- matrix(NA, ncol = 4)
+late.mat <- matrix(NA, ncol = 4)
+
+for (i in 1:length(seasons)) {
+
+  true.early <- SE.resp.valid[[i]]$early
+  true.mid <- SE.resp.valid[[i]]$mid
+  true.late <- SE.resp.valid[[i]]$late
+    
+  predicted.base.early <- predict(SEmodels[[1]], SE.pred.valid[[i]]$early)
+  predicted.base.mid <- predict(SEmodels[[2]], SE.pred.valid[[i]]$mid)
+  predicted.base.late <- predict(SEmodels[[3]], SE.pred.valid[[i]]$late)  
+  
+  predicted.const.early <- predict(SE.const.LM[[i]][[1]], SE.pred.valid[[i]]$early)
+  predicted.const.mid <- predict(SE.const.LM[[i]][[2]], SE.pred.valid[[i]]$mid)
+  predicted.const.late <- predict(SE.const.LM[[i]][[3]], SE.pred.valid[[i]]$late)
+  
+  predicted.vary.early <- predict(SE.vary.LM[[i]][[1]], SE.pred.valid[[i]]$early)
+  predicted.vary.mid <- predict(SE.vary.LM[[i]][[2]], SE.pred.valid[[i]]$mid)
+  predicted.vary.late <- predict(SE.vary.LM[[i]][[3]], SE.pred.valid[[i]]$late)
+  
+  early.mat <- rbind(early.mat, cbind(true.early, predicted.base.early, predicted.const.early, predicted.vary.early))
+  mid.mat <- rbind(mid.mat, cbind(true.mid, predicted.base.mid, predicted.const.mid, predicted.vary.mid))
+  late.mat <- rbind(late.mat, cbind(true.late, predicted.base.late, predicted.const.late, predicted.vary.late))
+}
+
+early.df <- as.data.frame(early.mat[-1, ])
+mid.df <- as.data.frame(mid.mat[-1,])
+late.df <- as.data.frame(late.mat[-1,])
+
+early.base.rmse <- rmse(early.df$true.early, early.df$predicted.base.early)
+early.const.rmse <- rmse(early.df$true.early, early.df$predicted.const.early)
+early.vary.rmse <- rmse(early.df$true.early, early.df$predicted.vary.early)
+
+mid.base.rmse <- rmse(mid.df$true.mid, mid.df$predicted.base.mid)
+mid.const.rmse <- rmse(mid.df$true.mid, mid.df$predicted.const.mid)
+mid.vary.rmse <- rmse(mid.df$true.mid, mid.df$predicted.vary.mid)
+
+late.base.rmse <- rmse(late.df$true.late, late.df$predicted.base.late)
+late.const.rmse <- rmse(late.df$true.late, late.df$predicted.const.late)
+late.vary.rmse <- rmse(late.df$true.late, late.df$predicted.vary.late)
+
+#output setup
+rmse.early <- list(early.base.rmse, early.const.rmse, early.vary.rmse)
+rmse.mid <- list(mid.base.rmse, mid.const.rmse, mid.vary.rmse)
+rmse.late <- list(late.base.rmse, late.const.rmse, late.vary.rmse)
+
+#temp model validation
+setwd("~/CO_AUS/AusCOmodeling/Data") 
+save(rmse.early, rmse.mid,rmse.late, file = "rmse.rda")
+
 #temp output, update LOYO loop for all years
 preds.2019.base <- list(pred.base.early, pred.base.mid, pred.base.late)
 preds.2019.const <- list(pred.const.early, pred.const.mid, pred.const.late )

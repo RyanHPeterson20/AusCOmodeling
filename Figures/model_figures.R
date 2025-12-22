@@ -19,6 +19,8 @@ load("Data/base_RAMPmodels.rda") #"base" model
 load("Data/loyo_models.rda") #leave one year out models/refits
 load("Data/preds_2019.rda") #2019 predictions 
 
+load("Data/rmse.rda") #RMSE 
+
 #setup
 #season years/weeks
 season.weeks <- c(38:52, 1:14)
@@ -115,21 +117,24 @@ all.range <- range(base.range, const.range, vary.range)
 
 
 
+#updated RMSE for SE Aus:
+
+
 
 
 #fig 2b
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-png(filename = "SEpreds_2019_fig2b.png", width = 3000, height = 3000, res = 300)
+png(filename = "SEpreds_2019_fig2b_new.png", width = 3000, height = 3500, res = 300)
 
-par(mfrow = c(3, 1), oma = c(3, 3.5, 1, 1), mar = c(3, 2, 1, 1))
+par(mfrow = c(3, 1), oma = c(3, 3.5, 2, 1), mar = c(3, 2, 2, 1))
 #update prediction figure (full model)
-plot(1:29, pred.base.fit, type = "l", ylim = all.range, axes = FALSE, 
+plot(1:29, pred.base.fit, type = "l", ylim = c(-50,50), axes = FALSE, 
      lwd = 3, lty = 2, col = "forestgreen",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
-axis(2, at = c(-15, 0, 25, 50),  cex.axis = 1.45)
+axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.45)
 #upper bound
 envelopePlot(x1 = 1:29,
              y1 = pred.base.upr,
@@ -147,12 +152,12 @@ envelopePlot(x1 = 1:29,
              lineCol = NA)
 #lines(1:29, pred.base.lwr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
 lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
-abline(h=0, lty =3, col = "gray24", cex = 1)
-abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
+abline(h=0, lty =3, col = "gray15", lwd = 2)
+abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
 legend("topright", 
        legend = c("Observed",
-                  "Full Model Predictions",
-                  "95% Prediction Interval"),
+                  "Model Predictions",
+                  "95% Pred. Interval"),
        lty = c(1, 2, 1), 
        lwd = c(1.75, 1.75, 10 ),
        cex = 1.75,
@@ -160,16 +165,18 @@ legend("topright",
                "forestgreen",
                alpha("springgreen3", 0.3)),
        xpd = TRUE)
-
-text(x= 2.75, y = 47, labels = "Full Model", col = "gray5", cex = 1.65)
+title("Full model", adj = 0, cex.main = 1.65)
+text(x= 3, y = -46, labels = "RMSE: 5.95", col = "gray35", cex = 1.5)
+text(x=15.5, y = -46, labels = "RMSE: 3.85", col = "gray35", cex = 1.5)
+text(x=20, y = -46, labels = "RMSE: 2.74", col = "gray35", cex = 1.5)
 
 #update prediction figure (fixed model)
-plot(1:29, pred.const.fit, type = "l", ylim = all.range, axes = FALSE, 
+plot(1:29, pred.const.fit, type = "l", ylim = c(-50,50), axes = FALSE, 
      lwd = 3, lty = 2, col = "magenta3",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
-axis(2, at = c(-15, 0, 25, 50),  cex.axis = 1.45)
+axis(2, at = c(-50, -25,  0, 25, 50),  cex.axis = 1.45)
 #upper bound
 envelopePlot(x1 = 1:29,
              y1 = pred.const.upr,
@@ -187,12 +194,12 @@ envelopePlot(x1 = 1:29,
              lineCol = NA)
 #lines(1:29, pred.const.lwr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
 lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
-abline(h=0, lty =3, col = "gray24", cex = 1)
-abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
+abline(h=0, lty =3, col = "gray15", lwd = 2)
+abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
 legend("topright", 
        legend = c("Observed",
-                  "Fixed Model Predictions",
-                  "95% Prediction Interval"),
+                  "Model Predictions",
+                  "95% Pred. Interval"),
        lty = c(1, 2, 1), 
        lwd = c(1.75, 1.75, 10 ),
        cex = 1.75,
@@ -200,16 +207,20 @@ legend("topright",
                "magenta3",
                alpha("orchid3", 0.3)),
        xpd = TRUE)
-text(x= 3, y = 47, labels = "Fixed Model", col = "gray5", cex = 1.65)
+title("Fixed Model", adj = 0, cex.main = 1.65)
 
+
+text(x= 3, y = -46, labels = "RMSE: 6.98", col = "gray35", cex = 1.5)
+text(x=15.5, y = -46, labels = "RMSE: 6.82", col = "gray35", cex = 1.5)
+text(x=20, y = -46, labels = "RMSE: 3.08", col = "gray35", cex = 1.5)
 
 #update prediction figure (non-fixed model)
-plot(1:29, pred.vary.fit, type = "l", ylim = all.range, axes = FALSE, 
+plot(1:29, pred.vary.fit, type = "l", ylim = c(-50,50), axes = FALSE, 
      lwd = 3, lty = 2, col = "darkorange2",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
-axis(2, at = c(-15, 0, 25, 50),  cex.axis = 1.45)
+axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.45)
 #upper bound
 envelopePlot(x1 = 1:29,
              y1 = pred.vary.upr,
@@ -227,12 +238,12 @@ envelopePlot(x1 = 1:29,
              lineCol = NA)
 #lines(1:29, pred.vary.lwr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
 lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
-abline(h=0, lty =3, col = "gray24", cex = 1)
-abline(v = c(13.5, 17.5), lty = 3, col = "gray24", cex = 1)
+abline(h=0, lty =3, col = "gray15", lwd = 2)
+abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
 legend("topright", 
        legend = c("Observed",
-                  "Non-Fixed  Model Predictions",
-                  "95% Prediction Interval"),
+                  "Model Predictions",
+                  "95% Pred. Interval"),
        lty = c(1, 2, 1), 
        lwd = c(1.75, 1.75, 10 ),
        cex = 1.75,
@@ -240,7 +251,11 @@ legend("topright",
                "darkorange2",
                alpha("orange2", 0.3)),
        xpd = TRUE)
-text(x= 3.75, y = 47, labels = "Non-Fixed Model", col = "gray5", cex = 1.65)
+title("Non-fixed Model", adj = 0, cex.main = 1.65)
+
+text(x= 3, y = -46, labels = "RMSE: 9.61", col = "gray35", cex = 1.5)
+text(x=15.5, y = -46, labels = "RMSE: 8.15", col = "gray35", cex = 1.5)
+text(x=20, y = -46, labels = "RMSE: 4.68", col = "gray35", cex = 1.5)
 
 mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25, line = 2)
 mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
