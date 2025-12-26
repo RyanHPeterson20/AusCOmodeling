@@ -115,6 +115,47 @@ const.range <- range(SE.2019.true, pred.const.fit, pred.const.lwr, pred.const.up
 vary.range <- range(SE.2019.true, pred.vary.fit, pred.vary.lwr, pred.vary.upr)
 all.range <- range(base.range, const.range, vary.range)
 
+#updated predictions for  
+#TODO: get points in between groups
+#base group preds
+base.upr.early <- c(pred.base.upr[1:13], mean(pred.base.upr[13:14]))
+base.upr.mid <- c(mean(pred.base.upr[13:14]), pred.base.upr[14:17], mean(pred.base.upr[17:18]))
+base.upr.late <- c(mean(pred.base.upr[17:18]),  pred.base.upr[18:29])
+
+base.fit.early <- c(pred.base.fit[1:13], mean(pred.base.fit[13:14]))
+base.fit.mid <- c(mean(pred.base.fit[13:14]), pred.base.fit[14:17], mean(pred.base.fit[17:18]))
+base.fit.late <- c(mean(pred.base.fit[17:18]),  pred.base.fit[18:29])
+
+base.lwr.early <- c(pred.base.lwr[1:13], mean(pred.base.lwr[13:14]))
+base.lwr.mid <- c(mean(pred.base.lwr[13:14]), pred.base.lwr[14:17], mean(pred.base.lwr[17:18]))
+base.lwr.late <- c(mean(pred.base.lwr[17:18]),  pred.base.lwr[18:29])
+
+#constant group preds
+const.upr.early <- c(pred.const.upr[1:13], mean(pred.const.upr[13:14]))
+const.upr.mid <- c(mean(pred.const.upr[13:14]), pred.const.upr[14:17], mean(pred.const.upr[17:18]))
+const.upr.late <- c(mean(pred.const.upr[17:18]),  pred.const.upr[18:29])
+
+const.fit.early <- c(pred.const.fit[1:13], mean(pred.const.fit[13:14]))
+const.fit.mid <- c(mean(pred.const.fit[13:14]), pred.const.fit[14:17], mean(pred.const.fit[17:18]))
+const.fit.late <- c(mean(pred.const.fit[17:18]),  pred.const.fit[18:29])
+
+const.lwr.early <- c(pred.const.lwr[1:13], mean(pred.const.lwr[13:14]))
+const.lwr.mid <- c(mean(pred.const.lwr[13:14]), pred.const.lwr[14:17], mean(pred.const.lwr[17:18]))
+const.lwr.late <- c(mean(pred.const.lwr[17:18]),  pred.const.lwr[18:29])
+
+#varying group preds
+vary.upr.early <- c(pred.vary.upr[1:13], mean(pred.vary.upr[13:14]))
+vary.upr.mid <- c(mean(pred.vary.upr[13:14]), pred.vary.upr[14:17], mean(pred.vary.upr[17:18]))
+vary.upr.late <- c(mean(pred.vary.upr[17:18]),  pred.vary.upr[18:29])
+
+vary.fit.early <- c(pred.vary.fit[1:13], mean(pred.vary.fit[13:14]))
+vary.fit.mid <- c(mean(pred.vary.fit[13:14]), pred.vary.fit[14:17], mean(pred.vary.fit[17:18]))
+vary.fit.late <- c(mean(pred.vary.fit[17:18]),  pred.vary.fit[18:29])
+
+vary.lwr.early <- c(pred.vary.lwr[1:13], mean(pred.vary.lwr[13:14]))
+vary.lwr.mid <- c(mean(pred.vary.lwr[13:14]), pred.vary.lwr[14:17], mean(pred.vary.lwr[17:18]))
+vary.lwr.late <- c(mean(pred.vary.lwr[17:18]),  pred.vary.lwr[18:29])
+
 
 
 #updated RMSE for SE Aus:
@@ -129,6 +170,8 @@ png(filename = "SEpreds_2019_fig2b_new.png", width = 3000, height = 3500, res = 
 
 par(mfrow = c(3, 1), oma = c(3, 3.5, 2, 1), mar = c(3, 2, 2, 1))
 #update prediction figure (full model)
+
+
 plot(1:29, pred.base.fit, type = "l", ylim = c(-50,50), axes = FALSE, 
      lwd = 3, lty = 2, col = "forestgreen",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
@@ -136,18 +179,43 @@ box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
 axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.45)
 #upper bound
-envelopePlot(x1 = 1:29,
-             y1 = pred.base.upr,
-             x2 = 1:29,
-             y2 = pred.base.fit,
+envelopePlot(x1 = c(1:13, 13.5),
+             y1 = base.upr.early,
+             x2 = c(1:13, 13.5),
+             y2 = base.fit.early,
+             col = alpha("springgreen3", 0.2),
+             lineCol = NA)
+#TODO: add in different color for peak group
+envelopePlot(x1 = c(13.5, 14:17, 17.5),
+             y1 = base.upr.mid,
+             x2 = c(13.5, 14:17, 17.5),
+             y2 = base.fit.mid,
+             col = alpha("springgreen4", 0.33),
+             lineCol = NA)
+envelopePlot(x1 = c(17.5, 18:29),
+             y1 = base.upr.late,
+             x2 = c(17.5, 18:29),
+             y2 = base.fit.late,
              col = alpha("springgreen3", 0.2),
              lineCol = NA)
 #lines(1:29, pred.base.upr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
 #lower bound
-envelopePlot(x1 = 1:29,
-             y1 = pred.base.lwr,
-             x2 = 1:29,
-             y2 = pred.base.fit,
+envelopePlot(x1 = c(1:13, 13.5),
+             y1 = base.lwr.early,
+             x2 = c(1:13, 13.5),
+             y2 = base.fit.early,
+             col = alpha("springgreen3", 0.2),
+             lineCol = NA)
+envelopePlot(x1 = c(13.5, 14:17, 17.5),
+             y1 = base.lwr.mid,
+             x2 = c(13.5, 14:17, 17.5),
+             y2 = base.fit.mid,
+             col = alpha("springgreen4", 0.33),
+             lineCol = NA)
+envelopePlot(x1 = c(17.5, 18:29),
+             y1 = base.lwr.late,
+             x2 = c(17.5, 18:29),
+             y2 = base.fit.late,
              col = alpha("springgreen3", 0.2),
              lineCol = NA)
 #lines(1:29, pred.base.lwr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
