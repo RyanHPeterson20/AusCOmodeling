@@ -115,8 +115,8 @@ const.range <- range(SE.2019.true, pred.const.fit, pred.const.lwr, pred.const.up
 vary.range <- range(SE.2019.true, pred.vary.fit, pred.vary.lwr, pred.vary.upr)
 all.range <- range(base.range, const.range, vary.range)
 
-#updated predictions for  
-#TODO: get points in between groups
+
+#updated predictions for variations and groups
 #base group preds
 base.upr.early <- c(pred.base.upr[1:13], mean(pred.base.upr[13:14]))
 base.upr.mid <- c(mean(pred.base.upr[13:14]), pred.base.upr[14:17], mean(pred.base.upr[17:18]))
@@ -162,15 +162,13 @@ vary.lwr.late <- c(mean(pred.vary.lwr[17:18]),  pred.vary.lwr[18:29])
 
 
 
-
 #fig 2b
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-png(filename = "SEpreds_2019_fig2b_new.png", width = 3000, height = 3500, res = 300)
+png(filename = "SEpreds_2019_fig2b_newest.png", width = 3000, height = 3500, res = 300)
 
 par(mfrow = c(3, 1), oma = c(3, 3.5, 2, 1), mar = c(3, 2, 2, 1))
 #update prediction figure (full model)
-
 
 plot(1:29, pred.base.fit, type = "l", ylim = c(-50,50), axes = FALSE, 
      lwd = 3, lty = 2, col = "forestgreen",
@@ -185,7 +183,7 @@ envelopePlot(x1 = c(1:13, 13.5),
              y2 = base.fit.early,
              col = alpha("springgreen3", 0.2),
              lineCol = NA)
-#TODO: add in different color for peak group
+#different color for peak group
 envelopePlot(x1 = c(13.5, 14:17, 17.5),
              y1 = base.upr.mid,
              x2 = c(13.5, 14:17, 17.5),
@@ -237,6 +235,8 @@ title("Full model", adj = 0, cex.main = 1.65)
 text(x= 3, y = -46, labels = "RMSE: 5.95", col = "gray35", cex = 1.5)
 text(x=15.5, y = -46, labels = "RMSE: 3.85", col = "gray35", cex = 1.5)
 text(x=20, y = -46, labels = "RMSE: 2.74", col = "gray35", cex = 1.5)
+text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.65)
+
 
 #update prediction figure (fixed model)
 plot(1:29, pred.const.fit, type = "l", ylim = c(-50,50), axes = FALSE, 
@@ -246,18 +246,43 @@ box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
 axis(2, at = c(-50, -25,  0, 25, 50),  cex.axis = 1.45)
 #upper bound
-envelopePlot(x1 = 1:29,
-             y1 = pred.const.upr,
-             x2 = 1:29,
-             y2 = pred.const.fit,
+envelopePlot(x1 = c(1:13, 13.5),
+             y1 = const.upr.early,
+             x2 = c(1:13, 13.5),
+             y2 = const.fit.early,
+             col = alpha("orchid3", 0.2),
+             lineCol = NA)
+#different color for peak group
+envelopePlot(x1 = c(13.5, 14:17, 17.5),
+             y1 = const.upr.mid,
+             x2 = c(13.5, 14:17, 17.5),
+             y2 = const.fit.mid,
+             col = alpha("orchid4", 0.33),
+             lineCol = NA)
+envelopePlot(x1 = c(17.5, 18:29),
+             y1 = const.upr.late,
+             x2 = c(17.5, 18:29),
+             y2 = const.fit.late,
              col = alpha("orchid3", 0.2),
              lineCol = NA)
 #lines(1:29, pred.const.upr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
 #lower bound
-envelopePlot(x1 = 1:29,
-             y1 = pred.const.lwr,
-             x2 = 1:29,
-             y2 = pred.const.fit,
+envelopePlot(x1 = c(1:13, 13.5),
+             y1 = const.lwr.early,
+             x2 = c(1:13, 13.5),
+             y2 = const.fit.early,
+             col = alpha("orchid3", 0.2),
+             lineCol = NA)
+envelopePlot(x1 = c(13.5, 14:17, 17.5),
+             y1 = const.lwr.mid,
+             x2 = c(13.5, 14:17, 17.5),
+             y2 = const.fit.mid,
+             col = alpha("orchid4", 0.33),
+             lineCol = NA)
+envelopePlot(x1 = c(17.5, 18:29),
+             y1 = const.lwr.late,
+             x2 = c(17.5, 18:29),
+             y2 = const.fit.late,
              col = alpha("orchid3", 0.2),
              lineCol = NA)
 #lines(1:29, pred.const.lwr, lty = 4, lwd = 2, col = alpha("magenta3", 0.9))
@@ -277,10 +302,11 @@ legend("topright",
        xpd = TRUE)
 title("Fixed Model", adj = 0, cex.main = 1.65)
 
-
 text(x= 3, y = -46, labels = "RMSE: 6.98", col = "gray35", cex = 1.5)
 text(x=15.5, y = -46, labels = "RMSE: 6.82", col = "gray35", cex = 1.5)
 text(x=20, y = -46, labels = "RMSE: 3.08", col = "gray35", cex = 1.5)
+text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.65)
+
 
 #update prediction figure (non-fixed model)
 plot(1:29, pred.vary.fit, type = "l", ylim = c(-50,50), axes = FALSE, 
@@ -290,24 +316,51 @@ box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
 axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.45)
 #upper bound
-envelopePlot(x1 = 1:29,
-             y1 = pred.vary.upr,
-             x2 = 1:29,
-             y2 = pred.vary.fit,
+envelopePlot(x1 = c(1:13, 13.5),
+             y1 = vary.upr.early,
+             x2 = c(1:13, 13.5),
+             y2 = vary.fit.early,
+             col = alpha("orange2", 0.2),
+             lineCol = NA)
+#different color for peak group
+envelopePlot(x1 = c(13.5, 14:17, 17.5),
+             y1 = vary.upr.mid,
+             x2 = c(13.5, 14:17, 17.5),
+             y2 = vary.fit.mid,
+             col = alpha("orange3", 0.33),
+             lineCol = NA)
+envelopePlot(x1 = c(17.5, 18:29),
+             y1 = vary.upr.late,
+             x2 = c(17.5, 18:29),
+             y2 = vary.fit.late,
              col = alpha("orange2", 0.2),
              lineCol = NA)
 #lines(1:29, pred.vary.upr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
 #lower bound
-envelopePlot(x1 = 1:29,
-             y1 = pred.vary.lwr,
-             x2 = 1:29,
-             y2 = pred.vary.fit,
+envelopePlot(x1 = c(1:13, 13.5),
+             y1 = vary.lwr.early,
+             x2 = c(1:13, 13.5),
+             y2 = vary.fit.early,
+             col = alpha("orange2", 0.2),
+             lineCol = NA)
+envelopePlot(x1 = c(13.5, 14:17, 17.5),
+             y1 = vary.lwr.mid,
+             x2 = c(13.5, 14:17, 17.5),
+             y2 = vary.fit.mid,
+             col = alpha("orange3", 0.33),
+             lineCol = NA)
+envelopePlot(x1 = c(17.5, 18:29),
+             y1 = vary.lwr.late,
+             x2 = c(17.5, 18:29),
+             y2 = vary.fit.late,
              col = alpha("orange2", 0.2),
              lineCol = NA)
 #lines(1:29, pred.vary.lwr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
 lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
 abline(h=0, lty =3, col = "gray15", lwd = 2)
 abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
+
+
 legend("topright", 
        legend = c("Observed",
                   "Model Predictions",
@@ -324,11 +377,22 @@ title("Non-fixed Model", adj = 0, cex.main = 1.65)
 text(x= 3, y = -46, labels = "RMSE: 9.61", col = "gray35", cex = 1.5)
 text(x=15.5, y = -46, labels = "RMSE: 8.15", col = "gray35", cex = 1.5)
 text(x=20, y = -46, labels = "RMSE: 4.68", col = "gray35", cex = 1.5)
+text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.65)
 
 mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25, line = 2)
 mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
 
 dev.off()
+
+
+
+#alternative Fig 2b
+#TODO: get peak only prediction, as mfrow = c(1, 3) 
+
+
+
+#alternative Fig 2c
+#TODO: include RMSE for all groups and variations (as boxplot?)
 
 
 
