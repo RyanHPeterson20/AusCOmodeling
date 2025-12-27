@@ -549,14 +549,68 @@ late.base.rmse <- rmse(late.df$true.late, late.df$predicted.base.late)
 late.const.rmse <- rmse(late.df$true.late, late.df$predicted.const.late)
 late.vary.rmse <- rmse(late.df$true.late, late.df$predicted.vary.late)
 
+#get RSME for each wildfire season
+early.split <- split(early.df, ceiling(seq_len(nrow(early.df))/13))
+mid.split <- split(mid.df, ceiling(seq_len(nrow(mid.df))/4))
+late.split <- split(late.df, ceiling(seq_len(nrow(late.df))/12))
+
+base.rmse.early <- sapply(early.split, function(x) {rmse(x$true.early, x$predicted.base.early)}  )
+base.rmse.mid <- sapply(mid.split, function(x) {rmse(x$true.mid, x$predicted.base.mid)}  )
+base.rmse.late <- sapply(late.split, function(x) {rmse(x$true.late, x$predicted.base.late)}  )
+
+const.rmse.early <- sapply(early.split, function(x) {rmse(x$true.early, x$predicted.const.early)}  )
+const.rmse.mid <- sapply(mid.split, function(x) {rmse(x$true.mid, x$predicted.const.mid)}  )
+const.rmse.late <- sapply(late.split, function(x) {rmse(x$true.late, x$predicted.const.late)}  )
+
+vary.rmse.early <- sapply(early.split, function(x) {rmse(x$true.early, x$predicted.vary.early)}  )
+vary.rmse.mid <- sapply(mid.split, function(x) {rmse(x$true.mid, x$predicted.vary.mid)}  )
+vary.rmse.late <- sapply(late.split, function(x) {rmse(x$true.late, x$predicted.vary.late)}  )
+
+base.rmse.df <- data.frame(seasons, early = base.rmse.early, mid = base.rmse.mid, late = base.rmse.late)
+const.rmse.df <- data.frame(seasons, early = const.rmse.early, mid = const.rmse.mid, late = const.rmse.late)
+vary.rmse.df <- data.frame(seasons, early = vary.rmse.early, mid = vary.rmse.mid, late = vary.rmse.late)
+
+#get RSME for each week
+
+#update for week
+early.df$week <- rep(season.weeks[1:13], 20)
+mid.df$week <- rep(season.weeks[14:17], 20)
+late.df$week <- rep(season.weeks[18:29], 20)
+
+early.week <- split(early.df, early.df$week)
+mid.week <- split(mid.df, mid.df$week)
+late.week <- split(late.df, late.df$week)
+
+base.rmse.early.week <- sapply(early.week, function(x) {rmse(x$true.early, x$predicted.base.early)}  )
+base.rmse.mid.week <- sapply(mid.week, function(x) {rmse(x$true.mid, x$predicted.base.mid)}  )
+base.rmse.late.week <- sapply(late.week, function(x) {rmse(x$true.late, x$predicted.base.late)}  )
+
+base.rmse.weekly <- c(base.rmse.early.week, base.rmse.mid.week, base.rmse.late.week)
+
+const.rmse.early.week <- sapply(early.week, function(x) {rmse(x$true.early, x$predicted.const.early)}  )
+const.rmse.mid.week <- sapply(mid.week, function(x) {rmse(x$true.mid, x$predicted.const.mid)}  )
+const.rmse.late.week <- sapply(late.week, function(x) {rmse(x$true.late, x$predicted.const.late)}  )
+
+const.rmse.weely <- c(const.rmse.early.week, const.rmse.mid.week, const.rmse.late.week)
+
+vary.rmse.early.week <- sapply(early.week, function(x) {rmse(x$true.early, x$predicted.vary.early)}  )
+vary.rmse.mid.week <- sapply(mid.week, function(x) {rmse(x$true.mid, x$predicted.vary.mid)}  )
+vary.rmse.late.week <- sapply(late.week, function(x) {rmse(x$true.late, x$predicted.vary.late)}  )
+
+vary.rmse.weekly <- c(vary.rmse.early.week, vary.rmse.mid.week, vary.rmse.late.week)
+
+
 #output setup
+rmse.season <- list(base.rmse.df, const.rmse.df, vary.rmse.df)
+rmse.weekly <- list(base.rmse.weekly, const.rmse.weely, vary.rmse.weekly)
+
 rmse.early <- list(early.base.rmse, early.const.rmse, early.vary.rmse)
 rmse.mid <- list(mid.base.rmse, mid.const.rmse, mid.vary.rmse)
 rmse.late <- list(late.base.rmse, late.const.rmse, late.vary.rmse)
 
 #temp model validation
 setwd("~/CO_AUS/AusCOmodeling/Data") 
-save(rmse.early, rmse.mid,rmse.late, file = "rmse.rda")
+save(rmse.season, rmse.weekly, rmse.early, rmse.mid,rmse.late, file = "rmse.rda")
 
 #temp output, update LOYO loop for all years
 preds.2019.base <- list(pred.base.early, pred.base.mid, pred.base.late)

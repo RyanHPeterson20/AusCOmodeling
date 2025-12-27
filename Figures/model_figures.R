@@ -117,6 +117,11 @@ all.range <- range(base.range, const.range, vary.range)
 
 
 #updated predictions for variations and groups
+#groups for true SE 2019 values
+SE2019.early <- c(SE.2019.true[1:13], mean(SE.2019.true[13:14]))
+SE2019.mid <- c(mean(SE.2019.true[13:14]), SE.2019.true[14:17], mean(SE.2019.true[17:18]))
+SE2019.late <- c(mean(SE.2019.true[17:18]),  SE.2019.true[18:29])
+
 #base group preds
 base.upr.early <- c(pred.base.upr[1:13], mean(pred.base.upr[13:14]))
 base.upr.mid <- c(mean(pred.base.upr[13:14]), pred.base.upr[14:17], mean(pred.base.upr[17:18]))
@@ -360,7 +365,6 @@ lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
 abline(h=0, lty =3, col = "gray15", lwd = 2)
 abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
 
-
 legend("topright", 
        legend = c("Observed",
                   "Model Predictions",
@@ -387,12 +391,111 @@ dev.off()
 
 
 #alternative Fig 2b
-#TODO: get peak only prediction, as mfrow = c(1, 3) 
+
+#test peak group only (weeks 51, 52, 1, 2)
+par(mfrow = c(1, 3))
+
+#full model (base)
+plot(c(0.5, 1:4, 4.5), base.fit.mid, type = "l", ylim = c(-8, 55), xlim = c(0.75, 4.25),
+     axes = FALSE, 
+     lwd = 3, lty = 2, col = "forestgreen",
+     ylab = "CO Anomaly [ppb]", xlab = "", cex.lab = 1.65)
+box()
+axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = 1.45)
+axis(2, at = c(-25, 0, 25, 50),  cex.axis = 1.45)
+#true line
+lines(c(0.5, 1:4, 4.5), SE2019.mid, lty = 1, lwd = 2, col = "grey5")
+#upper bound
+envelopePlot(x1 = c(0.5, 1:4, 4.5),
+             y1 = base.upr.mid,
+             x2 = c(0.5, 1:4, 4.5),
+             y2 = base.fit.mid,
+             col = alpha("springgreen3", 0.25),
+             lineCol = NA)
+#lower bound
+envelopePlot(x1 = c(0.5, 1:4, 4.5),
+             y1 = base.lwr.mid,
+             x2 = c(0.5, 1:4, 4.5),
+             y2 = base.fit.mid,
+             col = alpha("springgreen3", 0.25),
+             lineCol = NA)
+abline(h=0, lty =3, col = "gray15", lwd = 2)
+text(x= 1.65, y = 54, labels = "Full Model", col = "gray25", cex = 1.85)
+
+#fixed model (constant)
+plot(c(0.5, 1:4, 4.5), const.fit.mid, type = "l", ylim = c(-8, 55), xlim = c(0.75, 4.25),
+     axes = FALSE, 
+     lwd = 3, lty = 2, col = "magenta3",
+     ylab = "", xlab = "Week", cex.lab = 1.65)
+box()
+axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = 1.45)
+axis(2, at = c(-25, 0, 25, 50),  cex.axis = 1.45)
+#true line
+lines(c(0.5, 1:4, 4.5), SE2019.mid, lty = 1, lwd = 2, col = "grey5")
+#upper bound
+envelopePlot(x1 = c(0.5, 1:4, 4.5),
+             y1 = const.upr.mid,
+             x2 = c(0.5, 1:4, 4.5),
+             y2 = const.fit.mid,
+             col = alpha("orchid3", 0.25),
+             lineCol = NA)
+#lower bound
+envelopePlot(x1 = c(0.5, 1:4, 4.5),
+             y1 = const.lwr.mid,
+             x2 = c(0.5, 1:4, 4.5),
+             y2 = const.fit.mid,
+             col = alpha("orchid3", 0.25),
+             lineCol = NA)
+abline(h=0, lty =3, col = "gray15", lwd = 2)
+text(x = 1.75, y = 54, labels = "Fixed Model", col = "gray25", cex = 1.85)
+
+#non-fixed model (varying)
+plot(c(0.5, 1:4, 4.5), vary.fit.mid, type = "l", ylim = c(-8, 55), xlim = c(0.75, 4.25),
+     axes = FALSE, 
+     lwd = 3, lty = 2, col = "darkorange2",
+     ylab = "", xlab = "")
+box()
+axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = 1.45)
+axis(2, at = c(-25, 0, 25, 50),  cex.axis = 1.45)
+#true line
+lines(c(0.5, 1:4, 4.5), SE2019.mid, lty = 1, lwd = 2, col = "grey5")
+#upper bound
+envelopePlot(x1 = c(0.5, 1:4, 4.5),
+             y1 = vary.upr.mid,
+             x2 = c(0.5, 1:4, 4.5),
+             y2 = vary.fit.mid,
+             col = alpha("orange2", 0.25),
+             lineCol = NA)
+#lower bound
+envelopePlot(x1 = c(0.5, 1:4, 4.5),
+             y1 = vary.lwr.mid,
+             x2 = c(0.5, 1:4, 4.5),
+             y2 = vary.fit.mid,
+             col = alpha("orange2", 0.25),
+             lineCol = NA)
+abline(h=0, lty =3, col = "gray15", lwd = 2)
+text(x= 1.95, y = 54, labels = "Non-Fixed Model", col = "gray25", cex = 1.85)
+
 
 
 
 #alternative Fig 2c
 #TODO: include RMSE for all groups and variations (as boxplot?)
+##RMSE following earlier plots
+early.rmse <- data.frame(base = base.rmse.df$early, 
+                         const = const.rmse.df$early,
+                         vary = vary.rmse.df$early)
+mid.rmse <- data.frame(base = base.rmse.df$mid, 
+                       const = const.rmse.df$mid,
+                       vary = vary.rmse.df$mid)
+
+
+#seasonal boxplots
+boxplot(cbind(early.rmse, mid.rmse), 
+        col =  rep(c(alpha("forestgreen", 0.5),
+                 alpha("magenta3", 0.5),
+                 alpha("darkorange2", 0.5)),2))
+
 
 
 
