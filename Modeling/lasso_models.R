@@ -323,6 +323,7 @@ save(NEmodels.noOLR , SEmodels.noOLR ,
 
 ## ---- LOYO Models ---- ##
 
+#TODO: move everything below to a new file, for CV
 #Train/Test Setup
 
 ## --- partial data setup 

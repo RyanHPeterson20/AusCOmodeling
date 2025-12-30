@@ -41,8 +41,9 @@ SE3.coef <- coef(SE3.lm)
 SE3.constcoef <- coef(SE.const.LM$`2019-2020`[[3]])
 SE3.varycoef <- coef(SE.vary.LM$`2019-2020`[[3]])
 
-#TODO: get updated figure with split WTIO and ETIO
+#TODO: make some updates to lines
 #notes for updated figures: increase height, update layout, new plot for ETIO, ensure alignment
+
 
 #new interaction figure
 #fig 2a - `peak` group
@@ -138,7 +139,7 @@ links[[2]] <- list(
   from_y = grconvertY(SE22_ninocoef[1], from = "user", to = "ndc")
 )
 
-#TODO: seperate this into WTIO and ETIO plots
+
 # --- Plot 2: WTIO ---
 par(mar = c(4, 4, 2, 1))
 #wtio pch 24
@@ -156,7 +157,7 @@ title("WTIO", adj = 0, cex.main = 1.5)
 
 
 # --- Plot 3: ETIO
-par(mar = c(4, 4, 2, 1))
+par(mar = c(4, 4, 2, 1)) #TODO: adjust individual margins
 #etio pch 25
 plot(SE2_etiolag, SE2_etiocoef, pch = 25, col = "grey4",
      bg =  alpha("forestgreen",.5), cex = 1.8, cex.axis = 1.6,
@@ -168,6 +169,8 @@ points(SE22_etiolag, SE22_etiocoef, pch = 25, col = "black",
 points(SE23_etiolag, SE23_etiocoef, pch = 25, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 1.8)
 abline(h = 0, lty = 2)
+#TODO: move the title inside the plot
+text("ETIO", )
 title("ETIO", adj = 0, cex.main = 1.5)
 
 
@@ -187,20 +190,21 @@ links[[4]] <- list(
   from_y = grconvertY(SE22_etiocoef[1], from = "user", to = "ndc")
 )
 
+## shift-up
 ## I(etio_lag8^2) 
 ## vary
 links[[5]] <- list(
-  y_val = SE23_etiocoef[1],
+  y_val = SE23_etiocoef[1]+0.125,
   from_x = grconvertX(SE23_etiolag[1], from = "user", to = "ndc"),
-  from_y = grconvertY(SE23_etiocoef[1], from = "user", to = "ndc")
+  from_y = grconvertY(SE23_etiocoef[1]+0.125, from = "user", to = "ndc")
 )
-#TODO: jitter this line down a little
+#shift-down (line 'jitter')
 ## etio_lag8:tsa_lag31
 ## vary
 links[[6]] <- list(
-  y_val = SE23_etiocoef[1], #small shift down here.
+  y_val = SE23_etiocoef[1] - 0.12, #small shift down here.
   from_x = grconvertX(SE23_etiolag[1], from = "user", to = "ndc"),
-  from_y = grconvertY(SE23_etiocoef[1], from = "user", to = "ndc")
+  from_y = grconvertY(SE23_etiocoef[1] - 0.12, from = "user", to = "ndc")
 )
 
 
