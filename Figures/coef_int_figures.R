@@ -56,7 +56,7 @@ layout(matrix(c(1, 6,
                 5, 6), ncol = 2, byrow = TRUE),
        widths = c(1.75, 1.25), heights = c(1, 1, 1, 1, 1, 1))
 
-par(oma = c(1, 1, 1, 1))
+par(oma = c(2, 1, 2.5, 1))
 
 # Store links
 links <- list()
@@ -111,17 +111,18 @@ SEAus2_range <- c(-SEAus2_absmax, SEAus2_absmax)
 
 
 # --- Plot 1: Nino ---
-par(mar = c(4, 4, 2, 1))
+par(mar = c(3, 4, 2.5, 1))
 #nino pch 21
 plot(SE2_ninolag, SE2_ninocoef, pch = 21, 
-     col = "grey4", bg =  alpha("forestgreen",.5), cex = 2.25,
+     col = "grey4", bg =  alpha("forestgreen",.5), cex = 2.33,
      xlim = c(1,52), cex.axis = 1.6, 
      ylim = SEAus2_range,
      xlab = "", ylab = "")
 points(SE22_ninolag, SE22_ninocoef, pch = 21, col = "grey4",
-       bg =  alpha("magenta4",.65), cex = 2.25)
-abline(h = 0, lty = 2)
-title("Ni\u00f1o 3.4", adj = 0, cex.main = 1.5)
+       bg =  alpha("magenta4",.65), cex = 2.33)
+abline(h = 0, lty = 2, lwd = 1.5)
+text(x = 3.5, y = 4.15, labels ="Ni\u00f1o 3.4",  col = "gray12", cex = 1.65)
+title("Peak Group (Weeks 51, 52, 1, & 2)", adj = 0, cex.main = 2, line = 1)
 
 ## --- Nino Interaction
 ## nino_lag40:etio_lag7
@@ -141,37 +142,37 @@ links[[2]] <- list(
 
 
 # --- Plot 2: WTIO ---
-par(mar = c(4, 4, 2, 1))
+par(mar = c(3, 4, 1, 1))
 #wtio pch 24
 plot(SE2_wtiolag-0.25, SE2_wtiocoef, pch = 24, col = "black",
-     bg =  alpha("forestgreen",.5), cex = 1.8, cex.axis = 1.6,
+     bg =  alpha("forestgreen",.5), cex = 2, cex.axis = 1.6,
      xlim = c(1,52), 
      ylim = SEAus2_range,
      xlab = "", ylab = "")
 points(SE22_wtiolag+0.25, SE22_wtiocoef, pch = 24, col = "black",
-       bg =  alpha("magenta4",.65) , cex = 1.8)
+       bg =  alpha("magenta4",.65) , cex = 2)
 points(SE23_wtiolag, SE23_wtiocoef, pch = 24, col = "black",
-       bg =  alpha("darkorange2",.65) , cex = 1.8)
-abline(h = 0, lty = 2)
-title("WTIO", adj = 0, cex.main = 1.5)
+       bg =  alpha("darkorange2",.65) , cex = 2)
+abline(h = 0, lty = 2, lwd = 1.5)
+text(x = 3, y = 4.15, labels ="WTIO",  col = "gray12", cex = 1.65)
+#title("WTIO", adj = 0, cex.main = 1.5)
 
 
 # --- Plot 3: ETIO
-par(mar = c(4, 4, 2, 1)) #TODO: adjust individual margins
+par(mar = c(3, 4, 1, 1)) 
 #etio pch 25
 plot(SE2_etiolag, SE2_etiocoef, pch = 25, col = "grey4",
-     bg =  alpha("forestgreen",.5), cex = 1.8, cex.axis = 1.6,
+     bg =  alpha("forestgreen",.5), cex = 2, cex.axis = 1.6,
      xlim = c(1,52), 
      ylim = SEAus2_range,
      xlab = "", ylab = "")
 points(SE22_etiolag, SE22_etiocoef, pch = 25, col = "black",
-       bg =  alpha("magenta4",.65) , cex = 1.8)
+       bg =  alpha("magenta4",.65) , cex = 2)
 points(SE23_etiolag, SE23_etiocoef, pch = 25, col = "black",
-       bg =  alpha("darkorange2",.65) , cex = 1.8)
-abline(h = 0, lty = 2)
-#TODO: move the title inside the plot
-text("ETIO", )
-title("ETIO", adj = 0, cex.main = 1.5)
+       bg =  alpha("darkorange2",.65) , cex = 2)
+abline(h = 0, lty = 2, lwd = 1.5)
+text(x = 3, y = 4.15, labels ="ETIO",  col = "gray12", cex = 1.65)
+#title("ETIO", adj = 0, cex.main = 1.5)
 
 
 ## --- ETIO Interaction
@@ -209,7 +210,7 @@ links[[6]] <- list(
 
 
 # --- Plot 4: TSA ---
-par(mar = c(4, 4, 2, 1))
+par(mar = c(3, 4, 1, 1))
 #tsa pch 22
 plot(SE2_tsalag-0.25, SE2_tsacoef, pch = 22, col = "black",
      bg =  alpha("forestgreen", 0.5), xlim = c(1,52), cex = 2.25,
@@ -219,8 +220,9 @@ points(SE22_tsalag+0.25, SE22_tsacoef, pch = 22, col = "black",
        bg =  alpha("magenta4",.65) , cex = 2.25)
 points(SE23_tsalag, SE23_tsacoef, pch = 22, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 2.25)
-abline(h = 0, lty = 2)
-title("TSA", adj = 0, cex.main = 1.5)
+abline(h = 0, lty = 2, lwd = 1.5)
+text(x = 3, y = 4.15, labels ="TSA",  col = "gray12", cex = 1.65)
+#title("TSA", adj = 0, cex.main = 1.5)
 
 ## --- TSA Interaction
 ## etio_lag8:tsa_lag31
@@ -232,7 +234,7 @@ links[[7]] <- list(
 )
 
 # --- Plot 5: SAM/AAO ---
-par(mar = c(4, 4, 2, 1))
+par(mar = c(4.5, 4, 1, 1))
 #sam pch 23
 plot(SE2_aaolag-0.25, SE2_aaocoef, pch = 23,
      col = "grey4",
@@ -244,17 +246,18 @@ points(SE22_aaolag+0.25, SE22_aaocoef, pch = 23, col = "black",
        bg =  alpha("magenta4",.65) , cex = 2.25)
 points(SE23_aaolag, SE23_aaocoef, pch = 23, col = "black",
        bg =  alpha("darkorange2",.65) , cex = 2.25)
-abline(h = 0, lty = 2)
-title("SAM", adj = 0, cex.main = 1.5)
+abline(h = 0, lty = 2, lwd = 1.5)
+text(x = 3, y = 4.15, labels ="SAM",  col = "gray12", cex = 1.65)
+#title("SAM", adj = 0, cex.main = 1.5)
 
 # --- Plot 6: Interaction Effects ---
-par(mar = c(4, 4, 2, 2))
+par(mar = c(4.5, 1, 2.5, 1))
 
 plot(SE2.coef[1], 0, type = "n", main = "", 
      ylim = c(0,1), xlim = SEAus2_range, cex = 2, cex.axis = 1.6,
      xlab = "Coefficients", cex.lab = 1.75,
      yaxt = "n",  ylab = "")
-abline(v= 0, lty = 2)
+abline(v= 0, lty = 2, lwd = 1.5)
 
 #square terms
 int_1 <- grconvertY(links[[5]]$from_y, from = "ndc", to = "user") #I(etio_lag8^2)  (varying terms)
@@ -270,27 +273,27 @@ int_7 <- grconvertY(links[[7]]$from_y, from = "ndc", to = "user") # tsa_lag31 ->
 #nino_lag40:etio_lag7
 ## base
 int_pt1 <- (int_2 + int_4)/2
-segments(SE2.coef[10], int_2, SE2.coef[10], int_pt1, col = "forestgreen", lty = 2, lwd = 1.75)
-segments(SE2.coef[10], int_4, SE2.coef[10], int_pt1, col = "forestgreen", lty = 2, lwd = 1.75)
+segments(SE2.coef[10], int_2, SE2.coef[10], int_pt1, col = "forestgreen", lty = 2, lwd = 2)
+segments(SE2.coef[10], int_4, SE2.coef[10], int_pt1, col = "forestgreen", lty = 2, lwd = 2)
 ## const
 int_pt2 <- (int_3 + int_5)/2
-segments(SE2.constcoef[10], int_3, SE2.constcoef[10], int_pt2, col = "magenta4", lty = 2, lwd = 1.75)
-segments(SE2.constcoef[10], int_5, SE2.constcoef[10], int_pt2, col = "magenta4", lty = 2, lwd = 1.75)
+segments(SE2.constcoef[10], int_3, SE2.constcoef[10], int_pt2, col = "magenta4", lty = 2, lwd = 2)
+segments(SE2.constcoef[10], int_5, SE2.constcoef[10], int_pt2, col = "magenta4", lty = 2, lwd = 2)
 ## etio_lag8:tsa_lag31
 ## vary
 int_pt3 <- (int_6 + int_7)/2
-segments(SE2.varycoef[8], int_6, SE2.varycoef[8], int_pt3, col = "darkorange2", lty = 2, lwd = 1.75)
-segments(SE2.varycoef[8], int_7, SE2.varycoef[8], int_pt3, col = "darkorange2", lty = 2, lwd = 1.75)
+segments(SE2.varycoef[8], int_6, SE2.varycoef[8], int_pt3, col = "darkorange2", lty = 2, lwd = 2)
+segments(SE2.varycoef[8], int_7, SE2.varycoef[8], int_pt3, col = "darkorange2", lty = 2, lwd = 2)
 
 #interaction points
 points(SE2.varycoef[7], int_1,  pch = 25, col = "grey4",
        bg = alpha("darkorange2",.65), cex = 2,) 
 points(SE2.coef[10], int_pt1,  pch = 11, col = alpha("forestgreen",.99),
-       bg = alpha("forestgreen",.95), cex = 1.9) 
+       bg = alpha("forestgreen",.95), cex = 2) 
 points(SE2.constcoef[10], int_pt2,  pch = 11, col = alpha("magenta4",.99),
-       bg = alpha("magenta4",.95), cex = 1.9) 
+       bg = alpha("magenta4",.95), cex = 2) 
 points(SE2.varycoef[8], int_pt3,  pch = 11, col = alpha("darkorange3",.99),
-       bg = alpha("darkorange2",.95), cex = 1.9) 
+       bg = alpha("darkorange2",.95), cex = 2) 
 
 #link to x 
 links[[1]]$to_x <- grconvertX(SE2.coef[10], from = "user", to = "ndc")
@@ -315,23 +318,24 @@ for (i in 1:length(links)) {
   grid.lines(
     x = unit(c(links[[i]]$from_x, links[[i]]$to_x), "npc"),
     y = unit(c(links[[i]]$from_y, links[[i]]$to_y), "npc"),
-    gp = gpar(col = colors[i], lwd = 1.75, lty = linetypes[i])
+    gp = gpar(col = colors[i], lwd = 2, lty = linetypes[i])
   )
 }
 
 mtext("Coefficients", side = 2, outer = TRUE, padj = 0.5, cex = 1.25)
 
-#add legends
+#TODO: get these aligned correctly
+#add legends 
 par(xpd = NA)
-legend("topright", inset = c(0.00, 0.00),
-       title = "Terms", cex = 1.5,
+legend("topright", inset = c(-0.004, 0.00),
+       title = "Terms", cex = 2,
        legend = c("Ni\u00f1o 3.4", "WTIO", "ETIO", "TSA", "SAM", "Interaction"),
        pch = c(21, 24, 25, 22, 23, 11),
        col = "grey4",
        pt.bg = alpha("gray36",.65),
        pt.cex = c(2.25, 1.8, 1.8, 2.25, 2.25, 1.8))
-legend("topright", inset = c(0.004, 0.1775),
-       title = "Model", cex = 1.5,
+legend("topright", inset = c(0.00, 0.1775),
+       title = "Model", cex = 2,
        legend = c("Full", "Fixed", "Non-Fixed"),
        pch = 15,
        col = c("forestgreen", "magenta4", "darkorange2"),
@@ -349,6 +353,7 @@ SE1.constcoef
 SE1.varycoef
 
 
+
 #fig SI
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 png(filename = "SEcoefs_early.png", width = 3600, height = 3600, res = 300)
@@ -359,7 +364,7 @@ layout(matrix(c(1, 6,
                 5, 6), ncol = 2, byrow = TRUE),
        widths = c(1.75, 1.25), heights = c(1, 1, 1, 1, 1, 1))
 
-par(oma = c(1, 1, 1, 1))
+par(oma = c(1.5, 2, 1.5, 1))
 
 # Store links
 links <- list()
