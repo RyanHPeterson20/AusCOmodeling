@@ -117,7 +117,7 @@ plot(SE2_ninolag, SE2_ninocoef, pch = 21,
      xlim = c(1,52), cex.axis = 1.6, 
      ylim = SEAus2_range,
      xlab = "", ylab = "")
-points(SE22_ninolag, SE22_ninocoef, pch = 21, col = "black",
+points(SE22_ninolag, SE22_ninocoef, pch = 21, col = "grey4",
        bg =  alpha("magenta4",.65), cex = 2.25)
 abline(h = 0, lty = 2)
 title("Ni\u00f1o 3.4", adj = 0, cex.main = 1.5)

@@ -391,18 +391,22 @@ dev.off()
 
 
 #alternative Fig 2b
+#TODO: create output file for this
+setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-#test peak group only (weeks 51, 52, 1, 2)
-par(mfrow = c(1, 3))
+png(filename = "SEpreds2019_peak_fig2b.png", width = 3000, height = 1500, res = 300)
+#peak group only (weeks 51, 52, 1, 2)
+par(mfrow = c(1, 3), oma = c(3, 3, 2.5, 1), mar = c(3, 3, 2, 1))
 
 #full model (base)
 plot(c(0.5, 1:4, 4.5), base.fit.mid, type = "l", ylim = c(-8, 55), xlim = c(0.75, 4.25),
      axes = FALSE, 
      lwd = 3, lty = 2, col = "forestgreen",
-     ylab = "CO Anomaly [ppb]", xlab = "", cex.lab = 1.65)
+     ylab = "", xlab = "", cex.lab = 1.65)
 box()
 axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = 1.45)
 axis(2, at = c(-25, 0, 25, 50),  cex.axis = 1.45)
+title("Peak Group 2019/2020 Wildfire Season", adj = 0, cex.main = 2, outer = TRUE, xpd = TRUE)
 #true line
 lines(c(0.5, 1:4, 4.5), SE2019.mid, lty = 1, lwd = 2, col = "grey5")
 #upper bound
@@ -426,7 +430,7 @@ text(x= 1.65, y = 54, labels = "Full Model", col = "gray25", cex = 1.85)
 plot(c(0.5, 1:4, 4.5), const.fit.mid, type = "l", ylim = c(-8, 55), xlim = c(0.75, 4.25),
      axes = FALSE, 
      lwd = 3, lty = 2, col = "magenta3",
-     ylab = "", xlab = "Week", cex.lab = 1.65)
+     ylab = "", xlab = "", cex.lab = 1.65)
 box()
 axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = 1.45)
 axis(2, at = c(-25, 0, 25, 50),  cex.axis = 1.45)
@@ -476,6 +480,11 @@ envelopePlot(x1 = c(0.5, 1:4, 4.5),
 abline(h=0, lty =3, col = "gray15", lwd = 2)
 text(x= 1.95, y = 54, labels = "Non-Fixed Model", col = "gray25", cex = 1.85)
 
+mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25, line = 1)
+mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
+
+dev.off()
+
 
 
 
@@ -488,14 +497,39 @@ early.rmse <- data.frame(base = base.rmse.df$early,
 mid.rmse <- data.frame(base = base.rmse.df$mid, 
                        const = const.rmse.df$mid,
                        vary = vary.rmse.df$mid)
+late.rmse <- data.frame(base = base.rmse.df$late, 
+                        const = const.rmse.df$late,
+                        vary = vary.rmse.df$late)
+max.rmse <- max(early.rmse, mid.rmse, late.rmse)
 
 
 #seasonal boxplots
-boxplot(cbind(early.rmse, mid.rmse), 
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+
+png(filename = "SEpreds2019_rmse_fig2c.png", width = 3000, height = 1500, res = 300)
+
+par(mar = c(2, 4.5, 2, 1))
+boxplot(cbind(early.rmse, mid.rmse, late.rmse), 
+        ylim = c(0, max.rmse), xlim = c(0.85, 9.15),
         col =  rep(c(alpha("forestgreen", 0.5),
                  alpha("magenta3", 0.5),
-                 alpha("darkorange2", 0.5)),2))
+                 alpha("darkorange2", 0.5)),3), pch = 16,
+        axes = FALSE, ylab = "RMSE", cex.lab = 1.15)
+box()
+axis(2, cex.axis = 1.15)
+abline(v=c(3.5, 6.5), lty = 2, col = "gray24", lwd = 1.5)
+legend("topright",
+       title = "Model Variation", cex = 1.25,
+       legend = c("Full", "Fixed", "Non-Fixed"),
+       pch = 22,
+       col = "grey4",
+       pt.bg = c(alpha("forestgreen", 0.65),
+               alpha("magenta3", 0.65),
+               alpha("darkorange2", 0.65)),
+       pt.cex = 2)
+text(x = c(2,5,8), y = 0, labels = c("Early", "Peak", "Late"), col = "gray20", cex = 1.3)
 
+dev.off()
 
 
 
