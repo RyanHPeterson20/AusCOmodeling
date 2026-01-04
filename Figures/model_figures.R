@@ -162,12 +162,10 @@ vary.lwr.mid <- c(mean(pred.vary.lwr[13:14]), pred.vary.lwr[14:17], mean(pred.va
 vary.lwr.late <- c(mean(pred.vary.lwr[17:18]),  pred.vary.lwr[18:29])
 
 
+#updated to include RMSE for SE Aus:
+#only preds for peak group of 2019/2020, to reflect the behavior of the first part of fig 2. 
 
-#updated RMSE for SE Aus:
-
-
-
-#fig 2b
+#fig 2b, predictions and intervals.
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
 png(filename = "SEpreds_2019_fig2b_newest.png", width = 3000, height = 3500, res = 300)
@@ -391,22 +389,30 @@ dev.off()
 
 
 #alternative Fig 2b
-#TODO: create output file for this
+#setup cex
+cex.num <- 2.25 #cex.axis = 1.45
+cex.label <- 2.5 #cex.lab = 1.75
+cex.subtile <- 2 #cex = 1.65
+#cex.title
+line.width <- 2.5 #lwd = 2
+
+
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-png(filename = "SEpreds2019_peak_fig2b.png", width = 3000, height = 1500, res = 300)
+png(filename = "SEpreds2019_peak_fig2b.png", width = 3000, height = 1750, res = 300)
 #peak group only (weeks 51, 52, 1, 2)
-par(mfrow = c(1, 3), oma = c(3, 3, 2.5, 1), mar = c(3, 3, 2, 1))
+par(mfrow = c(1, 3), oma = c(1, 1, 3.5, 1))
 
 #full model (base)
+par(mar = c(4.5, 5, 1, 2))
 plot(c(0.5, 1:4, 4.5), base.fit.mid, type = "l", ylim = c(-8, 55), xlim = c(0.75, 4.25),
      axes = FALSE, 
      lwd = 3, lty = 2, col = "forestgreen",
-     ylab = "", xlab = "", cex.lab = 1.65)
+     ylab = "CO Anomaly [ppb]", xlab = "", cex.lab = cex.label)
 box()
-axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = 1.45)
-axis(2, at = c(-25, 0, 25, 50),  cex.axis = 1.45)
-title("Peak Group 2019/2020 Wildfire Season", adj = 0, cex.main = 2, outer = TRUE, xpd = TRUE)
+axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = cex.num)
+axis(2, at = c(-25, 0, 25, 50),  cex.axis = cex.num)
+title("Peak Group 2019/2020 Wildfire Season", adj = 0.12, cex.main = 2.25, line = 0, xpd = TRUE, outer = TRUE)
 #true line
 lines(c(0.5, 1:4, 4.5), SE2019.mid, lty = 1, lwd = 2, col = "grey5")
 #upper bound
@@ -427,13 +433,14 @@ abline(h=0, lty =3, col = "gray15", lwd = 2)
 text(x= 1.65, y = 54, labels = "Full Model", col = "gray25", cex = 1.85)
 
 #fixed model (constant)
+par(mar = c(4.5, 2, 1, 2))
 plot(c(0.5, 1:4, 4.5), const.fit.mid, type = "l", ylim = c(-8, 55), xlim = c(0.75, 4.25),
      axes = FALSE, 
      lwd = 3, lty = 2, col = "magenta3",
-     ylab = "", xlab = "", cex.lab = 1.65)
+     ylab = "", xlab = "Week", cex.lab = cex.label)
 box()
-axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = 1.45)
-axis(2, at = c(-25, 0, 25, 50),  cex.axis = 1.45)
+axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = cex.num)
+axis(2, at = c(-25, 0, 25, 50),  cex.axis = cex.num)
 #true line
 lines(c(0.5, 1:4, 4.5), SE2019.mid, lty = 1, lwd = 2, col = "grey5")
 #upper bound
@@ -454,13 +461,14 @@ abline(h=0, lty =3, col = "gray15", lwd = 2)
 text(x = 1.75, y = 54, labels = "Fixed Model", col = "gray25", cex = 1.85)
 
 #non-fixed model (varying)
+par(mar = c(4.5, 2, 1, 1))
 plot(c(0.5, 1:4, 4.5), vary.fit.mid, type = "l", ylim = c(-8, 55), xlim = c(0.75, 4.25),
      axes = FALSE, 
      lwd = 3, lty = 2, col = "darkorange2",
      ylab = "", xlab = "")
 box()
-axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = 1.45)
-axis(2, at = c(-25, 0, 25, 50),  cex.axis = 1.45)
+axis(1, labels = season.weeks[14:17], at = 1:4, cex.axis = cex.num)
+axis(2, at = c(-25, 0, 25, 50),  cex.axis = cex.num)
 #true line
 lines(c(0.5, 1:4, 4.5), SE2019.mid, lty = 1, lwd = 2, col = "grey5")
 #upper bound
@@ -480,8 +488,13 @@ envelopePlot(x1 = c(0.5, 1:4, 4.5),
 abline(h=0, lty =3, col = "gray15", lwd = 2)
 text(x= 1.95, y = 54, labels = "Non-Fixed Model", col = "gray25", cex = 1.85)
 
-mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25, line = 1)
-mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
+#TODO: add in a legend to the right and expand the right margin
+
+#old labels
+#mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25, line = 1)
+#mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
+
+
 
 dev.off()
 
