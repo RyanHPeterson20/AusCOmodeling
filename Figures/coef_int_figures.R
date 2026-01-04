@@ -332,7 +332,7 @@ legend("topright", inset = c(-0.004, 0.00),
        legend = c("Ni\u00f1o 3.4", "WTIO", "ETIO", "TSA", "SAM", "Interaction"),
        pch = c(21, 24, 25, 22, 23, 11),
        col = "grey4",
-       pt.bg = alpha("gray36",.65),
+       pt.bg = alpha("gray32",.65),
        pt.cex = c(2.25, 1.8, 1.8, 2.25, 2.25, 1.8))
 legend("topright", inset = c(0.00, 0.1775),
        title = "Model", cex = 2,
