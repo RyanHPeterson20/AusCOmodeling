@@ -388,7 +388,7 @@ dev.off()
 
 
 
-#alternative Fig 2b
+#alternative Fig 2b (peak 2019/2020 predictions)
 #setup cex
 cex.num <- 2.25 #cex.axis = 1.45
 cex.label <- 2.5 #cex.lab = 1.75
@@ -399,7 +399,7 @@ line.width <- 2.5 #lwd = 2
 
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-png(filename = "SEpreds2019_peak_fig2b.png", width = 3000, height = 1750, res = 300)
+png(filename = "SEpreds2019_peak_fig2b.png", width = 3000, height = 1600, res = 300)
 #peak group only (weeks 51, 52, 1, 2)
 par(mfrow = c(1, 3), oma = c(1, 1, 3.5, 1))
 
@@ -430,7 +430,7 @@ envelopePlot(x1 = c(0.5, 1:4, 4.5),
              col = alpha("springgreen3", 0.25),
              lineCol = NA)
 abline(h=0, lty =3, col = "gray15", lwd = 2)
-text(x= 1.65, y = 54, labels = "Full Model", col = "gray25", cex = 1.85)
+text(x= 1.65, y = 54, labels = "Full Model", col = "gray25", cex = 2)
 
 #fixed model (constant)
 par(mar = c(4.5, 2, 1, 2))
@@ -458,7 +458,7 @@ envelopePlot(x1 = c(0.5, 1:4, 4.5),
              col = alpha("orchid3", 0.25),
              lineCol = NA)
 abline(h=0, lty =3, col = "gray15", lwd = 2)
-text(x = 1.75, y = 54, labels = "Fixed Model", col = "gray25", cex = 1.85)
+text(x = 1.75, y = 54, labels = "Fixed Model", col = "gray25", cex = 2)
 
 #non-fixed model (varying)
 par(mar = c(4.5, 2, 1, 1))
@@ -486,24 +486,25 @@ envelopePlot(x1 = c(0.5, 1:4, 4.5),
              col = alpha("orange2", 0.25),
              lineCol = NA)
 abline(h=0, lty =3, col = "gray15", lwd = 2)
-text(x= 1.95, y = 54, labels = "Non-Fixed Model", col = "gray25", cex = 1.85)
+text(x= 1.95, y = 54, labels = "Non-Fixed Model", col = "gray25", cex = 2)
 
-#TODO: add in a legend to the right and expand the right margin
+#TODO: add in a legend to the right and expand the right margin (maybe?)
 
 #old labels
 #mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25, line = 1)
 #mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
 
-
-
 dev.off()
 
 
 
+#alternative Fig 2c (RMSE for early, peak, and late)
 
-#alternative Fig 2c
-#TODO: include RMSE for all groups and variations (as boxplot?)
 ##RMSE following earlier plots
+base.rmse.df <- rmse.season[[1]]
+const.rmse.df <- rmse.season[[2]]
+vary.rmse.df <- rmse.season[[3]]
+
 early.rmse <- data.frame(base = base.rmse.df$early, 
                          const = const.rmse.df$early,
                          vary = vary.rmse.df$early)
@@ -516,23 +517,27 @@ late.rmse <- data.frame(base = base.rmse.df$late,
 max.rmse <- max(early.rmse, mid.rmse, late.rmse)
 
 
+#TODO: update to align with the other plots in fig. 2 
+
+
+
 #seasonal boxplots
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-png(filename = "SEpreds2019_rmse_fig2c.png", width = 3000, height = 1500, res = 300)
+png(filename = "SEpreds2019_rmse_fig2c.png", width = 3000, height = 1600, res = 300)
 
 par(mar = c(2, 4.5, 2, 1))
 boxplot(cbind(early.rmse, mid.rmse, late.rmse), 
         ylim = c(0, max.rmse), xlim = c(0.85, 9.15),
-        col =  rep(c(alpha("forestgreen", 0.5),
-                 alpha("magenta3", 0.5),
-                 alpha("darkorange2", 0.5)),3), pch = 16,
-        axes = FALSE, ylab = "RMSE", cex.lab = 1.15)
+        col =  rep(c(alpha("forestgreen", 0.45),
+                 alpha("magenta3", 0.45),
+                 alpha("darkorange2", 0.45)),3), pch = 16,
+        axes = FALSE, ylab = "RMSE", cex.lab = cex.label)
 box()
-axis(2, cex.axis = 1.15)
-abline(v=c(3.5, 6.5), lty = 2, col = "gray24", lwd = 1.5)
+axis(2, cex.axis = cex.num)
+abline(v=c(3.5, 6.5), lty = 2, col = "gray20", lwd = 1.5)
 legend("topright",
-       title = "Model Variation", cex = 1.25,
+       title = "Model", cex = 1.25,
        legend = c("Full", "Fixed", "Non-Fixed"),
        pch = 22,
        col = "grey4",
@@ -541,6 +546,8 @@ legend("topright",
                alpha("darkorange2", 0.65)),
        pt.cex = 2)
 text(x = c(2,5,8), y = 0, labels = c("Early", "Peak", "Late"), col = "gray20", cex = 1.3)
+title()
+
 
 dev.off()
 
