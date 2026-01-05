@@ -461,7 +461,7 @@ abline(h=0, lty =3, col = "gray15", lwd = 2)
 text(x = 1.75, y = 54, labels = "Fixed Model", col = "gray25", cex = 2)
 
 #non-fixed model (varying)
-par(mar = c(4.5, 2, 1, 1))
+par(mar = c(4.5, 2, 1, 2))
 plot(c(0.5, 1:4, 4.5), vary.fit.mid, type = "l", ylim = c(-8, 55), xlim = c(0.75, 4.25),
      axes = FALSE, 
      lwd = 3, lty = 2, col = "darkorange2",
@@ -517,16 +517,32 @@ late.rmse <- data.frame(base = base.rmse.df$late,
 max.rmse <- max(early.rmse, mid.rmse, late.rmse)
 
 
-#TODO: update to align with the other plots in fig. 2 
-
-
+#TODO: update to align with the other plots in fig. 2, by using mfrow = c(1, 3) and 3 plots
+#the exact values don't quite work
 
 #seasonal boxplots
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
 png(filename = "SEpreds2019_rmse_fig2c.png", width = 3000, height = 1600, res = 300)
 
-par(mar = c(2, 4.5, 2, 1))
+#updated par()
+par(mfrow = c(1, 3), oma = c(1, 1, 3.5, 1))
+#old par
+#par(oma = c(1, 1, 3.5, 1), mar = c(0, 5, 1, 1))
+
+#early boxplot
+par(mar = c(4.5, 5, 1, 0))
+
+
+#peak boxplot
+par(mar = c(4.5, 0, 1, 0))
+
+
+#late boxplot
+par(mar = c(4.5, 0, 1, 1))
+
+
+
 boxplot(cbind(early.rmse, mid.rmse, late.rmse), 
         ylim = c(0, max.rmse), xlim = c(0.85, 9.15),
         col =  rep(c(alpha("forestgreen", 0.45),
@@ -545,9 +561,8 @@ legend("topright",
                alpha("magenta3", 0.65),
                alpha("darkorange2", 0.65)),
        pt.cex = 2)
-text(x = c(2,5,8), y = 0, labels = c("Early", "Peak", "Late"), col = "gray20", cex = 1.3)
-title()
-
+text(x = c(2,5,8), y = 0, labels = c("Early", "Peak", "Late"), col = "gray25", cex = 1.85)
+title("Root Mean Squared-Error", adj = 0.12, cex.main = 2.09, line = 0, xpd = TRUE, outer = TRUE)
 
 dev.off()
 
