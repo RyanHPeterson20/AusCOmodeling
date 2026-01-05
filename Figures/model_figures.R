@@ -631,11 +631,24 @@ etio.mag <- ceiling(abs(etio.coef*3))
 wtio.mag <- ceiling(abs(wtio.coef*3))
 wtio.mag[2] <- 2
 
-#updated figure
+#updated figure 3a
+## changes to make:
+# - add in another row to mfrow for the legend.
+# - adjust font/number sizes 
+## include horizontal legend with
+# - response group (dashed line w/ arrows)
+# - pos./neg. colors
+# - coef magnitude
+
+
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
 png(filename = "IODlag_fig3a.png", width = 3000, height = 2400, res = 300)
-par(mfrow = c(2, 1), oma = c(2.5, 1, 1, 1), mar = c(2.5, 3, 1, 1))
+#add a layout since we can define the size of each `plot`
+#layout()
+#old par
+#par(mfrow = c(2, 1), oma = c(2.5, 1, 1, 1), mar = c(2.5, 3, 1, 1))
+
 plot(NULL, xlim = c(2.4, 64.3), ylim = c(0.60, 3.40),
      yaxt = "n", xaxt = "n", xlab = "", ylab = "", main = "", bty = "l")
 #abline(h = 1:3, lty = 3, col = "gray70") #temp line guide
