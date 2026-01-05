@@ -568,13 +568,18 @@ dev.off()
 
 
 
-## lag-overlap plot
-##SE Only
+## --- lag-overlap plot --- ##
+## SE Only
 
 #setup
 SE.early <- 38:50
 SE.mid <- c(51, 52, 1, 2)
 SE.late <- 3:14
+
+#TODO: get SE2.coef, etc.
+SE1.coef <- coef(SE1.lm)
+SE2.coef <- coef(SE2.lm)
+SE3.coef <- coef(SE3.lm)
 
 #ETIO
 SE2.coef[5:6]
@@ -589,26 +594,18 @@ SElate.lag33 <- sapply(SE.late - 33 , function(x) ifelse(x <=0, x + 52, x))
 etio.lag.min <- c(min(SElate.lag33), min(SElate.lag16), min(SEmid.lag33), min(SEmid.lag7))
 etio.lag.max <- c(max(SElate.lag33), max(SElate.lag16), max(SEmid.lag33), max(SEmid.lag7))
 
-#varying; non-fixed 
-SE1.varycoef[3:4]
-SE2.varycoef[5]
-SE3.varycoef[7:8]
-
-SEearly.lag2.vary <- sapply(SE.early - 2, function(x) ifelse(x <=0, x + 52, x)) 
-SEearly.lag42.vary <- sapply(SE.early - 42, function(x) ifelse(x <=0, x + 52, x))
-
-SEmid.lag8.vary <- sapply(SE.mid - 8, function(x) ifelse(x <=0, x + 52, x)) 
-
-SElate.lag16.vary <- sapply(SE.late - 16 , function(x) ifelse(x <=0, x + 52, x)) 
-SElate.lag19.vary <- sapply(SE.late - 19 , function(x) ifelse(x <=0, x + 52, x))
+# 
+# SEearly.lag2.vary <- sapply(SE.early - 2, function(x) ifelse(x <=0, x + 52, x)) 
+# SEearly.lag42.vary <- sapply(SE.early - 42, function(x) ifelse(x <=0, x + 52, x))
+# 
+# SEmid.lag8.vary <- sapply(SE.mid - 8, function(x) ifelse(x <=0, x + 52, x)) 
+# 
+# SElate.lag16.vary <- sapply(SE.late - 16 , function(x) ifelse(x <=0, x + 52, x)) 
+# SElate.lag19.vary <- sapply(SE.late - 19 , function(x) ifelse(x <=0, x + 52, x))
 
 #WTIO
 SE1.coef[3]
 SE2.coef[3:4]
-
-#varying; non-fixed 
-SE2.varycoef[2]
-SE3.varycoef[5:6]
 
 
 SEearly.lag5 <- sapply(SE.early - 5, function(x) ifelse(x <=0, x + 52, x)) 
@@ -633,9 +630,9 @@ wtio.mag[2] <- 2
 
 #updated figure 3a
 ## changes to make:
-# - add in another row to mfrow for the legend.
+# - add in another row to mfrow (layout) for the legend. [done]
 # - adjust font/number sizes 
-## include horizontal legend with
+## include horizontal legend with:
 # - response group (dashed line w/ arrows)
 # - pos./neg. colors
 # - coef magnitude
@@ -645,10 +642,14 @@ setwd("~/CO_AUS/AusCOmodeling/Figures")
 
 png(filename = "IODlag_fig3a.png", width = 3000, height = 2400, res = 300)
 #add a layout since we can define the size of each `plot`
-#layout()
-#old par
+layout(matrix(c(1,2,3), nrow = 3), heights = c(4, 1, 4))
+#new par
+par(oma = c(1, 1, 1, 1))
+#old par (Delete when done)
 #par(mfrow = c(2, 1), oma = c(2.5, 1, 1, 1), mar = c(2.5, 3, 1, 1))
 
+#ETIO
+par(mar = c(0, 3, 1, 1))
 plot(NULL, xlim = c(2.4, 64.3), ylim = c(0.60, 3.40),
      yaxt = "n", xaxt = "n", xlab = "", ylab = "", main = "", bty = "l")
 #abline(h = 1:3, lty = 3, col = "gray70") #temp line guide
@@ -685,6 +686,23 @@ abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray38")
 text(x =c(4.75, 16, 29, 42, 55 ), y = 0.65,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
 text(x = 3, y = 3.25, labels = "ETIO", col = "gray24", cex = 1.25)
 
+#TODO: add in a "legend" here
+#Horizontal Legend
+par(mar = c(0, 3, 0, 1))
+plot.new()
+#test legend
+legend("left",
+  title = "Temp",
+  legend = c("A", "B"),
+  col = c("red", "blue"),
+  lty = 1,
+  horiz = TRUE,
+  bty = "n"
+)
+#add in segments and text here.
+
+#WTIO
+par(mar = c(2, 3, 0, 1))
 plot(NULL, xlim = c(2.4, 64.3), ylim = c(0.60, 3.40),
      yaxt = "n", xaxt = "n", xlab = "", ylab = "", main = "", bty = "l")
 #abline(h = 1:3, lty = 3, col = "gray70") #temp line guide
@@ -720,8 +738,12 @@ arrows(x0 = c(55+0.5, 66-0.5), y0 = 1.1,
 abline(v = c(9.5, 22.5, 35.5, 48.5, 61.5), lty = 2, col = "gray38")
 text(x =c(4.75, 16, 29, 42, 55 ), y = 0.65,  labels = c("DJF", "MAM", "JJA", "SON", "DJF" ), col = "gray36")
 text(x = 3, y = 3.25, labels = "WTIO", col = "gray24", cex = 1.25)
-mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
+
+#mtext("Week", side = 1,  adj = 0.5, cex = 1.25, line = 0, outer = TRUE, xpd = TRUE) #Not needed, create a different label or clean up this space
+
 dev.off()
+
+
 
 
 #alternate plot
