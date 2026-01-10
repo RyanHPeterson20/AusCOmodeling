@@ -197,6 +197,10 @@ coef(SE2.lm)
 coef(SE.const.LM$`2019-2020`[[2]])
 coef(SE.vary.LM$`2019-2020`[[2]])
 
+summary(SE2.lm)
+summary(SE.const.LM$`2019-2020`[[2]])
+summary(SE.vary.LM$`2019-2020`[[2]])
+
 coef(SE3.lm)
 coef(SE.const.LM$`2019-2020`[[3]])
 coef(SE.vary.LM$`2019-2020`[[3]])

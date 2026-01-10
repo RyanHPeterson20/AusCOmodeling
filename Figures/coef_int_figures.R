@@ -27,6 +27,11 @@ SE.const.LM <- SEmodels.loyo[[2]]
 SE.vary.LM <- SEmodels.loyo[[3]]
 
 
+#get model summaries
+summary(SE2.lm)
+summary(SE.const.LM$`2019-2020`[[2]])
+summary(SE.vary.LM$`2019-2020`[[2]])
+
 ## ---- Coeff/Interaction Figures ---- ##
 ## setup
 SE1.coef <- coef(SE1.lm)
