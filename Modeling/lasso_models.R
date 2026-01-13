@@ -505,6 +505,10 @@ pred.vary.mid <- predict(SE.vary.LM$`2019-2020`[[2]],  X2.valid, se.fit = TRUE, 
 pred.vary.late <- predict(SE.vary.LM$`2019-2020`[[3]],  X3.valid, se.fit = TRUE, interval = "prediction")
 
 
+
+
+
+
 #TODO: move this elsewhere
 #Get RMSE here: 
 early.mat <- matrix(NA, ncol = 4)
