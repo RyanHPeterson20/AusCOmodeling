@@ -23,10 +23,49 @@ for (i in 1:(length(season.years)-1)) {
 }
 rm(i, temp_season)
 
-
-
+#base/full data models
 SEmodels[[1]]$coefficients #early
+summary(SEmodels[[1]])
 SEmodels[[2]]$coefficients #peak
+summary(SEmodels[[2]])
 SEmodels[[3]]$coefficients #late
+summary(SEmodels[[3]])
+
+
+#2001/2002
+#early
+SErefit.new[[2]]$`2001-2002`[[1]]$coefficients
+summary(SErefit.new[[2]]$`2001-2002`[[1]])
+SErefit.new[[3]]$`2001-2002`[[1]]$coefficients
+summary(SErefit.new[[3]]$`2001-2002`[[1]])
+#peak
+SErefit.new[[2]]$`2001-2002`[[2]]$coefficients
+summary(SErefit.new[[2]]$`2001-2002`[[2]])
+SErefit.new[[3]]$`2001-2002`[[2]]$coefficients
+summary(SErefit.new[[3]]$`2001-2002`[[2]])
+#late
+SErefit.new[[2]]$`2001-2002`[[3]]$coefficients
+summary(SErefit.new[[2]]$`2001-2002`[[3]])
+SErefit.new[[3]]$`2001-2002`[[3]]$coefficients
+summary(SErefit.new[[3]]$`2001-2002`[[3]])
+
+
+#2002/2003
+#early
+SErefit.new[[2]]$`2002-2003`[[1]]$coefficients
+summary(SErefit.new[[2]]$`2002-2003`[[1]])
+SErefit.new[[3]]$`2002-2003`[[1]]$coefficients
+summary(SErefit.new[[3]]$`2002-2003`[[1]])
+#peak
+SErefit.new[[2]]$`2002-2003`[[2]]$coefficients
+summary(SErefit.new[[2]]$`2002-2003`[[2]])
+SErefit.new[[3]]$`2002-2003`[[2]]$coefficients
+summary(SErefit.new[[3]]$`2002-2003`[[2]])
+#late
+SErefit.new[[2]]$`2002-2003`[[3]]$coefficients
+summary(SErefit.new[[2]]$`2002-2003`[[3]])
+SErefit.new[[3]]$`2002-2003`[[3]]$coefficients
+summary(SErefit.new[[3]]$`2002-2003`[[3]])
+
 
 
