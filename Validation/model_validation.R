@@ -164,3 +164,4 @@ SErefit.new <- list(SE.vary.terms, SE.const.LM, SE.vary.LM)
 setwd("~/CO_AUS/AusCOmodeling/Data") 
 save(SEvalid, SErefit.new, file = "validation_refits_new.rda")
 
+
