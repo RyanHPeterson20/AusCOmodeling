@@ -12,8 +12,8 @@ load("Data/modeldata.rda") #resp/pred data
 load("Data/base_RAMPmodels.rda") #"base" model
 load("Data/validation_refits_new.rda") #updated RMSE and Predictions (w/ intervals)
 
-
 load("Data/rmse.rda") #RMSE 
+
 
 #season years/weeks
 season.weeks <- c(38:52, 1:14)
