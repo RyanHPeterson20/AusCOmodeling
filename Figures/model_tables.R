@@ -415,3 +415,491 @@ grid.arrange(card1, card2, card3,
              card1.vary.2008, card2.vary.2008, card3.vary.2008, ncol = 3)
 dev.off()
 
+
+#2009/2010
+## constant model
+#early
+fit1.const.2009 <- SErefit.new[[2]]$`2009-2010`[[1]]
+#peak
+fit2.const.2009 <- SErefit.new[[2]]$`2009-2010`[[2]]
+#late
+fit3.const.2009 <- SErefit.new[[2]]$`2009-2010`[[3]]
+
+#update cards
+card1.const.2009 <- lm_card_grob(fit1.const.2009, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2009 <- lm_card_grob(fit2.const.2009, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2009 <- lm_card_grob(fit3.const.2009, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2009, card2.const.2009, card3.const.2009, ncol = 3)
+
+## varying
+#early
+fit1.vary.2009 <- SErefit.new[[3]]$`2009-2010`[[1]]
+#peak
+fit2.vary.2009 <- SErefit.new[[3]]$`2009-2010`[[2]]
+#late
+fit3.vary.2009 <- SErefit.new[[3]]$`2009-2010`[[3]]
+
+#update cards
+card1.vary.2009 <- lm_card_grob(fit1.vary.2009, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2009 <- lm_card_grob(fit2.vary.2009, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2009 <- lm_card_grob(fit3.vary.2009, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2009, card2.vary.2009, card3.vary.2009, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2009.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2009, card2.const.2009, card3.const.2009,
+             card1.vary.2009, card2.vary.2009, card3.vary.2009, ncol = 3)
+dev.off()
+
+
+
+#2010/2011
+## constant model
+#early
+fit1.const.2010 <- SErefit.new[[2]]$`2010-2011`[[1]]
+#peak
+fit2.const.2010 <- SErefit.new[[2]]$`2010-2011`[[2]]
+#late
+fit3.const.2010 <- SErefit.new[[2]]$`2010-2011`[[3]]
+
+#update cards
+card1.const.2010 <- lm_card_grob(fit1.const.2010, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2010 <- lm_card_grob(fit2.const.2010, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2010 <- lm_card_grob(fit3.const.2010, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2010, card2.const.2010, card3.const.2010, ncol = 3)
+
+## varying
+#early
+fit1.vary.2010 <- SErefit.new[[3]]$`2010-2011`[[1]]
+#peak
+fit2.vary.2010 <- SErefit.new[[3]]$`2010-2011`[[2]]
+#late
+fit3.vary.2010 <- SErefit.new[[3]]$`2010-2011`[[3]]
+
+#update cards
+card1.vary.2010 <- lm_card_grob(fit1.vary.2010, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2010 <- lm_card_grob(fit2.vary.2010, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2010 <- lm_card_grob(fit3.vary.2010, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2010, card2.vary.2010, card3.vary.2010, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2010.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2010, card2.const.2010, card3.const.2010,
+             card1.vary.2010, card2.vary.2010, card3.vary.2010, ncol = 3)
+dev.off()
+
+
+#2011/2012
+## constant model
+#early
+fit1.const.2011 <- SErefit.new[[2]]$`2011-2012`[[1]]
+#peak
+fit2.const.2011 <- SErefit.new[[2]]$`2011-2012`[[2]]
+#late
+fit3.const.2011 <- SErefit.new[[2]]$`2011-2012`[[3]]
+
+#update cards
+card1.const.2011 <- lm_card_grob(fit1.const.2011, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2011 <- lm_card_grob(fit2.const.2011, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2011 <- lm_card_grob(fit3.const.2011, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2011, card2.const.2011, card3.const.2011, ncol = 3)
+
+## varying
+#early
+fit1.vary.2011 <- SErefit.new[[3]]$`2011-2012`[[1]]
+#peak
+fit2.vary.2011 <- SErefit.new[[3]]$`2011-2012`[[2]]
+#late
+fit3.vary.2011 <- SErefit.new[[3]]$`2011-2012`[[3]]
+
+#update cards
+card1.vary.2011 <- lm_card_grob(fit1.vary.2011, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2011 <- lm_card_grob(fit2.vary.2011, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2011 <- lm_card_grob(fit3.vary.2011, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2011, card2.vary.2011, card3.vary.2011, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2011.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2011, card2.const.2011, card3.const.2011,
+             card1.vary.2011, card2.vary.2011, card3.vary.2011, ncol = 3)
+dev.off()
+
+
+
+#2012/2013
+## constant model
+#early
+fit1.const.2012 <- SErefit.new[[2]]$`2012-2013`[[1]]
+#peak
+fit2.const.2012 <- SErefit.new[[2]]$`2012-2013`[[2]]
+#late
+fit3.const.2012 <- SErefit.new[[2]]$`2012-2013`[[3]]
+
+#update cards
+card1.const.2012 <- lm_card_grob(fit1.const.2012, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2012 <- lm_card_grob(fit2.const.2012, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2012 <- lm_card_grob(fit3.const.2012, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2012, card2.const.2012, card3.const.2012, ncol = 3)
+
+## varying
+#early
+fit1.vary.2012 <- SErefit.new[[3]]$`2012-2013`[[1]]
+#peak
+fit2.vary.2012 <- SErefit.new[[3]]$`2012-2013`[[2]]
+#late
+fit3.vary.2012 <- SErefit.new[[3]]$`2012-2013`[[3]]
+
+#update cards
+card1.vary.2012 <- lm_card_grob(fit1.vary.2012, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2012 <- lm_card_grob(fit2.vary.2012, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2012 <- lm_card_grob(fit3.vary.2012, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2012, card2.vary.2012, card3.vary.2012, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2012.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2012, card2.const.2012, card3.const.2012,
+             card1.vary.2012, card2.vary.2012, card3.vary.2012, ncol = 3)
+dev.off()
+
+
+
+#2013/2014
+## constant model
+#early
+fit1.const.2013 <- SErefit.new[[2]]$`2013-2014`[[1]]
+#peak
+fit2.const.2013 <- SErefit.new[[2]]$`2013-2014`[[2]]
+#late
+fit3.const.2013 <- SErefit.new[[2]]$`2013-2014`[[3]]
+
+#update cards
+card1.const.2013 <- lm_card_grob(fit1.const.2013, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2013 <- lm_card_grob(fit2.const.2013, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2013 <- lm_card_grob(fit3.const.2013, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2013, card2.const.2013, card3.const.2013, ncol = 3)
+
+## varying
+#early
+fit1.vary.2013 <- SErefit.new[[3]]$`2013-2014`[[1]]
+#peak
+fit2.vary.2013 <- SErefit.new[[3]]$`2013-2014`[[2]]
+#late
+fit3.vary.2013 <- SErefit.new[[3]]$`2013-2014`[[3]]
+
+#update cards
+card1.vary.2013 <- lm_card_grob(fit1.vary.2013, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2013 <- lm_card_grob(fit2.vary.2013, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2013 <- lm_card_grob(fit3.vary.2013, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2013, card2.vary.2013, card3.vary.2013, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2013.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2013, card2.const.2013, card3.const.2013,
+             card1.vary.2013, card2.vary.2013, card3.vary.2013, ncol = 3)
+dev.off()
+
+
+
+#2014/2015
+## constant model
+#early
+fit1.const.2014 <- SErefit.new[[2]]$`2014-2015`[[1]]
+#peak
+fit2.const.2014 <- SErefit.new[[2]]$`2014-2015`[[2]]
+#late
+fit3.const.2014 <- SErefit.new[[2]]$`2014-2015`[[3]]
+
+#update cards
+card1.const.2014 <- lm_card_grob(fit1.const.2014, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2014 <- lm_card_grob(fit2.const.2014, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2014 <- lm_card_grob(fit3.const.2014, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2014, card2.const.2014, card3.const.2014, ncol = 3)
+
+## varying
+#early
+fit1.vary.2014 <- SErefit.new[[3]]$`2014-2015`[[1]]
+#peak
+fit2.vary.2014 <- SErefit.new[[3]]$`2014-2015`[[2]]
+#late
+fit3.vary.2014 <- SErefit.new[[3]]$`2014-2015`[[3]]
+
+#update cards
+card1.vary.2014 <- lm_card_grob(fit1.vary.2014, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2014 <- lm_card_grob(fit2.vary.2014, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2014 <- lm_card_grob(fit3.vary.2014, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2014, card2.vary.2014, card3.vary.2014, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2014.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2014, card2.const.2014, card3.const.2014,
+             card1.vary.2014, card2.vary.2014, card3.vary.2014, ncol = 3)
+dev.off()
+
+
+
+#2015/2016
+## constant model
+#early
+fit1.const.2015 <- SErefit.new[[2]]$`2015-2016`[[1]]
+#peak
+fit2.const.2015 <- SErefit.new[[2]]$`2015-2016`[[2]]
+#late
+fit3.const.2015 <- SErefit.new[[2]]$`2015-2016`[[3]]
+
+#update cards
+card1.const.2015 <- lm_card_grob(fit1.const.2015, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2015 <- lm_card_grob(fit2.const.2015, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2015 <- lm_card_grob(fit3.const.2015, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2015, card2.const.2015, card3.const.2015, ncol = 3)
+
+## varying
+#early
+fit1.vary.2015 <- SErefit.new[[3]]$`2015-2016`[[1]]
+#peak
+fit2.vary.2015 <- SErefit.new[[3]]$`2015-2016`[[2]]
+#late
+fit3.vary.2015 <- SErefit.new[[3]]$`2015-2016`[[3]]
+
+#update cards
+card1.vary.2015 <- lm_card_grob(fit1.vary.2015, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2015 <- lm_card_grob(fit2.vary.2015, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2015 <- lm_card_grob(fit3.vary.2015, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2015, card2.vary.2015, card3.vary.2015, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2015.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2015, card2.const.2015, card3.const.2015,
+             card1.vary.2015, card2.vary.2015, card3.vary.2015, ncol = 3)
+dev.off()
+
+
+#2016/2017
+## constant model
+#early
+fit1.const.2016 <- SErefit.new[[2]]$`2016-2017`[[1]]
+#peak
+fit2.const.2016 <- SErefit.new[[2]]$`2016-2017`[[2]]
+#late
+fit3.const.2016 <- SErefit.new[[2]]$`2016-2017`[[3]]
+
+#update cards
+card1.const.2016 <- lm_card_grob(fit1.const.2016, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2016 <- lm_card_grob(fit2.const.2016, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2016 <- lm_card_grob(fit3.const.2016, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2016, card2.const.2016, card3.const.2016, ncol = 3)
+
+## varying
+#early
+fit1.vary.2016 <- SErefit.new[[3]]$`2016-2017`[[1]]
+#peak
+fit2.vary.2016 <- SErefit.new[[3]]$`2016-2017`[[2]]
+#late
+fit3.vary.2016 <- SErefit.new[[3]]$`2016-2017`[[3]]
+
+#update cards
+card1.vary.2016 <- lm_card_grob(fit1.vary.2016, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2016 <- lm_card_grob(fit2.vary.2016, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2016 <- lm_card_grob(fit3.vary.2016, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2016, card2.vary.2016, card3.vary.2016, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2016.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2016, card2.const.2016, card3.const.2016,
+             card1.vary.2016, card2.vary.2016, card3.vary.2016, ncol = 3)
+dev.off()
+
+
+#2017/2018
+## constant model
+#early
+fit1.const.2017 <- SErefit.new[[2]]$`2017-2018`[[1]]
+#peak
+fit2.const.2017 <- SErefit.new[[2]]$`2017-2018`[[2]]
+#late
+fit3.const.2017 <- SErefit.new[[2]]$`2017-2018`[[3]]
+
+#update cards
+card1.const.2017 <- lm_card_grob(fit1.const.2017, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2017 <- lm_card_grob(fit2.const.2017, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2017 <- lm_card_grob(fit3.const.2017, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2017, card2.const.2017, card3.const.2017, ncol = 3)
+
+## varying
+#early
+fit1.vary.2017 <- SErefit.new[[3]]$`2017-2018`[[1]]
+#peak
+fit2.vary.2017 <- SErefit.new[[3]]$`2017-2018`[[2]]
+#late
+fit3.vary.2017 <- SErefit.new[[3]]$`2017-2018`[[3]]
+
+#update cards
+card1.vary.2017 <- lm_card_grob(fit1.vary.2017, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2017 <- lm_card_grob(fit2.vary.2017, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2017 <- lm_card_grob(fit3.vary.2017, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2017, card2.vary.2017, card3.vary.2017, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2017.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2017, card2.const.2017, card3.const.2017,
+             card1.vary.2017, card2.vary.2017, card3.vary.2017, ncol = 3)
+dev.off()
+
+
+
+#2018/2019
+## constant model
+#early
+fit1.const.2018 <- SErefit.new[[2]]$`2018-2019`[[1]]
+#peak
+fit2.const.2018 <- SErefit.new[[2]]$`2018-2019`[[2]]
+#late
+fit3.const.2018 <- SErefit.new[[2]]$`2018-2019`[[3]]
+
+#update cards
+card1.const.2018 <- lm_card_grob(fit1.const.2018, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2018 <- lm_card_grob(fit2.const.2018, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2018 <- lm_card_grob(fit3.const.2018, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2018, card2.const.2018, card3.const.2018, ncol = 3)
+
+## varying
+#early
+fit1.vary.2018 <- SErefit.new[[3]]$`2018-2019`[[1]]
+#peak
+fit2.vary.2018 <- SErefit.new[[3]]$`2018-2019`[[2]]
+#late
+fit3.vary.2018 <- SErefit.new[[3]]$`2018-2019`[[3]]
+
+#update cards
+card1.vary.2018 <- lm_card_grob(fit1.vary.2018, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2018 <- lm_card_grob(fit2.vary.2018, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2018 <- lm_card_grob(fit3.vary.2018, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2018, card2.vary.2018, card3.vary.2018, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2018.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2018, card2.const.2018, card3.const.2018,
+             card1.vary.2018, card2.vary.2018, card3.vary.2018, ncol = 3)
+dev.off()
+
+
+
+#2019/2020
+## constant model
+#early
+fit1.const.2019 <- SErefit.new[[2]]$`2019-2020`[[1]]
+#peak
+fit2.const.2019 <- SErefit.new[[2]]$`2019-2020`[[2]]
+#late
+fit3.const.2019 <- SErefit.new[[2]]$`2019-2020`[[3]]
+
+#update cards
+card1.const.2019 <- lm_card_grob(fit1.const.2019, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2019 <- lm_card_grob(fit2.const.2019, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2019 <- lm_card_grob(fit3.const.2019, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2019, card2.const.2019, card3.const.2019, ncol = 3)
+
+## varying
+#early
+fit1.vary.2019 <- SErefit.new[[3]]$`2019-2020`[[1]]
+#peak
+fit2.vary.2019 <- SErefit.new[[3]]$`2019-2020`[[2]]
+#late
+fit3.vary.2019 <- SErefit.new[[3]]$`2019-2020`[[3]]
+
+#update cards
+card1.vary.2019 <- lm_card_grob(fit1.vary.2019, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2019 <- lm_card_grob(fit2.vary.2019, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2019 <- lm_card_grob(fit3.vary.2019, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2019, card2.vary.2019, card3.vary.2019, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2019.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2019, card2.const.2019, card3.const.2019,
+             card1.vary.2019, card2.vary.2019, card3.vary.2019, ncol = 3)
+dev.off()
+
+
+
+#2020/2021
+## constant model
+#early
+fit1.const.2020 <- SErefit.new[[2]]$`2020-2021`[[1]]
+#peak
+fit2.const.2020 <- SErefit.new[[2]]$`2020-2021`[[2]]
+#late
+fit3.const.2020 <- SErefit.new[[2]]$`2020-2021`[[3]]
+
+#update cards
+card1.const.2020 <- lm_card_grob(fit1.const.2020, border = "magenta3", fill = alpha("orchid3", 0.1))
+card2.const.2020 <- lm_card_grob(fit2.const.2020, border = "magenta3", fill = alpha("orchid4", 0.2))
+card3.const.2020 <- lm_card_grob(fit3.const.2020, border = "magenta3", fill = alpha("orchid3", 0.1))
+
+grid.arrange(card1.const.2020, card2.const.2020, card3.const.2020, ncol = 3)
+
+## varying
+#early
+fit1.vary.2020 <- SErefit.new[[3]]$`2020-2021`[[1]]
+#peak
+fit2.vary.2020 <- SErefit.new[[3]]$`2020-2021`[[2]]
+#late
+fit3.vary.2020 <- SErefit.new[[3]]$`2020-2021`[[3]]
+
+#update cards
+card1.vary.2020 <- lm_card_grob(fit1.vary.2020, border = "darkorange2", fill = alpha("orange2", 0.1))
+card2.vary.2020 <- lm_card_grob(fit2.vary.2020, border = "darkorange2", fill = alpha("orange3", 0.2))
+card3.vary.2020 <- lm_card_grob(fit3.vary.2020, border = "darkorange2", fill = alpha("orange2", 0.1))
+
+grid.arrange(card1.vary.2020, card2.vary.2020, card3.vary.2020, ncol = 3)
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+png(filename = "model_tables_2020.png", width = 3500, height = 4000, res = 275)
+grid.arrange(card1, card2, card3,
+             card1.const.2020, card2.const.2020, card3.const.2020,
+             card1.vary.2020, card2.vary.2020, card3.vary.2020, ncol = 3)
+dev.off()
+
