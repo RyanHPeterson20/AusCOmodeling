@@ -14,7 +14,6 @@ load("Data/modeldata.rda") #resp/pred data
 load("Data/base_RAMPmodels.rda") #"base" model
 load("Data/loyo_models.rda") #leave one year out models/refits
 
-
 # main setup #
 
 #SEmodels
