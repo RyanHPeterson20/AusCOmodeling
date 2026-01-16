@@ -1,7 +1,6 @@
 
 #new figures, because why not
 
-
 #libraries
 suppressMessages( library(scales)) #for adjusting opacity
 suppressMessages( library(fields)) #for envelope plot
@@ -13,7 +12,6 @@ load("Data/base_RAMPmodels.rda") #"base" model
 load("Data/validation_refits_new.rda") #updated RMSE and Predictions (w/ intervals)
 
 load("Data/rmse.rda") #RMSE 
-
 
 #season years/weeks
 season.weeks <- c(38:52, 1:14)
@@ -597,6 +595,122 @@ dev.off()
 
 
 #repeat for all years
+#TODO: add for loop and RMSE (RMSE for each plot and all tables)
+SE.rmse <- SEvalid$rmse
+
+SE.rmse[[1]]$vary.pred
+
+
+
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+for (i in 1:20) {
+  
+  png(filename = paste0("preds_", season.years[i], ".png"), width = 6500, height = 2500, res = 300)
+  par(mfrow = c(3, 1),oma = c(2, 2, 2, 1))
+  par(mar = c(3, 2, 2, 1))
+  i <- 1 #2001/2002
+  #plot
+  plot(1:29, base.preds[[i]], type = "l", ylim = c(-50,50), axes = FALSE, 
+       lwd = 3, lty = 2, col = "forestgreen",
+       ylab = "", xlab = "", xlim = c(1.95, 28.05))
+  box()
+  axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
+  axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.45)
+  #upper bound
+  envelopePlot(x1 = c(1:29),
+               y1 = base.upr[[i]],
+               x2 = c(1:29),
+               y2 = base.preds[[i]],
+               col = alpha("springgreen3", 0.2),
+               lineCol = NA)
+  #lower bound
+  envelopePlot(x1 = c(1:29),
+               y1 = base.lwr[[i]],
+               x2 = c(1:29),
+               y2 = base.preds[[i]],
+               col = alpha("springgreen3", 0.2),
+               lineCol = NA)
+  lines(1:29, true.vals[[i]], lty = 1, lwd = 2, col = "grey5")
+  abline(h=0, lty =3, col = "gray15", lwd = 2)
+  abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
+  text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray20", cex = 1.65)
+  text(x= c(7, 15.5, 23), y = -37, labels = c(paste0("RMSE: ", round(SE.rmse[[i]]$base.pred[1], 2)), 
+                                              paste0("RMSE: ", round(SE.rmse[[i]]$base.pred[2], 2)),
+                                              paste0("RMSE: ", round(SE.rmse[[i]]$base.pred[3], 2))), col = "gray10", cex = 1.65)
+  text(x= 2, y = 48, labels = "All Data", col = "gray12", cex = 2)
+  
+  
+  par(mar = c(3, 2, 2, 1))  
+  #plot
+  plot(1:29, const.preds[[i]], type = "l", ylim = c(-50,50), axes = FALSE, 
+       lwd = 3, lty = 2, col = "magenta3",
+       ylab = "", xlab = "", xlim = c(1.95, 28.05))
+  box()
+  axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
+  axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.45)
+  #upper bound
+  envelopePlot(x1 = c(1:29),
+               y1 = const.upr[[i]],
+               x2 = c(1:29),
+               y2 = const.preds[[i]],
+               col = alpha("orchid3", 0.2),
+               lineCol = NA)
+  #lower bound
+  envelopePlot(x1 = c(1:29),
+               y1 = const.lwr[[i]],
+               x2 = c(1:29),
+               y2 = const.preds[[i]],
+               col = alpha("orchid3", 0.2),
+               lineCol = NA)
+  lines(1:29, true.vals[[i]], lty = 1, lwd = 2, col = "grey5")
+  abline(h=0, lty =3, col = "gray15", lwd = 2)
+  abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
+  text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray20", cex = 1.65)
+  text(x= c(7, 15.5, 23), y = -37, labels = c(paste0("RMSE: ", round(SE.rmse[[i]]$const.pred[1], 2)), 
+                                              paste0("RMSE: ", round(SE.rmse[[i]]$const.pred[2], 2)),
+                                              paste0("RMSE: ", round(SE.rmse[[i]]$const.pred[3], 2))), col = "gray10", cex = 1.65)
+  text(x= 2.5, y = 48, labels = "Fixed-Selection", col = "gray12", cex = 2)
+  
+  par(mar = c(3, 2, 2, 1))  
+  #plot
+  plot(1:29, vary.preds[[i]], type = "l", ylim = c(-50,50), axes = FALSE, 
+       lwd = 3, lty = 2, col = "darkorange2",
+       ylab = "", xlab = "", xlim = c(1.95, 28.05))
+  box()
+  axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
+  axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.45)
+  #upper bound
+  envelopePlot(x1 = c(1:29),
+               y1 = vary.upr[[i]],
+               x2 = c(1:29),
+               y2 = vary.preds[[i]],
+               col = alpha("orange2", 0.2),
+               lineCol = NA)
+  #lower bound
+  envelopePlot(x1 = c(1:29),
+               y1 = vary.lwr[[i]],
+               x2 = c(1:29),
+               y2 = vary.preds[[i]],
+               col = alpha("orange2", 0.2),
+               lineCol = NA)
+  lines(1:29, true.vals[[i]], lty = 1, lwd = 2, col = "grey5")
+  abline(h=0, lty =3, col = "gray15", lwd = 2)
+  abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
+  text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray20", cex = 1.65)
+  text(x= c(7, 15.5, 23), y = -37, labels = c(paste0("RMSE: ", round(SE.rmse[[i]]$vary.pred[1], 2)), 
+                                              paste0("RMSE: ", round(SE.rmse[[i]]$vary.pred[2], 2)),
+                                              paste0("RMSE: ", round(SE.rmse[[i]]$vary.pred[3], 2))), col = "gray10", cex = 1.65)
+  text(x= 2.5, y = 48, labels = "Withheld-Season", col = "gray12", cex = 2)
+  title(seasons[i], adj = 0.05, cex.main = 2.5, outer = TRUE, line = -0.5)
+  
+  dev.off()
+}
+
+
+
+
+
+
 
 #2001/2002 predictions
 setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
@@ -688,6 +802,8 @@ text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gra
 title("", adj = 0, cex.main = 1.25)
 title(seasons[i], adj = 0.05, cex.main = 2.5, outer = TRUE)
 dev.off()
+
+
 
 
 setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")

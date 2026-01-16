@@ -6,15 +6,29 @@
 suppressMessages(library(grid)) #gridlines between plots
 suppressMessages( library(scales)) #for adjusting opacity
 
-
 #data import
 setwd("~/CO_AUS/AusCOmodeling") 
 load("Data/modeldata.rda") #resp/pred data
 load("Data/base_RAMPmodels.rda") #"base" model
-load("Data/loyo_models.rda") #leave one year out models/refits
+#load("Data/loyo_models.rda") #leave one year out models/refits
+load("Data/validation_refits_new.rda") #updated RMSE and Predictions (w/ intervals)
+load("Data/validation_refits_wo2019.rda") #RMSE/Preds/Models w/o 2019/2020 data
 
 #load functions
 source("Functions/coef_int_functions.R")
+
+
+#season years/weeks
+season.weeks <- c(38:52, 1:14)
+season.years <- unique(resp.df$year) #TODO: update response df
+
+seasons <- c()
+for (i in 1:(length(season.years)-1)) {
+  temp_season <- paste0(season.years[i], "-", season.years[i+1])
+  #print(temp_season)  
+  seasons <- c(seasons, temp_season)
+}
+rm(i, temp_season)
 
 
 
@@ -24,9 +38,23 @@ SE2.lm <- SEmodels[[2]]
 SE3.lm <- SEmodels[[3]]
 
 #SEmodels.loyo
-SE.const.LM <- SEmodels.loyo[[2]]
-SE.vary.LM <- SEmodels.loyo[[3]]
+#SE.const.LM <- SEmodels.loyo[[2]]
+#SE.vary.LM <- SEmodels.loyo[[3]]
 
+#extract linear models
+## constant/varying model set-up
+const.early <- lapply( SErefit.new[[2]], function(x) x[[1]])
+const.peak <- lapply( SErefit.new[[2]], function(x) x[[2]]) 
+const.late <- lapply( SErefit.new[[2]], function(x) x[[3]]) 
+
+vary.early <- lapply( SErefit.new[[3]], function(x) x[[1]])
+vary.peak <- lapply( SErefit.new[[3]], function(x) x[[2]]) 
+vary.late <- lapply( SErefit.new[[3]], function(x) x[[3]]) 
+
+#varying models w/o 2019/2020
+vary.early.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[1]])
+vary.peak.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[2]]) 
+vary.late.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[3]]) 
 
 ## ---- Coeff/Interaction Figures ---- ##
 ## setup
@@ -34,14 +62,83 @@ SE1.coef <- coef(SE1.lm)
 SE2.coef <- coef(SE2.lm)
 SE3.coef <- coef(SE3.lm)
 
+
+
+#varying models w.o 2019/2020
+#early models
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/Temp/New")
+for (i in 1:20) {
+  coefs1 <- list(
+    base  = SE1.coef,
+    const = coef(vary.early.wo2019[[i]]), 
+    vary  = coef(vary.early[[i]])  
+  )
+  
+  png(filename = paste0("new_SEcoefs_early_", season.years[i], ".png"), width = 3600, height = 3600, res = 300)
+  plot_lagged_coef_panels(
+    coefs_named_list = coefs1,
+    vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+    coef_range = c(-5, 5),
+    main_title = paste0("Early Fire Season (", seasons[i], " Withheld)"),   
+    quad_y_jitter = 0.004,
+    model_cols = c(base="forestgreen", const="royalblue3", vary="darkorange2"))
+  dev.off()
+}
+
+
+#peak models
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/Temp/New")
+for (i in 1:20) {
+  coefs2 <- list(
+    base  = SE2.coef,
+    const = coef(vary.peak.wo2019[[i]]), 
+    vary  = coef(vary.peak[[i]])  
+  )
+  
+  png(filename = paste0("new_SEcoefs_peak_", season.years[i], ".png"), width = 3600, height = 3600, res = 300)
+  plot_lagged_coef_panels(
+    coefs_named_list = coefs2,
+    vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+    coef_range = c(-5, 5),
+    main_title = paste0("Peak Fire Season (", seasons[i], " Withheld)"),   
+    quad_y_jitter = 0.004,
+    model_cols = c(base="forestgreen", const="royalblue3", vary="darkorange2"))
+  dev.off()
+}
+
+
+#late models
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/Temp/New")
+for (i in 1:20) {
+  coefs3 <- list(
+    base  = SE3.coef,
+    const = coef(vary.late.wo2019[[i]]), 
+    vary  = coef(vary.late[[i]])  
+  )
+  
+  png(filename = paste0("new_SEcoefs_late_", season.years[i], ".png"), width = 3600, height = 3600, res = 300)
+  plot_lagged_coef_panels(
+    coefs_named_list = coefs3,
+    vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+    coef_range = c(-5, 5),
+    main_title = paste0("Late Fire Season (", seasons[i], " Withheld)"),   
+    quad_y_jitter = 0.004,
+    model_cols = c(base="forestgreen", const="royalblue3", vary="darkorange2"))
+  dev.off()
+}
+
+
+
 #2001/2002
 #early 
 SE1.constcoef <- coef(SE.const.LM$`2001-2002`[[1]])
 SE1.varycoef <- coef(SE.vary.LM$`2001-2002`[[1]])
 
+i <- 1
+
 coefs1 <- list(
   base  = SE1.coef,
-  #const = SE1.constcoef, 
+  const = coef(vary.early.wo2019[[1]]), 
   vary  = SE1.varycoef  
 )
 
@@ -1312,4 +1409,9 @@ plot_lagged_coef_panels(
   main_title = "Late Fire Season (2020/2021 Withheld)",
   quad_y_jitter = 0.005)
 dev.off()
+
+
+
+
+###
 

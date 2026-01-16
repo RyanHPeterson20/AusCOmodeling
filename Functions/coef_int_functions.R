@@ -80,16 +80,16 @@ plot_lagged_coef_panels <- function(coefs_named_list,
                                     cex_subtitle = 1.4,
                                     line_width = 2,
                                     quad_y_jitter = 0.10,
-                                    x_offsets = c(base = 0, const = 0, vary=0)) {
+                                    x_offsets = c(base = 0, const = 0, vary=0),
+                                    model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2")) {
   
   stopifnot(is.list(coefs_named_list), length(coefs_named_list) >= 1)
   stopifnot(!is.null(names(coefs_named_list)))
   
   # styles per model
-  model_cols <- c(base="forestgreen", const="magenta4", vary="darkorange2")
-  model_bgs  <- c(base=alpha_col("forestgreen",0.5),
-                  const=alpha_col("magenta4",0.65),
-                  vary=alpha_col("darkorange2",0.65))
+  model_bgs  <- c(base=alpha_col(model_cols[1], 0.5),
+                  const=alpha_col(model_cols[2], 0.65),
+                  vary=alpha_col(model_cols[3], 0.65))
   model_outline <- c(base="grey4", const="black", vary="black")
   #x_offsets <- c(base = -0.25, const = 0.25, vary=0)
   

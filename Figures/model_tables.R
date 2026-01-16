@@ -12,6 +12,7 @@ setwd("~/CO_AUS/AusCOmodeling")
 load("Data/modeldata.rda") #resp/pred data
 load("Data/base_RAMPmodels.rda") #"base" model
 load("Data/validation_refits_new.rda") #updated RMSE and Predictions (w/ intervals)
+load("Data/validation_refits_wo2019.rda") #RMSE/Preds/Models w/o 2019/2020 data
 
 #season years/weeks
 season.weeks <- c(38:52, 1:14)
@@ -90,6 +91,54 @@ card2 <- lm_card_grob(fit2, border = "forestgreen", fill = alpha("springgreen4",
 card3 <- lm_card_grob(fit3, border = "forestgreen", fill = alpha("springgreen3", 0.1))
 
 grid.arrange(card1, card2, card3, ncol = 3)
+
+
+## constant/varying model set-up
+const.early <- lapply( SErefit.new[[2]], function(x) x[[1]])
+const.peak <- lapply( SErefit.new[[2]], function(x) x[[2]]) 
+const.late <- lapply( SErefit.new[[2]], function(x) x[[3]]) 
+
+vary.early <- lapply( SErefit.new[[3]], function(x) x[[1]])
+vary.peak <- lapply( SErefit.new[[3]], function(x) x[[2]]) 
+vary.late <- lapply( SErefit.new[[3]], function(x) x[[3]]) 
+
+#varying models w/o 2019/2020
+vary.early.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[1]])
+vary.peak.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[2]]) 
+vary.late.wo2010 <- lapply( SErefit.wo2019[[3]], function(x) x[[3]]) 
+
+
+
+#final plot
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
+for (i in 1:20) {
+  png(filename = paste0("new_model_tables_", season.years[i], ".png"), width = 3500, height = 4000, res = 275)
+  
+  card1.vary <- lm_card_grob(vary.early[[i]], border = "darkorange2", fill = alpha("orange2", 0.1))
+  card2.vary <- lm_card_grob(vary.peak[[i]], border = "darkorange2", fill = alpha("orange3", 0.2))
+  card3.vary <- lm_card_grob(vary.late[[i]], border = "darkorange2", fill = alpha("orange2", 0.1))
+  
+  card1.vary.wo2019 <- lm_card_grob(vary.early.wo2019[[i]], border = "royalblue3", fill = alpha("steelblue3", 0.1))
+  card2.vary.wo2019 <- lm_card_grob(vary.peak.wo2019[[i]], border = "royalblue3", fill = alpha("steelblue4", 0.2))
+  card3.vary.wo2019 <- lm_card_grob(vary.late.wo2010[[i]], border = "royalblue3", fill = alpha("steelblue3", 0.1))
+  
+  grid.arrange(card1, card2, card3,
+               card1.vary, card2.vary, card3.vary,
+               card1.vary.wo2019, card2.vary.wo2019, card3.vary.wo2019, ncol = 3)
+  
+  dev.off()
+}
+
+
+
+#test evaluation of varying models w.o 2019/2020
+i <- 2
+card1.vary.wo2019 <- lm_card_grob(vary.early.wo2019[[i]], border = "royalblue3", fill = alpha("steelblue3", 0.1))
+card2.vary.wo2019 <- lm_card_grob(vary.peak.wo2019[[i]], border = "royalblue3", fill = alpha("steelblue4", 0.2))
+card3.vary.wo2019 <- lm_card_grob(vary.late.wo2010[[i]], border = "royalblue3", fill = alpha("steelblue3", 0.1))
+
+grid.arrange(card1.vary.wo2019, card2.vary.wo2019, card3.vary.wo2019, ncol = 3)
+
 
 
 #2001/2002
