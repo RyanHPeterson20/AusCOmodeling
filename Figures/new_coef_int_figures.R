@@ -74,7 +74,7 @@ for (i in 1:20) {
     vary  = coef(vary.early[[i]])  
   )
   
-  png(filename = paste0("new_SEcoefs_early_", season.years[i], ".png"), width = 3600, height = 3600, res = 300)
+  png(filename = paste0("new_SEcoefs_early_", season.years[i], ".png"), width = 2400, height = 4400, res = 300)
   plot_lagged_coef_panels(
     coefs_named_list = coefs1,
     vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
@@ -95,7 +95,7 @@ for (i in 1:20) {
     vary  = coef(vary.peak[[i]])  
   )
   
-  png(filename = paste0("new_SEcoefs_peak_", season.years[i], ".png"), width = 3600, height = 3600, res = 300)
+  png(filename = paste0("new_SEcoefs_peak_", season.years[i], ".png"), width = 2400, height = 4400, res = 300)
   plot_lagged_coef_panels(
     coefs_named_list = coefs2,
     vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
@@ -116,7 +116,7 @@ for (i in 1:20) {
     vary  = coef(vary.late[[i]])  
   )
   
-  png(filename = paste0("new_SEcoefs_late_", season.years[i], ".png"), width = 3600, height = 3600, res = 300)
+  png(filename = paste0("new_SEcoefs_late_", season.years[i], ".png"), width = 2400, height = 4400, res = 300)
   plot_lagged_coef_panels(
     coefs_named_list = coefs3,
     vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
@@ -129,6 +129,71 @@ for (i in 1:20) {
 
 
 
+
+#varying models 
+#early models
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/Temp")
+for (i in 1:20) {
+  coefs1 <- list(
+    base  = SE1.coef,
+    #const = coef(vary.early.wo2019[[i]]), 
+    vary  = coef(vary.early[[i]])  
+  )
+  
+  png(filename = paste0("SEcoefs_early_", season.years[i], ".png"), width = 2400, height = 4400, res = 300)
+  plot_lagged_coef_panels(
+    coefs_named_list = coefs1,
+    vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+    coef_range = c(-5, 5),
+    main_title = paste0("Early Fire Season (", seasons[i], " Withheld)"),   
+    quad_y_jitter = 0.004,
+    model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"))
+  dev.off()
+}
+
+
+#peak models
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/Temp")
+for (i in 1:20) {
+  coefs2 <- list(
+    base  = SE2.coef,
+    #const = coef(vary.peak.wo2019[[i]]), 
+    vary  = coef(vary.peak[[i]])  
+  )
+  
+  png(filename = paste0("SEcoefs_peak_", season.years[i], ".png"), width = 2400, height = 4400, res = 300)
+  plot_lagged_coef_panels(
+    coefs_named_list = coefs2,
+    vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+    coef_range = c(-5, 5),
+    main_title = paste0("Peak Fire Season (", seasons[i], " Withheld)"),   
+    quad_y_jitter = 0.004,
+    model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"))
+  dev.off()
+}
+
+
+#late models
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/Temp")
+for (i in 1:20) {
+  coefs3 <- list(
+    base  = SE3.coef,
+    #const = coef(vary.late.wo2019[[i]]), 
+    vary  = coef(vary.late[[i]])  
+  )
+  
+  png(filename = paste0("SEcoefs_late_", season.years[i], ".png"), width = 2400, height = 4400, res = 300)
+  plot_lagged_coef_panels(
+    coefs_named_list = coefs3,
+    vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+    coef_range = c(-5, 5),
+    main_title = paste0("Late Fire Season (", seasons[i], " Withheld)"),   
+    quad_y_jitter = 0.004,
+    model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"))
+  dev.off()
+}
+
+
 #2001/2002
 #early 
 SE1.constcoef <- coef(SE.const.LM$`2001-2002`[[1]])
@@ -138,7 +203,7 @@ i <- 1
 
 coefs1 <- list(
   base  = SE1.coef,
-  const = coef(vary.early.wo2019[[1]]), 
+  #const = SE1.constcoef, 
   vary  = SE1.varycoef  
 )
 

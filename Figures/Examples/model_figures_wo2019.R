@@ -714,12 +714,19 @@ dev.off()
 
 #repeat for all years
 
-#add in some other stuff
+#add in some RMSE 
+SE.rmse <- SEvalid$rmse
+SE.rmse.wo2019 <- SErefit.wo2019$rmse
+
+SE.rmse.wo2019[[1]][1, 1] #early
+SE.rmse.wo2019[[1]][2, 1] #peak
+SE.rmse.wo2019[[1]][3, 1] #late
+
 
 
 setwd("~/CO_AUS/AusCOmodeling/Figures/Examples")
 for (i in 1:20) {
-  png(filename =  paste0("new_preds_", season.years[i], ".png"), width = 5000, height = 2500, res = 300)
+  png(filename =  paste0("new_preds_", season.years[i], ".png"), width = 6500, height = 2500, res = 300)
   par(mfrow = c(3, 1),oma = c(2, 2, 2, 1))
   par(mar = c(3, 2, 2, 1))
   #plot
@@ -747,7 +754,10 @@ for (i in 1:20) {
   abline(h=0, lty =3, col = "gray15", lwd = 2)
   abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
   text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.65)
-  title("", adj = 0, cex.main = 1.25)
+  text(x= c(7, 15.5, 23), y = -37, labels = c(paste0("RMSE: ", round(SE.rmse[[i]]$base.pred[1], 2)), 
+                                              paste0("RMSE: ", round(SE.rmse[[i]]$base.pred[2], 2)),
+                                              paste0("RMSE: ", round(SE.rmse[[i]]$base.pred[3], 2))), col = "gray10", cex = 1.65)
+  text(x= 2, y = 48, labels = "All Data", col = "gray12", cex = 2)
   
   par(mar = c(3, 2, 2, 1))  
   #plot
@@ -775,7 +785,10 @@ for (i in 1:20) {
   abline(h=0, lty =3, col = "gray15", lwd = 2)
   abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
   text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.65)
-  title("", adj = 0, cex.main = 1.25)
+  text(x= c(7, 15.5, 23), y = -37, labels = c(paste0("RMSE: ", round(SE.rmse[[i]]$vary.pred[1], 2)), 
+                                              paste0("RMSE: ", round(SE.rmse[[i]]$vary.pred[2], 2)),
+                                              paste0("RMSE: ", round(SE.rmse[[i]]$vary.pred[3], 2))), col = "gray10", cex = 1.65)
+  text(x= 2.5, y = 48, labels = "Withheld-Season", col = "gray12", cex = 2)
   
   par(mar = c(3, 2, 2, 1)) 
   #plot
@@ -803,12 +816,14 @@ for (i in 1:20) {
   abline(h=0, lty =3, col = "gray15", lwd = 2)
   abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
   text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.65)
-  title("", adj = 0, cex.main = 1.25)
-  title(seasons[i], adj = 0.05, cex.main = 2.5, outer = TRUE)
+  text(x= c(7, 15.5, 23), y = -37, labels = c(paste0("RMSE: ", round(SE.rmse.wo2019[[i]][1, 1] , 2)), 
+                                              paste0("RMSE: ", round(SE.rmse.wo2019[[i]][2, 1] , 2)),
+                                              paste0("RMSE: ", round(SE.rmse.wo2019[[i]][3, 1], 2))), col = "gray10", cex = 1.65)
+  text(x= 2.5, y = 48, labels = "Withheld-Season (& 2019/2020 withheld) ", col = "gray12", cex = 2)
+  title(seasons[i], adj = 0.05, cex.main = 2.5, outer = TRUE, line = -0.5)
   
   dev.off()
   
 }
-
 
 

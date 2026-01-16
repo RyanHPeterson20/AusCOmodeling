@@ -608,7 +608,6 @@ for (i in 1:20) {
   png(filename = paste0("preds_", season.years[i], ".png"), width = 6500, height = 2500, res = 300)
   par(mfrow = c(3, 1),oma = c(2, 2, 2, 1))
   par(mar = c(3, 2, 2, 1))
-  i <- 1 #2001/2002
   #plot
   plot(1:29, base.preds[[i]], type = "l", ylim = c(-50,50), axes = FALSE, 
        lwd = 3, lty = 2, col = "forestgreen",
