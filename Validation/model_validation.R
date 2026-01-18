@@ -167,7 +167,9 @@ save(SEvalid, SErefit.new, file = "validation_refits_new.rda")
 
 
 
-#repeat for new withheld (varying term) models without 2019/2020 and without another year
+#repeat for new withheld (varying term) models without 2019/2020 and without another year, 
+
+#TODO: expand this for every year, not just wo 2019/2020
 
 ## --- partial data setup 
 #leaving out a single year (loo) and 2019/2020
@@ -175,8 +177,14 @@ SE.pred.train <- list()
 SE.resp.train <- list()
 for (k in 1:length(seasons)) {
   #SE Aus
-  SE.pred.train[[seasons[k]]] <- pred_setup(SEAus.lag, season.weeks, SE.early, SE.mid, SE.late, j = -c(k, 19))
-  SE.resp.train[[seasons[k]]] <- resp_setup(SEresp.mat, season.weeks, SE.early, SE.mid, SE.late, j = -c(k, 19)) 
+  SE.pred.temp <- list()
+  SE.resp.temp <- list()
+  for (j in 1:length(seasons)) {
+    SE.pred.temp[[seasons[j]]] <- pred_setup(SEAus.lag, season.weeks, SE.early, SE.mid, SE.late, j = -c(k, j))
+    SE.resp.temp[[seasons[j]]] <- resp_setup(SEresp.mat, season.weeks, SE.early, SE.mid, SE.late, j = -c(k, j)) 
+  }
+  SE.pred.train[[seasons[k]]] <- SE.pred.temp
+  SE.resp.train[[seasons[k]]] <- SE.resp.temp
 }
 
 #extracting a single year (validation data)
@@ -189,7 +197,8 @@ for (k in 1:length(seasons)) {
 }
 
 
-#TODO: potentially delete later
+
+#double withheld seasons
 SE.vary.terms <- NULL #non-fixed terms
 SE.vary.LM <- NULL #non-fixed term model
 SE.pred.int <- NULL #predictions and intervals
@@ -204,20 +213,31 @@ for (i in 1:length(seasons)) {
   valid.pred <- SE.pred.valid[[i]]    
   
   #group data objects
-  SE.var.refit <- NULL #varying terms
-  SE.var <- NULL #varying linear models
-  SErmse.yearly <- matrix(NA, ncol = 1)
-  colnames(SErmse.yearly) <- c("vary.pred")
-  SE.intervals <- matrix(NA, ncol = 4)
-  colnames(SE.intervals) <- c("true", 
-                              "vary.fit", "vary.lwr", "vary.upr")
+  SE.inner.terms <- NULL #non-fixed terms
+  SE.inner.LM <- NULL #non-fixed term model
+  SE.inner.pred <- NULL #predictions and intervals
+  SE.inner.rmse <- NULL
+  
+  for (k in 1:length(seasons)) {
+    #additional withheld years
+    temp.resp <- train.resp[[k]]
+    temp.pred <- train.pred[[k]]
+    
+    #group data objects
+    SE.var.refit <- NULL #varying terms
+    SE.var <- NULL #varying linear models
+    SErmse.yearly <- matrix(NA, ncol = 1)
+    colnames(SErmse.yearly) <- c("vary.pred")
+    SE.intervals <- matrix(NA, ncol = 4)
+    colnames(SE.intervals) <- c("true", 
+                                "vary.fit", "vary.lwr", "vary.upr")
   
   for (j in 1:3) {
     
     #lm fit data setup
-    y.train <- as.numeric(train.resp[[j]])
+    y.train <- as.numeric(temp.resp[[j]])
     #with OLR
-    X.train <- cbind(as.matrix(train.pred[[j]][ ,c(1:52, 105:364)])) 
+    X.train <- cbind(as.matrix(temp.pred[[j]][ ,c(1:52, 105:364)])) 
     
     #varying ramp fit
     vary.fit <- RAMP(X = X.train, y = y.train,
@@ -256,15 +276,23 @@ for (i in 1:length(seasons)) {
     
     
   }
-  SE.vary.terms[[seasons[i]]] <- SE.var.refit
-  SE.vary.LM[[seasons[i]]] <- SE.var
+    SE.inner.terms[[seasons[i]]] <- SE.var.refit
+    SE.inner.LM[[seasons[i]]] <- SE.var
+    
+    SE.inner.rmse[[seasons[i]]] <- as.data.frame(rmse = SErmse.yearly[-1, ])
+    SE.inner.pred[[seasons[i]]] <- as.data.frame(SE.intervals[-1, ])
   
-  SE.rmse[[seasons[i]]] <- as.data.frame(SErmse.yearly[-1, ])
-  SE.pred.int[[seasons[i]]] <- as.data.frame(SE.intervals[-1, ])
+  
+  }
+  SE.vary.terms[[seasons[i]]] <- SE.inner.terms
+  SE.vary.LM[[seasons[i]]] <- SE.inner.LM
+  
+  SE.rmse[[seasons[i]]] <- SE.inner.rmse
+  SE.pred.int[[seasons[i]]] <- SE.inner.pred
 }  
 
 
-SErefit.wo2019 <- list(rmse = SE.rmse, preds = SE.pred.int, SE.vary.lm = SE.vary.LM)
+SErefit.wo.years <- list(rmse = SE.rmse, preds = SE.pred.int, SE.vary.lm = SE.vary.LM)
 
 setwd("~/CO_AUS/AusCOmodeling/Data") 
-save(SErefit.wo2019, file = "validation_refits_wo2019.rda")
+save(SErefit.wo.years, file = "validation_refits_wo2019.rda")
