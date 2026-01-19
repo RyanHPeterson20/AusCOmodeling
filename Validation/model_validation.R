@@ -169,7 +169,6 @@ save(SEvalid, SErefit.new, file = "validation_refits_new.rda")
 
 #repeat for new withheld (varying term) models without 2019/2020 and without another year, 
 
-#TODO: expand this for every year, not just wo 2019/2020
 
 ## --- partial data setup 
 #leaving out a single year (loo) and 2019/2020
@@ -203,7 +202,8 @@ SE.vary.terms <- NULL #non-fixed terms
 SE.vary.LM <- NULL #non-fixed term model
 SE.pred.int <- NULL #predictions and intervals
 SE.rmse <- NULL
-for (i in 1:length(seasons)) {
+#for (i in 1:length(seasons)) { #TODO: do there entire loop after everything runs correctly
+for (i in 1:2) { 
   #data w/o season (train)
   train.resp <- SE.resp.train[[i]]
   train.pred <- SE.pred.train[[i]]
@@ -276,11 +276,11 @@ for (i in 1:length(seasons)) {
     
     
   }
-    SE.inner.terms[[seasons[i]]] <- SE.var.refit
-    SE.inner.LM[[seasons[i]]] <- SE.var
+    SE.inner.terms[[seasons[k]]] <- SE.var.refit
+    SE.inner.LM[[seasons[k]]] <- SE.var
     
-    SE.inner.rmse[[seasons[i]]] <- as.data.frame(rmse = SErmse.yearly[-1, ])
-    SE.inner.pred[[seasons[i]]] <- as.data.frame(SE.intervals[-1, ])
+    SE.inner.rmse[[seasons[k]]] <- as.data.frame(SErmse.yearly[-1, ])
+    SE.inner.pred[[seasons[k]]] <- as.data.frame(SE.intervals[-1, ])
   
   
   }
