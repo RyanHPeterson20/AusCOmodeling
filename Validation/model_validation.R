@@ -202,8 +202,7 @@ SE.vary.terms <- NULL #non-fixed terms
 SE.vary.LM <- NULL #non-fixed term model
 SE.pred.int <- NULL #predictions and intervals
 SE.rmse <- NULL
-#for (i in 1:length(seasons)) { #TODO: do there entire loop after everything runs correctly
-for (i in 1:2) { 
+for (i in 1:length(seasons)) { #TODO: do there entire loop after everything runs correctly
   #data w/o season (train)
   train.resp <- SE.resp.train[[i]]
   train.pred <- SE.pred.train[[i]]
