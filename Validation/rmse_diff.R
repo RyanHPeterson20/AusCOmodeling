@@ -154,13 +154,13 @@ heatmap_fields_rwb0 <- function(z, x = NULL, y = NULL,
 
 #early
 z.early <- t(RMSE.diff.early)[ ,20:1]
-heatmap_fields_rwb0(z = z.temp, xlab = "Withheld-Season", ylab = "Prediction Year")
+heatmap_fields_rwb0(z = z.early, xlab = "Withheld-Season", ylab = "Prediction Year")
 #peak
 z.peak <- t(RMSE.diff.peak)[ ,20:1]
-heatmap_fields_rwb0(z = z.peak)
+heatmap_fields_rwb0(z = z.peak, xlab = "Withheld-Season", ylab = "Prediction Year")
 #late
 z.late <- t(RMSE.diff.late)[ ,20:1]
-heatmap_fields_rwb0(z = z.late)
+heatmap_fields_rwb0(z = z.late, xlab = "Withheld-Season", ylab = "Prediction Year")
 
 
 #update for difference from the normal ("yellow") withheld season
@@ -203,8 +203,27 @@ z.late <- t(RMSE.diff2.late)[ ,20:1]
 heatmap_fields_rwb0(z = z.late, xlab = "Withheld-Season", ylab = "Prediction Year")
 
 
-#create plots ( as normal plot with type = "b" and highlight the year where both withheld are the same year.)
+#extract single rows, goal is to figure out what happens "over time"
+#for given year we want to see if there is a change based on "evolving" climate conditions
+z.early <- t(RMSE.diff2.early)[ ,20:1]
+heatmap_fields_rwb0(z = z.early, x_n = 20, y_n =20,
+                    xlab = "Withheld-Season", ylab = "Prediction Year")
 
+
+
+#create plots ( as normal plot with type = "b" and highlight the year where both withheld are the same year.)
+cols <- colorRampPalette(c("blue4", "white", "red4"))(39) #maybe only 39? (19+19+1?)
+
+
+#test plot
+i <- 4
+cols.index <- cols[(21-i):(40-i)]
+cols.index[i] <- "orange2"
+plot(1:20, RMSE.diff2.early[i, ], type = "b", pch = 21, bg = cols.index,
+     main = seasons[i])
+abline(h = 0, lty = 2)
+
+#TODO: remove old plot or output, either one
 #note, using temporary mfrow to fit the quick EDA, update to c(5,2) (or c(5,4)) for final output
 par(mfrow = c(3, 2))
 for (i in 1:6) {
