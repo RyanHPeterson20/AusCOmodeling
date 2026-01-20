@@ -152,15 +152,41 @@ heatmap_fields_rwb0 <- function(z, x = NULL, y = NULL,
   invisible(NULL)
 }
 
+
 #early
 z.early <- t(RMSE.diff.early)[ ,20:1]
-heatmap_fields_rwb0(z = z.early, xlab = "Withheld-Season", ylab = "Prediction Year")
 #peak
 z.peak <- t(RMSE.diff.peak)[ ,20:1]
-heatmap_fields_rwb0(z = z.peak, xlab = "Withheld-Season", ylab = "Prediction Year")
 #late
 z.late <- t(RMSE.diff.late)[ ,20:1]
-heatmap_fields_rwb0(z = z.late, xlab = "Withheld-Season", ylab = "Prediction Year")
+
+#generate output figures
+#early
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/alt_withheld")
+png(filename = "rmse_diff_early.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_rwb0(z = z.early, main = expression(" Early Fire-Season: "~Delta*"RMSE (All-data - Withheld-Seasons)") )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+#peak
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/alt_withheld")
+png(filename = "rmse_diff_peak.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_rwb0(z = z.peak, main = expression(" Peak Fire-Season: "~Delta*"RMSE (All-data - Withheld-Seasons)") )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+#late
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/alt_withheld")
+png(filename = "rmse_diff_late.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_rwb0(z = z.late, main = expression(" Late Fire-Season: "~Delta*"RMSE (All-data - Withheld-Seasons)") )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
 
 
 #update for difference from the normal ("yellow") withheld season
@@ -194,13 +220,39 @@ row.names(RMSE.diff2.late) <- seasons
 
 #early
 z.early <- t(RMSE.diff2.early)[ ,20:1]
-heatmap_fields_rwb0(z = z.early, xlab = "Withheld-Season", ylab = "Prediction Year")
 #peak
 z.peak <- t(RMSE.diff2.peak)[ ,20:1]
-heatmap_fields_rwb0(z = z.peak, xlab = "Withheld-Season", ylab = "Prediction Year")
 #late
 z.late <- t(RMSE.diff2.late)[ ,20:1]
-heatmap_fields_rwb0(z = z.late, xlab = "Withheld-Season", ylab = "Prediction Year")
+
+
+#early
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/alt_withheld")
+png(filename = "rmse_diff2_early.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_rwb0(z = z.early, main = expression(" Early Fire-Season: "~Delta*"RMSE (Single Withheld-Season - Withheld-Seasons) ") )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+#peak
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/alt_withheld")
+png(filename = "rmse_diff2_peak.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_rwb0(z = z.peak, main = expression(" Peak Fire-Season: "~Delta*"RMSE (Single Withheld-Season - Withheld-Seasons)") )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+#late
+setwd("~/CO_AUS/AusCOmodeling/Figures/Examples/alt_withheld")
+png(filename = "rmse_diff2_late.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_rwb0(z = z.late, main = expression(" Late Fire-Season: "~Delta*"RMSE (Single Withheld-Season - Withheld-Seasons)") )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
 
 
 #extract single rows, goal is to figure out what happens "over time"
