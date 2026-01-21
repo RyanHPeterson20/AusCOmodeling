@@ -168,17 +168,18 @@ vary.lwr.late <- c(mean(pred.vary.lwr[17:18]),  pred.vary.lwr[18:29])
 #fig 2b, predictions and intervals.
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-png(filename = "SEpreds_2019_fig2b_newest.png", width = 3000, height = 3500, res = 300)
+png(filename = "SEpreds2019_fig2b_New.png", width = 3275, height = 3750, res = 300)
 
-par(mfrow = c(3, 1), oma = c(3, 3.5, 2, 1), mar = c(3, 2, 2, 1))
+par(mfrow = c(3, 1), oma = c(3, 3.5, 1, 1), mar = c(2, 2, 3, 1))
 #update prediction figure (full model)
 
 plot(1:29, pred.base.fit, type = "l", ylim = c(-50,50), axes = FALSE, 
      lwd = 3, lty = 2, col = "forestgreen",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
-axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.45)
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.65)
+axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 2.00)
+title("2019/2020 Wildfire Season", adj = 0, cex.main = 2.35, line = 1)
 #upper bound
 envelopePlot(x1 = c(1:13, 13.5),
              y1 = base.upr.early,
@@ -234,11 +235,12 @@ legend("topright",
                "forestgreen",
                alpha("springgreen3", 0.3)),
        xpd = TRUE)
-title("Full model", adj = 0, cex.main = 1.65)
-text(x= 3, y = -46, labels = "RMSE: 5.95", col = "gray35", cex = 1.5)
-text(x=15.5, y = -46, labels = "RMSE: 3.85", col = "gray35", cex = 1.5)
-text(x=20, y = -46, labels = "RMSE: 2.74", col = "gray35", cex = 1.5)
-text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.65)
+#title("Full model", adj = 0, cex.main = 1.65)
+text(x = 3.5, y = 49, labels = "All-Data Model", col = "gray15", cex = 2.00)
+#text(x= 3, y = -46, labels = "RMSE: 5.95", col = "gray35", cex = 1.5)
+#text(x=15.5, y = -46, labels = "RMSE: 3.85", col = "gray35", cex = 1.5)
+#text(x=20, y = -46, labels = "RMSE: 2.74", col = "gray35", cex = 1.5)
+text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 2.00)
 
 
 #update prediction figure (fixed model)
@@ -246,8 +248,8 @@ plot(1:29, pred.const.fit, type = "l", ylim = c(-50,50), axes = FALSE,
      lwd = 3, lty = 2, col = "magenta3",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
-axis(2, at = c(-50, -25,  0, 25, 50),  cex.axis = 1.45)
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.65)
+axis(2, at = c(-50, -25,  0, 25, 50),  cex.axis = 2.00)
 #upper bound
 envelopePlot(x1 = c(1:13, 13.5),
              y1 = const.upr.early,
@@ -303,12 +305,12 @@ legend("topright",
                "magenta3",
                alpha("orchid3", 0.3)),
        xpd = TRUE)
-title("Fixed Model", adj = 0, cex.main = 1.65)
-
-text(x= 3, y = -46, labels = "RMSE: 6.98", col = "gray35", cex = 1.5)
-text(x=15.5, y = -46, labels = "RMSE: 6.82", col = "gray35", cex = 1.5)
-text(x=20, y = -46, labels = "RMSE: 3.08", col = "gray35", cex = 1.5)
-text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.65)
+#title("Fixed Model", adj = 0, cex.main = 1.65)
+text(x = 4.5, y = 49, labels = "Fixed-Selection Model", col = "gray15", cex = 2.00)
+#text(x= 3, y = -46, labels = "RMSE: 6.98", col = "gray35", cex = 1.5)
+#text(x=15.5, y = -46, labels = "RMSE: 6.82", col = "gray35", cex = 1.5)
+#text(x=20, y = -46, labels = "RMSE: 3.08", col = "gray35", cex = 1.5)
+text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 2.00)
 
 
 #update prediction figure (non-fixed model)
@@ -316,8 +318,8 @@ plot(1:29, pred.vary.fit, type = "l", ylim = c(-50,50), axes = FALSE,
      lwd = 3, lty = 2, col = "darkorange2",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.45)
-axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.45)
+axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.65) #x-axis
+axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 2.00) #y-axis
 #upper bound
 envelopePlot(x1 = c(1:13, 13.5),
              y1 = vary.upr.early,
@@ -374,15 +376,15 @@ legend("topright",
                "darkorange2",
                alpha("orange2", 0.3)),
        xpd = TRUE)
-title("Non-fixed Model", adj = 0, cex.main = 1.65)
+#title("Non-fixed Model", adj = 0, cex.main = 1.65)
+text(x = 4.5, y = 49, labels = "Withheld-Season Model", col = "gray15", cex = 2.00)
+#text(x= 3, y = -46, labels = "RMSE: 9.61", col = "gray35", cex = 1.5)
+#text(x=15.5, y = -46, labels = "RMSE: 8.15", col = "gray35", cex = 1.5)
+#text(x=20, y = -46, labels = "RMSE: 4.68", col = "gray35", cex = 1.5)
+text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 2.00)
 
-text(x= 3, y = -46, labels = "RMSE: 9.61", col = "gray35", cex = 1.5)
-text(x=15.5, y = -46, labels = "RMSE: 8.15", col = "gray35", cex = 1.5)
-text(x=20, y = -46, labels = "RMSE: 4.68", col = "gray35", cex = 1.5)
-text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.65)
-
-mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.25, line = 2)
-mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.25, line = 1)
+mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.5, line = 2)
+mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.5, line = 1)
 
 dev.off()
 

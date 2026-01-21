@@ -50,7 +50,7 @@ SE3.varycoef <- coef(SE.vary.LM$`2019-2020`[[3]])
 
 
 #update sizes for all cex (e.g. number, labels, pts, and titles)
-cex.num <- 2.25 #cex.axis = 1.6
+cex.num <- 2.23 #cex.axis = 1.6
 cex.label <- 2.5 #cex.lab = 1.75
 cex.subtile <- 2 #cex = 1.65
 #cex.title
@@ -59,7 +59,7 @@ line.width <- 2.5 #lwd = 2
 #new interaction figure
 #fig 2a - `peak` group
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "SEcoefs_peak_new.png", width = 3000, height = 3750, res = 300)
+png(filename = "SEcoefs_peak_new.png", width = 3700, height = 4050, res = 300)
 layout(matrix(c(1, 6,
                 2, 6,
                 3, 6,
@@ -126,14 +126,17 @@ par(mar = c(3, 4.75, 2.5, 1))
 #nino pch 21
 plot(SE2_ninolag, SE2_ninocoef, pch = 21, 
      col = "grey4", bg =  alpha("forestgreen",.5), cex = 2.33,
-     xlim = c(1,52), cex.axis = cex.num, 
+     xlim = c(1,52), axes = FALSE, 
      ylim = SEAus2_range,
      xlab = "", ylab = "")
+box()
+axis(1, at = c(10, 20, 30, 40, 50), cex.axis = cex.num) #x-axis
+axis(2, at = c(-4, 0, 4),  cex.axis = cex.num) #y-axis
 points(SE22_ninolag, SE22_ninocoef, pch = 21, col = "grey4",
        bg =  alpha("magenta4",.65), cex = 2.33)
 abline(h = 0, lty = 2, lwd = 1.5)
 text(x = 4, y = 4.15, labels ="Ni\u00f1o 3.4",  col = "gray12", cex = cex.subtile)
-title("Peak Group (Weeks 51, 52, 1, & 2)", adj = 0, cex.main = 2.5, line = 1)
+title("Peak Fire-Season (Weeks 51, 52, 1, & 2)", adj = 0, cex.main = 2.5, line = 1)
 
 ## --- Nino Interaction
 ## nino_lag40:etio_lag7
@@ -155,10 +158,13 @@ links[[2]] <- list(
 par(mar = c(3, 4.75, 1, 1))
 #wtio pch 24
 plot(SE2_wtiolag-0.25, SE2_wtiocoef, pch = 24, col = "black",
-     bg =  alpha("forestgreen",.5), cex = 2, cex.axis = cex.num,
+     bg =  alpha("forestgreen",.5), cex = 2, axes = FALSE,
      xlim = c(1,52), 
      ylim = SEAus2_range,
      xlab = "", ylab = "")
+box()
+axis(1, at = c(10, 20, 30, 40, 50), cex.axis = cex.num) #x-axis
+axis(2, at = c(-4, 0, 4),  cex.axis = cex.num) #y-axis
 points(SE22_wtiolag+0.25, SE22_wtiocoef, pch = 24, col = "black",
        bg =  alpha("magenta4",.65) , cex = 2)
 points(SE23_wtiolag, SE23_wtiocoef, pch = 24, col = "black",
@@ -172,10 +178,13 @@ text(x = 3, y = 4.15, labels ="WTIO",  col = "gray12", cex = cex.subtile)
 par(mar = c(3, 4.75, 1, 1)) 
 #etio pch 25
 plot(SE2_etiolag, SE2_etiocoef, pch = 25, col = "grey4",
-     bg =  alpha("forestgreen",.5), cex = 2, cex.axis = cex.num,
+     bg =  alpha("forestgreen",.5), cex = 2, axes = FALSE,
      xlim = c(1,52), 
      ylim = SEAus2_range,
      xlab = "", ylab = "Coefficients", cex.lab = cex.label)
+box()
+axis(1, at = c(10, 20, 30, 40, 50), cex.axis = cex.num) #x-axis
+axis(2, at = c(-4, 0, 4),  cex.axis = cex.num) #y-axis
 points(SE22_etiolag, SE22_etiocoef, pch = 25, col = "black",
        bg =  alpha("magenta4",.65) , cex = 2)
 points(SE23_etiolag, SE23_etiocoef, pch = 25, col = "black",
@@ -224,8 +233,11 @@ par(mar = c(3, 4.75, 1, 1))
 #tsa pch 22
 plot(SE2_tsalag-0.25, SE2_tsacoef, pch = 22, col = "black",
      bg =  alpha("forestgreen", 0.5), xlim = c(1,52), cex = 2.25,
-     ylim = SEAus2_range, cex.axis = cex.num,
+     ylim = SEAus2_range,  axes = FALSE,
      xlab = "", ylab = "")
+box()
+axis(1, at = c(10, 20, 30, 40, 50), cex.axis = cex.num) #x-axis
+axis(2, at = c(-4, 0, 4),  cex.axis = cex.num) #y-axis
 points(SE22_tsalag+0.25, SE22_tsacoef, pch = 22, col = "black",
        bg =  alpha("magenta4",.65) , cex = 2.25)
 points(SE23_tsalag, SE23_tsacoef, pch = 22, col = "black",
@@ -249,9 +261,12 @@ par(mar = c(4.5, 4.75, 1, 1))
 plot(SE2_aaolag-0.25, SE2_aaocoef, pch = 23,
      col = "grey4",
      bg =  alpha("forestgreen",.5), cex = 2.25,
-     xlim = c(1,52),  cex.axis = cex.num, cex.lab = cex.label,
+     xlim = c(1,52),  axes = FALSE, cex.lab = cex.label,
      ylim = SEAus2_range,
      xlab = "Lag", ylab = "")
+box()
+axis(1, at = c(10, 20, 30, 40, 50), cex.axis = cex.num) #x-axis
+axis(2, at = c(-4, 0, 4),  cex.axis = cex.num) #y-axis
 points(SE22_aaolag+0.25, SE22_aaocoef, pch = 23, col = "black",
        bg =  alpha("magenta4",.65) , cex = 2.25)
 points(SE23_aaolag, SE23_aaocoef, pch = 23, col = "black",
@@ -344,9 +359,9 @@ legend("topright", inset = c(0.000, 0.00),
        col = "grey4",
        pt.bg = alpha("gray32",.65),
        pt.cex = c(2.25, 1.8, 1.8, 2.25, 2.25, 1.8))
-legend("topright", inset = c(0.00, 0.23),
-       title = "Model", cex = 2.25,
-       legend = c("Full", "Fixed", "Non-Fixed"),
+legend("topright", inset = c(0.00, 0.21),
+       title = "Model", cex = 2.0,
+       legend = c("All-Data", "Fixed-Selection", "Withheld-Season"),
        pch = 15,
        col = c("forestgreen", "magenta4", "darkorange2"),
        pt.cex = 2.25)
