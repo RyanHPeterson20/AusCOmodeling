@@ -1,7 +1,63 @@
-#automate the coefficient interaction plots
+
+#functions for model outputs, as table or coef-int plots
+
+#TODO: rename this for model output function so we know that the table functions are here too. 
+
+## model table output functions
+#TODO: add in checks for the necessary libraries (maybe grid and gridExtra? double check this.)
+#TODO: add in some functionality to select for model metrics, such as R^2, adj. R^2, RMSE, etc. 
+#function setup
+lm_card_grob <- function(fit,
+                         border = "#4C78A8",
+                         fill   = "#E8F1FB",
+                         title  = "Est (Std. Error)",
+                         digits = 1,
+                         fontfamily = "mono") {
+  sm <- summary(fit)
+  co <- sm$coefficients
+  
+  # Format coefficient rows
+  term <- rownames(co)
+  est  <- round(co[, "Estimate"], digits)
+  se   <- round(co[, "Std. Error"], digits)
+  
+  # Make fixed-width lines (monospace) that line up nicely
+  term_w <- max(nchar(term))
+  est_w  <- max(nchar(format(est, trim = TRUE)))
+  lines <- sprintf(
+    paste0("%-", term_w, "s  %", est_w, "s (%s)"),
+    term,
+    format(est, trim = TRUE),
+    format(se, trim = TRUE)
+  )
+  
+  # Footer stats
+  ## temp footer: (change later)
+  ar2     <- sm$adj.r.squared
+  nterms  <- nrow(co)
+  
+  footer <- c(
+    "",
+    sprintf("Adjusted R-squared: %.2f", ar2),
+    sprintf("Number of terms: %d", nterms)
+  )
+  
+  # Assemble full text block
+  text_block <- paste(c(title, lines, footer), collapse = "\n")
+  
+  grobTree(
+    rectGrob(gp = gpar(col = border, fill = fill, lwd = 3)),
+    textGrob(
+      text_block,
+      x = unit(0.04, "npc"), y = unit(0.96, "npc"),
+      just = c("left", "top"),
+      gp = gpar(fontfamily = fontfamily, fontsize = 11, col = "black")
+    )
+  )
+}  
 
 
-#
+## coefficient interaction plots functions
 # ---- parsing helpers ----
 parse_term <- function(term) {
   
