@@ -255,6 +255,10 @@ mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
 dev.off()
 
 
+#TODO: get the difference between years?? 
+## 
+
+
 
 #extract single rows, goal is to figure out what happens "over time"
 #for given year we want to see if there is a change based on "evolving" climate conditions
