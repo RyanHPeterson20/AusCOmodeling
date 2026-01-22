@@ -14,12 +14,14 @@ suppressMessages( library(gridExtra))
 #import models and data
 setwd("~/CO_AUS/AusCOmodeling") 
 load("Data/modeldata.rda") #resp/pred data
+load("Data/lagdata.rda") #lagged data
 load("Data/base_RAMPmodels.rda") #"base" model
 load("Data/validation_refits_wo2019.rda") #RMSE/Preds/Models w/o 2019/2020 data
 load("Data/validation_refits_new.rda") #updated RMSE and Predictions (w/ intervals)
 
 #functions
 source("Functions/coef_int_functions.R")
+source("Functions/modeling_functions.R")
 
 #setup
 season.weeks <- c(38:52, 1:14)
@@ -73,7 +75,7 @@ for (i in 1:20) {
     coef_range = c(-5, 5),
     main_title = paste0("Peak 2019/2020 Fire Season (", seasons[i], " Withheld)"),   
     quad_y_jitter = 0.004,
-    model_cols = c(base="forestgreen", const="royalblue3", vary="darkorange2"))
+    model_cols = c(base="forestgreen", const="darkorange2", vary="royalblue3"))
   dev.off()
 }
 
@@ -101,6 +103,55 @@ for (i in 1:20) {
 #TODO: isolate the weeks that each model looks at when "training" so that we can look at everything.
 #note, get each year (52 weeks preceding a group) at a time then combine them later.
 
+#pred data (kinda hacky, fix later if needed)
 
+#group weeks
+SE.early <- 38:50
+SE.mid <- c(51, 52, 1, 2)
+SE.late <- 3:14
+
+
+SEAus.lag$`Week  51`
+
+SE.pred <- pred_setup(SEAus.lag, season.weeks, SE.early, SE.mid, SE.late)
+
+#get lag 1-52 from week 51 and lags 1-3 from week 2 (for the peak group)
+SEpreds.peak <- SE.pred$mid
+SEpreds.peak51 <- SEAus.lag$`Week  51`
+SEpreds.peak2 <- SEAus.lag$`Week  2`
+
+#up to lag 52
+SEpreds.peak51.nino <- SEpreds.peak51[ ,3:54]
+SEpreds.peak51.wtio <- SEpreds.peak51[ ,107:158]
+SEpreds.peak51.etio <- SEpreds.peak51[ ,159:210]
+SEpreds.peak51.tsa <- SEpreds.peak51[ ,211:262] 
+SEpreds.peak51.aao <- SEpreds.peak51[ ,263:314]
+SEpreds.peak51.olr <- SEpreds.peak51[ ,315:366]
+#only up to lag 3
+SEpreds.peak2.nino <- SEpreds.peak2[ ,3:5]
+SEpreds.peak2.wtio <- SEpreds.peak2[ ,107:109]
+SEpreds.peak2.etio <- SEpreds.peak2[ ,159:161]
+SEpreds.peak2.tsa <- SEpreds.peak2[ ,211:213] 
+SEpreds.peak2.aao <- SEpreds.peak2[ ,263:265]
+SEpreds.peak2.olr <- SEpreds.peak2[ ,315:317]
+
+
+SEpreds.peak.nino <- cbind(SEpreds.peak2.nino, SEpreds.peak51.nino)
+SEpreds.peak.wtio <- cbind(SEpreds.peak2.wtio, SEpreds.peak51.wtio)
+SEpreds.peak.etio <- cbind(SEpreds.peak2.etio, SEpreds.peak51.etio)
+SEpreds.peak.tsa <- cbind(SEpreds.peak2.tsa, SEpreds.peak51.tsa)
+SEpreds.peak.aao <- cbind(SEpreds.peak2.aao, SEpreds.peak51.aao)
+SEpreds.peak.olr <- cbind(SEpreds.peak2.olr, SEpreds.peak51.olr)
+
+
+
+#start with frequency histograms
+par(mfrow = c(3,2))
+hist(as.matrix(SEpreds.peak.nino), freq = FALSE, main = "Nino - Peak Group", xlab = "Anomaly")
+hist(as.matrix(SEpreds.peak.wtio), freq = FALSE, main = "WTIO - Peak Group", xlab = "Anomaly")
+hist(as.matrix(SEpreds.peak.etio), freq = FALSE, main = "ETIO - Peak Group", xlab = "Anomaly")
+hist(as.matrix(SEpreds.peak.tsa), freq = FALSE, main = "TSA - Peak Group", xlab = "Anomaly")
+hist(as.matrix(SEpreds.peak.aao), freq = FALSE, main = "SAM (AAO) - Peak Group", xlab = "Anomaly")
+hist(as.matrix(SEpreds.peak.olr), freq = FALSE, main = "OLR - Peak Group", xlab = "Anomaly")
 
 
