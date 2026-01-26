@@ -1,10 +1,13 @@
 
 #some info theory explorations into our withheld models
+library(scatterplot3d)
+library(rgl)
 
 #import models and data
 setwd("~/CO_AUS/AusCOmodeling") 
 load("Data/modeldata.rda") #resp/pred data
 load("Data/lagdata.rda") #lagged data
+load("Data/matrixdata.rda") #data as matrix
 
 
 #setup
@@ -70,107 +73,160 @@ hist(as.matrix(SEpreds.peak.aao), freq = FALSE, main = "SAM (AAO) - Peak Group",
 hist(as.matrix(SEpreds.peak.olr), freq = FALSE, main = "OLR - Peak Group", xlab = "Anomaly")
 
 
+
+#TODO: update as to look at the lag of each week in the peak group separately, since we don't quite have a good understanding of this.
+## or raw weekly data?? It's hard to tell here. Try both?
+
+#weekly data
+nino.std <- scale(pred.matrix[-1, 1:52], center = TRUE, scale = TRUE)
+nino.std[,1]
+
+wtio.std <- scale(pred.matrix[-1, 105:156], center = TRUE, scale = TRUE)
+wtio.std[,1]
+
+etio.std <- scale(pred.matrix[-1, 157:208], center = TRUE, scale = TRUE)
+etio.std[,1]
+
+tsa.std <- scale(pred.matrix[-1, 209:260], center = TRUE, scale = TRUE)
+tsa.std[,1]
+
+aao.std <- scale(pred.matrix[-1, 261:312], center = TRUE, scale = TRUE)
+aao.std[,1]
+
+olr.std <- scale(pred.matrix[-1, 313:364], center = TRUE, scale = TRUE)
+olr.std[,1]
+
+
+
+
+#temp functions for wasserstein distance
+wasserstein_1d <- function(x, y, p = 1, n_grid = 2000) {
+  x <- as.numeric(x); x <- x[is.finite(x)]
+  y <- as.numeric(y); y <- y[is.finite(y)]
+  if (length(x) < 2 || length(y) < 2) return(NA_real_)
+  
+  u <- (1:n_grid - 0.5) / n_grid
+  qx <- as.numeric(quantile(x, probs = u, type = 8, names = FALSE))
+  qy <- as.numeric(quantile(y, probs = u, type = 8, names = FALSE))
+  
+  if (p == 1) mean(abs(qx - qy)) else (mean(abs(qx - qy)^p))^(1/p)
+}
+
+# Compare one year to the rest, marginal-by-marginal
+year_vs_rest_w1 <- function(X, year, target_year, standardize = TRUE, n_grid = 2000) {
+  idx_y <- year == target_year
+  idx_r <- !idx_y
+  
+  Xy <- X[idx_y, , drop = FALSE]
+  Xr <- X[idx_r, , drop = FALSE]
+  
+  if (standardize) {
+    mu <- colMeans(Xr, na.rm = TRUE)
+    sdv <- apply(Xr, 2, sd, na.rm = TRUE)
+    sdv[sdv == 0 | !is.finite(sdv)] <- 1
+    Xy <- sweep(sweep(Xy, 2, mu, "-"), 2, sdv, "/")
+    Xr <- sweep(sweep(Xr, 2, mu, "-"), 2, sdv, "/")
+  }
+  
+  w <- vapply(seq_len(ncol(X)), function(j) wasserstein_1d(Xy[, j], Xr[, j], p = 1, n_grid = n_grid),
+              numeric(1))
+  
+  list(
+    target_year = target_year,
+    per_feature_w1 = w,
+    mean_w1 = mean(w, na.rm = TRUE),
+    median_w1 = median(w, na.rm = TRUE),
+    max_w1 = max(w, na.rm = TRUE)
+  )
+}
+
+# Run for all years and return a summary table
+predictor_info_by_year <- function(X, year, standardize = TRUE, n_grid = 2000) {
+  yrs <- sort(unique(year))
+  res <- lapply(yrs, function(yr) year_vs_rest_w1(X, year, yr, standardize = standardize, n_grid = n_grid))
+  
+  data.frame(
+    year = yrs,
+    mean_w1 = vapply(res, `[[`, numeric(1), "mean_w1"),
+    median_w1 = vapply(res, `[[`, numeric(1), "median_w1"),
+    max_w1 = vapply(res, `[[`, numeric(1), "max_w1"),
+    stringsAsFactors = FALSE
+  )
+}
+
+
+#TODO: take the above code apart
+X <- etio.std
+year <- 2001
+
+
+
+
+
+tab <- predictor_info_by_year(X, year)
+tab[order(tab$mean_w1), ]
+
+#basic PCA (so that we understand how many dims we need to visualize)
+
+pca.nino <- prcomp(t(nino.std), center = TRUE, scale. = TRUE )
+pca.wtio <- prcomp(t(wtio.std), center = TRUE, scale. = TRUE )
+pca.etio <- prcomp(t(etio.std), center = TRUE, scale. = TRUE )
+pca.tsa <- prcomp(t(tsa.std), center = TRUE, scale. = TRUE )
+
+kmode <- 2
+#EOF spatial [np, kmod]
+pc_EOF <- pca.etio$rotation[, 1:kmode]
+
+#pca time series
+pc_ts <- pca.etio$x[, 1:kmode]
+
+#percent/proportion for each mode
+per.nino <- pca.nino$sdev^2 / sum(pca.nino$sdev^2)
+per.wtio <- pca.wtio$sdev^2 / sum(pca.wtio$sdev^2)
+per.etio <- pca.etio$sdev^2 / sum(pca.etio$sdev^2)
+per.tsa <- pca.tsa$sdev^2 / sum(pca.tsa$sdev^2)
+
+sum(per.nino[1:3])
+sum(per.wtio[1:3])
+sum(per.etio[1:3])
+sum(per.tsa[1:3])
+
+par(mfrow = c(2, 2))
+plot(1:20, per.nino, type = "l")
+plot(1:20, per.wtio, type = "l")
+plot(1:20, per.etio, type = "l")
+plot(1:20, per.tsa, type = "l")
+
+
 #basic MDS
+dvar.etio <- dist(t(etio.std), method = "euclidean")
+
+fit3 <- cmdscale(dvar.etio, k = 3, eig = TRUE)
+coords3 <- fit3$points  # p_vars x 3
+
+col.vec <- rep("gray2", ncol(etio.std))
+col.vec[43:45] <- "red3"
+col.vec[42] <- "darkorange"
+col.vec[46] <- "darkviolet"
+
+open3d()
+plot3d(coords3[,1], coords3[,2], coords3[,3],
+       col = col.vec, type = "s",
+       xlab = "MDS1", ylab = "MDS2", zlab = "MDS3")
+
+scatterplot3d(coords3, pch = 16, color = col.vec)
+
 
 #for 2-D relationship of lagged predictors
-dvar.etio <- dist(t(as.matrix(SEpreds.peak.etio)), method = "euclidean")
+dvar.etio <- dist(t(etio.std), method = "euclidean")
 
 fit2 <- cmdscale(dvar.etio, k = 2, eig = TRUE)
 coords2 <- fit2$points  # p_vars x 2
 
 # Plot
 plot(coords2, asp = 1, xlab = "MDS1", ylab = "MDS2", pch = 16)
-text(coords2, labels = colnames(SEpreds.peak.etio), cex = 0.7)
-abline(h = 0, v = 0, col = "gray80")
-
-
-
-#for 2-D relationship of years
-Dtime <- dist(as.matrix(SEpreds.peak.etio), "euclidean")  # now distance between years
-fit2 <- cmdscale(Dtime, k = 2, eig = TRUE)
-
-plot(fit2$points, pch = 16, xlab = "MDS1", ylab = "MDS2")
-text(fit2$points, labels = rownames(SEpreds.peak.etio), pos = 3, cex = 0.7)
-
-
-
-
-#TODO: fix this lazy code
-### INPUT ASSUMPTION:
-### X: n_years x p_vars numeric matrix
-### rownames(X) are years (e.g., "2005", "2006", ...)
-### colnames(X) are variable names
-
-mds_vars <- function(X, k = 2, dist_method = "euclidean", scale_cols = TRUE) {
-  if (scale_cols) X <- scale(X)
-  D <- dist(t(X), method = dist_method)      # variables as rows
-  fit <- cmdscale(D, k = k, eig = FALSE)
-  fit
-}
-
-# Procrustes alignment: align Y to X (both n x k)
-procrustes_align <- function(Xref, Y) {
-  Xc <- scale(Xref, center = TRUE, scale = FALSE)
-  Yc <- scale(Y,    center = TRUE, scale = FALSE)
-  
-  # Find rotation R minimizing ||Yc R - Xc||_F
-  M <- t(Yc) %*% Xc
-  sv <- svd(M)
-  R <- sv$u %*% t(sv$v)
-  
-  Y_aligned <- Yc %*% R
-  
-  # Match the reference translation (put back at Xref mean)
-  Y_aligned <- sweep(Y_aligned, 2, colMeans(Xref), "+")
-  Y_aligned
-}
-
-
-X.etio <- as.matrix(SEpreds.peak.etio)
-row.names(X.etio) <- season.years[1:20]
-
-### 1) Full-data MDS (reference)
-coords_all <- mds_vars(X.etio, k = 2, dist_method = "euclidean", scale_cols = TRUE)
-# Ensure rownames are variable names for easier matching
-rownames(coords_all) <- colnames(X.etio)
-
-### 2) Leave-one-year-out, pick a year to remove
-year_drop <- "2019"   # <-- change to whatever year label you have
-keep_idx  <- rownames(X.etio) != year_drop
-X_drop    <- X.etio[keep_idx, , drop = FALSE]
-
-coords_drop <- mds_vars(X_drop, k = 2, dist_method = "euclidean", scale_cols = TRUE)
-rownames(coords_drop) <- colnames(X.etio)
-
-### 3) Align leave-one-out coords to full-data coords
-coords_drop_aligned <- procrustes_align(coords_all, coords_drop)
-
-### 4) Plot: full-data points + leave-one-out points + connecting segments
-# Plot window that includes both
-xy_all  <- coords_all
-xy_drop <- coords_drop_aligned
-
-xlim <- range(c(xy_all[,1], xy_drop[,1]))
-ylim <- range(c(xy_all[,2], xy_drop[,2]))
-
-plot(xy_all, type = "n", asp = 1, xlab = "MDS1", ylab = "MDS2",
-     xlim = xlim, ylim = ylim)
-abline(h = 0, v = 0, col = "gray85")
-
-# Full-data points
-points(xy_all, pch = 16, cex = 0.8)
-text(xy_all, labels = rownames(xy_all), pos = 3, cex = 0.6)
-
-# Dropped-year points (different symbol)
-points(xy_drop, pch = 1, cex = 0.9)
-
-# Segments connecting same variable
-segments(x0 = xy_all[,1], y0 = xy_all[,2],
-         x1 = xy_drop[,1], y1 = xy_drop[,2])
-
-legend("topleft",
-       legend = c("All years", paste0("Leave out ", year_drop)),
-       pch = c(16, 1), bty = "n")
+text(coords2, labels = colnames(etio.std), cex = 0.7)
+abline(h = 0, v = 0, col = "gray50")
 
 
 
@@ -178,7 +234,7 @@ legend("topleft",
 #TODO: clean up another lazy code drop
 
 
-X <- as.matrix(SEpreds.peak.etio)
+X <- as.matrix(etio.std)
 row.names(X) <- season.years[1:20]
 ### X: n_years x p_vars matrix
 ### rownames(X) = years, colnames(X) = variables
@@ -205,11 +261,12 @@ procrustes_align <- function(Xref, Y) {
   Y_aligned
 }
 
+
 # ---- 1) Reference: all years
 coords_all <- mds_vars(X, k = 2)
 
 # ---- 2) Cumulative drops
-years_drop <- c("2019", "2010")  # order matters for the path, but data are cumulative
+years_drop <- c("2019", "2011")  # order matters for the path, but data are cumulative
 coords_path <- list(All = coords_all)
 
 X_work <- X
@@ -223,9 +280,13 @@ for (yr in years_drop) {
 
 # ---- 3) Plot + chain segments
 all_mat <- do.call(rbind, coords_path)
-xlim <- range(all_mat[,1]); ylim <- range(all_mat[,2])
+xlim <- range(all_mat[,1])
+ylim <- range(all_mat[,2])
+max(all_mat[,1])
 
-plot(coords_all, type="n", asp=1, xlab="MDS1", ylab="MDS2", xlim=xlim, ylim=ylim)
+
+
+plot(coords_all, type="n", asp=1, xlab="MDS1", ylab="MDS2", xlim=c(0, 4), ylim=c(0,-3))
 abline(h=0, v=0, col="gray85")
 
 # Points
@@ -253,3 +314,7 @@ legend("topleft",
                   paste0("Drop ", paste(years_drop[1:2], collapse=", "))),
        pch = c(16, pch_seq[1], pch_seq[2]),
        bty = "n")
+
+
+#get pca to see if 2-dims is enough
+

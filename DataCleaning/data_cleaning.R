@@ -116,6 +116,7 @@ min.year <- min(resp.temp$year)
 max.year <- 2019
 
 ##predictor lag setup
+#TODO: check to see why this is done again
 nino.lag <- matrix(NA, nrow = length(resp.temp$NEAus.anom))
 
 lag.vec <- c()
