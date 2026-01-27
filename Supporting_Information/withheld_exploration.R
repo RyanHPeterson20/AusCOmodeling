@@ -10,6 +10,11 @@ suppressMessages( library(fields)) #for envelope plot
 suppressMessages( library(grid)) #table/grid setup and lines between plots
 suppressMessages( library(gridExtra))
 suppressMessages( library(lubridate))
+suppressMessages( library(MASS))
+suppressMessages(library(colorspace))
+suppressMessages(library(RColorBrewer))
+suppressMessages( library(cmocean)) #ocean colors
+suppressMessages( library(rgl))
 
 #data
 #import models and data
@@ -237,11 +242,227 @@ lines(density(X.etio.2), col = "darkmagenta", lwd = 2.5, lty = 2)
 lines(density(X.etio.3), col = "magenta", lwd = 2.5, lty = 2)
 
 
+#DMI representation 
+wtio.all <- as.numeric(X.wtio.1)
+wtio.ordered <- wtio.all[order(wtio.all)]
 
-#bivariate KDE for WTIO and ETIO
+etio.all <- as.numeric(X.etio.1)
+etio.ordered <- etio.all[order(etio.all)]
+ 
+dmi.all <- outer(wtio.ordered, etio.ordered, "-")
+
+image.plot(x = wtio.ordered, y = etio.ordered, z = dmi.all,
+           xlab = "WTIO", ylab = "ETIO", col = cmocean("curl")(36))
+
+#alternative DMI setup
+wtio.range <- range(wtio.all)
+etio.range <- range(etio.all)
+
+wtio.new <- seq(wtio.range[1], wtio.range[2], length.out = 500)
+etio.new <- seq(etio.range[1], etio.range[2], length.out = 500)
+
+dmi.new <- outer(wtio.new, etio.new, "-")
+
+image.plot(x = wtio.new, y = etio.new, z = dmi.new,
+           xlab = "WTIO", ylab = "ETIO", col = cmocean("delta")(68))
+
+
+#use the above dmi plot to grab slice of the ETIO/WTIO density
+#find a diagonal slice of equivalent DMI
+
+k <- kde2d(x = wtio.all, y = etio.all,
+  n = 500, lims = c(range(wtio.all), range(etio.all)))
+
+wtio.new <- k$x
+etio.new <- k$y
+dmi.new  <- outer(wtio.new, etio.new, "-") 
+z.surface <- k$z
+z.surface <- z.surface/max(z.surface)
+
+target.dmi <- 1
+tol <- max(diff(wtio.new)[1], diff(etio.new)[1])  # ~ one step
+
+index.dmi <- which(abs(dmi.new - target.dmi) <= tol, arr.ind = TRUE)
+
+length(index.dmi)
+
+wtio.slice <- wtio.new[index.dmi[, 1]]
+etio.slice <- etio.new[index.dmi[, 2]]
+dmi.slice  <- dmi.new[index.dmi]
+
+#z.slice <- z.surface[index.dmi] 
+z.slice <- z.surface
+z.slice[!index.dmi] <- NA_real_
+
+open3d()
+bg3d("white")
+
+# rgl wants x and y as vectors and z as a matrix
+surface3d(wtio.new, etio.new, z.slice, back = "lines", color = rev(cmocean("matter")(36)))
+axes3d()
+title3d(xlab = "WTIO", ylab = "ETIO", zlab = "Density")
+
+
+# Optional: order along the diagonal so 1D plots look clean
+slice.order <- order(wtio.slice)
+wtio.slice <- wtio.slice[slice.order]
+etio.slice <- etio.slice[slice.order]
+z.slice    <- z.slice[slice.order]
+
+plot(wtio.slice, z.slice,
+     pch = 16, cex = 0.5,
+     xlab = "WTIO (along WTIO - ETIO ≈ 1.5)",
+     ylab = "KDE density",
+     main = "Density values along the diagonal band")
+sp <- smooth.spline(wtio.slice, z.slice, spar = 0.6)
+lines(sp, lwd = 2, col = "forestgreen")
+
+
+plot(etio.slice, z.slice,
+     pch = 16, cex = 0.5,
+     xlab = "ETIO (along WTIO - ETIO ≈ 1.5)",
+     ylab = "KDE density",
+     main = "Density values along the diagonal band")
+sp <- smooth.spline(etio.slice, z.slice, spar = 0.6)
+lines(sp, lwd = 2, col = "forestgreen")
+
+
+#now for the arc-lengths slice
+u <- (wtio.slice + etio.slice) / sqrt(2)
+o <- order(u)
+
+x <- wtio.slice[o]
+y <- etio.slice[o]
+z <- z.slice[o]
+
+
+image.plot(k$x, k$y, k$z,
+           xlab = "WTIO", ylab = "ETIO", col = cmocean("tempo")(36))
+lines(x, y,  lwd = 2)
 
 
 
+
+
+
+#bivariate KDE for WTIO and ETIO (IOD)
+IOD.kde <- kde2d(as.numeric(X.wtio.1), as.numeric(X.etio.1), n = 150)
+
+
+image.plot(x = IOD.kde$x, y = IOD.kde$y, z = IOD.kde$z,
+           xlab = "WTIO", ylab = "ETIO", col = cmocean("dense")(36), 
+           main = "All Data")
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "IOD_kde.png", width = 2000, height = 1500, res =275)
+image.plot(x = IOD.kde$x, y = IOD.kde$y, z = IOD.kde$z,
+  xlab = "WTIO", ylab = "ETIO", col = cmocean("dense")(36), 
+  main = "All Data")
+dev.off()
+
+
+
+
+
+
+
+#try 3-d adjust later
+persp(x = IOD.kde$x, y = IOD.kde$y, z = IOD.kde$z,
+  theta = 35, phi = 25,
+  expand = 0.6,
+  xlab = "WTIO", ylab = "ETIO", zlab = "Density",
+  ticktype = "detailed",
+  main = "Bivariate KDE surface"
+)
+
+
+#bivariate KDE for WTIO and ETIO, without 2019/2020
+IOD.kde.2 <- kde2d(as.numeric(X.wtio.2), as.numeric(X.etio.2), n = 150)
+
+
+cols.prgn <- colorRampPalette(brewer.pal(11, "Oranges"))(32)
+
+
+image.plot(x = IOD.kde.2$x, y = IOD.kde.2$y, z = IOD.kde.2$z,
+           xlab = "WTIO", ylab = "ETIO", col = cmocean("dense")(36))
+
+#differencing
+iod_diff <- IOD.kde.2
+iod_diff$z <- IOD.kde$z - IOD.kde.2$z
+
+
+cols.ryb <- rev(colorRampPalette(brewer.pal(11, "RdBu"))(21))
+m <- max(abs(iod_diff$z), na.rm = TRUE)
+
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "IOD_kde_2019diff.png", width = 2000, height = 1500, res =275)
+image.plot(x = iod_diff$x, y = iod_diff$y, z = iod_diff$z, zlim = c(-m, m), 
+           xlab = "WTIO", ylab = "ETIO", col =  rev(cmocean("tarn")(31)),
+           main = "All Data - Withheld 2019/2020")
+dev.off()
+
+
+#try 3-d adjust later
+persp(x = iod_diff$x, y = iod_diff$y, z = iod_diff$z,
+      theta = 35, phi = 25,
+      expand = 0.6,
+      xlab = "WTIO", ylab = "ETIO", zlab = "Density",
+      ticktype = "detailed"
+)
+
+
+#bivariate KDE for WTIO and ETIO, without 2019/2020 and 2001/2002
+IOD.kde.3 <- kde2d(as.numeric(X.wtio.3), as.numeric(X.etio.3), n = 150)
+
+image.plot(x = IOD.kde.3$x, y = IOD.kde.3$y, z = IOD.kde.3$z,
+           xlab = "WTIO", ylab = "ETIO", col = rev(cmocean("haline")(36)))
+
+#differencing
+iod_diff.2 <- IOD.kde.2
+iod_diff.2$z <- IOD.kde.2$z - IOD.kde.3$z
+
+m <- max(abs(iod_diff$z), abs(iod_diff.2$z), na.rm = TRUE)
+
+image.plot(x = iod_diff.2$x, y = iod_diff.2$y, z = iod_diff.2$z, zlim = c(-m, m), 
+           xlab = "WTIO", ylab = "ETIO", col = rev(cmocean("tarn")(31)))
+
+           
+           
+#check for only 2019/2020
+X.wtio.i <- as.matrix(SEpreds.peak.wtio[c(19), ]) #only 2019/2020 and season[i]
+X.etio.i <- as.matrix(SEpreds.peak.etio[c(19), ]) #only 2019/2020 and season[i]
+
+IOD.kde.i <- kde2d(as.numeric(X.wtio.i), as.numeric(X.etio.i), n = 150)
+
+image.plot(x = IOD.kde.i$x, y = IOD.kde.i$y, z = IOD.kde.i$z,
+           xlab = "WTIO", ylab = "ETIO", col = tim.colors(128))
+
+
+#repeat for other years, get multiple outputs
+i <- 6
+X.wtio.i <- as.matrix(SEpreds.peak.wtio[-c(i,19), ]) #without 2019/2020 and season[i]
+X.etio.i <- as.matrix(SEpreds.peak.etio[-c(i,19), ]) #without 2019/2020 and season[i]
+
+IOD.kde.i <- kde2d(as.numeric(X.wtio.i), as.numeric(X.etio.i), n = 150)
+
+image.plot(x = IOD.kde.i$x, y = IOD.kde.i$y, z = IOD.kde.i$z,
+           xlab = "WTIO", ylab = "ETIO", col = tim.colors(128))
+
+
+
+
+#differencing
+iod_diff.i <- IOD.kde.2
+iod_diff.i$z <- IOD.kde.2$z - IOD.kde.i$z
+
+cols.rb <- colorRampPalette(c("blue3", "white", "red3"))(89)
+m <- max(abs(iod_diff$z), abs(iod_diff.i$z), na.rm = TRUE)
+
+image.plot(x = iod_diff.i$x, y = iod_diff.i$y, z = iod_diff.i$z, zlim = c(-m, m), 
+           xlab = "WTIO", ylab = "ETIO", col = cols.rb)
 
 
 #time series plots for interesting years 2001, 2010, & 2011 (and 2005, 2015)
