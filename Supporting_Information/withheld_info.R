@@ -2,6 +2,7 @@
 #some info theory explorations into our withheld models
 library(scatterplot3d)
 library(rgl)
+library(transport)
 
 #import models and data
 setwd("~/CO_AUS/AusCOmodeling") 
@@ -101,8 +102,10 @@ olr.std[,1]
 
 #temp functions for wasserstein distance
 wasserstein_1d <- function(x, y, p = 1, n_grid = 2000) {
-  x <- as.numeric(x); x <- x[is.finite(x)]
-  y <- as.numeric(y); y <- y[is.finite(y)]
+  x <- as.numeric(x)
+  x <- x[is.finite(x)]
+  y <- as.numeric(y)
+  y <- y[is.finite(y)]
   if (length(x) < 2 || length(y) < 2) return(NA_real_)
   
   u <- (1:n_grid - 0.5) / n_grid
@@ -183,6 +186,48 @@ Xr <- X[idx_r, , drop = FALSE] #X_{-y}
 #vapply(seq_len(ncol(X)), function(j) wasserstein_1d(Xy[, j], Xr[, j], p = 1, n_grid = n_grid), numeric(1))
 ##calls function wasserstein_1d() 
 #compares Xy[, j], Xr[, j], for each j (different lags of a given climate mode)
+
+test.W <- wasserstein_1d(as.numeric(Xy[,]), as.numeric(Xr[, ]), p = 1, n_grid = 2000)
+
+#make changes to Xy, Xr
+Xy.2007 <- X[-c(7,19), ]
+Xy.2008 <- X[-c(8,19), ]
+Xy.2009 <- X[-c(9,19), ]
+Xy.2010 <- X[-c(10,19), ]
+Xy.2011 <- X[-c(11,19), ]
+Xy.2012 <- X[-c(12,19), ]
+Xr <- X[-c(19), ]
+
+wasserstein1d(as.numeric(Xy.2007[,]), as.numeric(Xr[,]))
+wasserstein1d(as.numeric(Xy.2008[,]), as.numeric(Xr[,]))
+wasserstein1d(as.numeric(Xy.2009[,]), as.numeric(Xr[,]))
+wasserstein1d(as.numeric(Xy.2010[,]), as.numeric(Xr[,]))
+wasserstein1d(as.numeric(Xy.2011[,]), as.numeric(Xr[,]))
+wasserstein1d(as.numeric(Xy.2012[,]), as.numeric(Xr[,]))
+
+#j <- 1
+w1.2007 <- sapply(seq_len(ncol(X)), function(j) wasserstein1d(as.numeric(Xy.2007[,j]), as.numeric(Xr[,j])))
+w1.2008 <- sapply(seq_len(ncol(X)), function(j) wasserstein1d(as.numeric(Xy.2008[,j]), as.numeric(Xr[,j])))
+w1.2009 <- sapply(seq_len(ncol(X)), function(j) wasserstein1d(as.numeric(Xy.2009[,j]), as.numeric(Xr[,j])))
+w1.2010 <- sapply(seq_len(ncol(X)), function(j) wasserstein1d(as.numeric(Xy.2010[,j]), as.numeric(Xr[,j])))
+w1.2011 <- sapply(seq_len(ncol(X)), function(j) wasserstein1d(as.numeric(Xy.2011[,j]), as.numeric(Xr[,j])))
+w1.2012 <- sapply(seq_len(ncol(X)), function(j) wasserstein1d(as.numeric(Xy.2012[,j]), as.numeric(Xr[,j])))
+
+w1.lim <- range(w1.2008, w1.2010, w1.2011, w1.2012)
+
+par(mfrow = c(3, 2))
+plot(1:52, w1.2007, type = "b", pch = 16, ylim = w1.lim)
+abline(v= c(42.5, 46.5), lty = 2)
+plot(1:52, w1.2008, type = "b", pch = 16, ylim = w1.lim)
+abline(v= c(42.5, 46.5), lty = 2)
+plot(1:52, w1.2009, type = "b", pch = 16, ylim = w1.lim)
+abline(v= c(42.5, 46.5), lty = 2)
+plot(1:52, w1.2010, type = "b", pch = 16, ylim = w1.lim)
+abline(v= c(42.5, 46.5), lty = 2)
+plot(1:52, w1.2011, type = "b", pch = 16, ylim = w1.lim)
+abline(v= c(42.5, 46.5), lty = 2)
+plot(1:52, w1.2012, type = "b", pch = 16, ylim = w1.lim)
+abline(v= c(42.5, 46.5), lty = 2)
 
 
 

@@ -9,6 +9,7 @@ suppressMessages( library(scales)) #for adjusting opacity
 suppressMessages( library(fields)) #for envelope plot
 suppressMessages( library(grid)) #table/grid setup and lines between plots
 suppressMessages( library(gridExtra))
+suppressMessages( library(lubridate))
 
 #data
 #import models and data
@@ -102,6 +103,268 @@ for (i in 1:20) {
 
 #TODO: isolate the weeks that each model looks at when "training" so that we can look at everything.
 #note, get each year (52 weeks preceding a group) at a time then combine them later.
+
+
+
+#Get visualizations of data
+
+SE.pred <- pred_setup(SEAus.lag, season.weeks, SE.early, SE.mid, SE.late)
+
+#get lag 1-52 from week 51 and lags 1-3 from week 2 (for the peak group)
+SEpreds.peak <- SE.pred$mid
+SEpreds.peak51 <- SEAus.lag$`Week  51`
+SEpreds.peak2 <- SEAus.lag$`Week  2`
+
+#up to lag 52
+SEpreds.peak51.nino <- SEpreds.peak51[ ,3:54]
+SEpreds.peak51.wtio <- SEpreds.peak51[ ,107:158]
+SEpreds.peak51.etio <- SEpreds.peak51[ ,159:210]
+SEpreds.peak51.tsa <- SEpreds.peak51[ ,211:262] 
+SEpreds.peak51.aao <- SEpreds.peak51[ ,263:314]
+SEpreds.peak51.olr <- SEpreds.peak51[ ,315:366]
+#only up to lag 3
+SEpreds.peak2.nino <- SEpreds.peak2[ ,3:5]
+SEpreds.peak2.wtio <- SEpreds.peak2[ ,107:109]
+SEpreds.peak2.etio <- SEpreds.peak2[ ,159:161]
+SEpreds.peak2.tsa <- SEpreds.peak2[ ,211:213] 
+SEpreds.peak2.aao <- SEpreds.peak2[ ,263:265]
+SEpreds.peak2.olr <- SEpreds.peak2[ ,315:317]
+
+SEpreds.peak.nino <- cbind(SEpreds.peak2.nino, SEpreds.peak51.nino)
+SEpreds.peak.wtio <- cbind(SEpreds.peak2.wtio, SEpreds.peak51.wtio)
+SEpreds.peak.etio <- cbind(SEpreds.peak2.etio, SEpreds.peak51.etio)
+SEpreds.peak.tsa <- cbind(SEpreds.peak2.tsa, SEpreds.peak51.tsa)
+SEpreds.peak.aao <- cbind(SEpreds.peak2.aao, SEpreds.peak51.aao)
+SEpreds.peak.olr <- cbind(SEpreds.peak2.olr, SEpreds.peak51.olr)
+
+
+#start with frequency histograms
+par(mfrow = c(3,2))
+hist(as.matrix(SEpreds.peak.nino), freq = FALSE, main = "Nino - Peak Group", xlab = "Anomaly")
+hist(as.matrix(SEpreds.peak.wtio), freq = FALSE, main = "WTIO - Peak Group", xlab = "Anomaly")
+hist(as.matrix(SEpreds.peak.etio), freq = FALSE, main = "ETIO - Peak Group", xlab = "Anomaly")
+hist(as.matrix(SEpreds.peak.tsa), freq = FALSE, main = "TSA - Peak Group", xlab = "Anomaly")
+hist(as.matrix(SEpreds.peak.aao), freq = FALSE, main = "SAM (AAO) - Peak Group", xlab = "Anomaly")
+hist(as.matrix(SEpreds.peak.olr), freq = FALSE, main = "OLR - Peak Group", xlab = "Anomaly")
+
+
+#overlayed histograms
+
+#nino
+X.nino.1 <- as.matrix(SEpreds.peak.nino)
+X.nino.2 <- as.matrix(SEpreds.peak.nino[-19, ]) #without 2019/2020
+X.nino.3 <- as.matrix(SEpreds.peak.nino[-c(1,19), ]) #without 2001/2002; 2019/2020
+brks <- pretty(range(c(X.nino.1, X.nino.2)), n = 14)
+hist(X.nino.1, breaks = brks,
+     freq = FALSE, col = "grey80",
+     border = "grey40",
+     main = "Nino - Peak Group", xlab = "Anomaly")
+lines(density(X.nino.1), col = "gray5", lwd = 2)
+hist(X.nino.2,
+     breaks = brks,
+     freq = FALSE,
+     col = rgb(1, 0, 0, 0.24),
+     border = rgb(1, 0, 0, 0.58),
+     add = TRUE)
+lines(density(X.nino.2), col = "firebrick", lwd = 2.5, lty = 2)
+lines(density(X.nino.3), col = "darkorange2", lwd = 2.65, lty = 2)
+
+
+sum(density(X.nino.1)$y)
+sum(density(X.nino.2)$y)
+sum(density(X.nino.3)$y)
+
+
+#wtio
+X.wtio.1 <- as.matrix(SEpreds.peak.wtio)
+X.wtio.2 <- as.matrix(SEpreds.peak.wtio[-19, ]) #without 2019/2020
+X.wtio.3 <- as.matrix(SEpreds.peak.wtio[-c(1,19), ]) #without 2001/2002; 2019/2020
+brks <- pretty(range(c(X.wtio.1, X.wtio.2)), n = 14)
+hist(X.wtio.1, breaks = brks,
+     freq = FALSE, col = "grey80",
+     border = "grey40",
+     main = "WTIO - Peak Group", xlab = "Anomaly")
+lines(density(X.wtio.1), col = "gray5", lwd = 2)
+hist(X.wtio.2,
+     breaks = brks,
+     freq = FALSE,
+     col = rgb(0, 1, 0, 0.24),
+     border = rgb(0, 1, 0, 0.58),
+     add = TRUE)
+lines(density(X.wtio.2), col = "forestgreen", lwd = 2.5, lty = 2)
+lines(density(X.wtio.2), col = "chartreuse2", lwd = 2.75, lty = 2)
+
+
+#etio
+X.etio.1 <- as.matrix(SEpreds.peak.etio)
+X.etio.2 <- as.matrix(SEpreds.peak.etio[-19, ]) #without 2019/2020
+X.etio.3 <- as.matrix(SEpreds.peak.etio[-c(1,19), ]) #without 2001/2002; 2019/2020
+brks <- pretty(range(c(X.etio.1, X.etio.2)), n = 14)
+hist(X.etio.1, breaks = brks,
+     freq = FALSE, col = "grey80",
+     border = "grey40",
+     main = "ETIO - Peak Group", xlab = "Anomaly")
+lines(density(X.etio.1), col = "gray5", lwd = 2)
+hist(X.etio.2,
+     breaks = brks,
+     freq = FALSE,
+     col = rgb(0, 0, 1, 0.24),
+     border = rgb(0, 0, 1, 0.58),
+     add = TRUE)
+lines(density(X.etio.2), col = "blue3", lwd = 2.5, lty = 2)
+lines(density(X.etio.3), col = "slateblue3", lwd = 2.5, lty = 2)
+
+dens.test <- density(X.etio.2)
+
+
+#tsa
+X.tsa.1 <- as.matrix(SEpreds.peak.tsa)
+X.tsa.2 <- as.matrix(SEpreds.peak.tsa[-19, ]) #without 2019/2020
+X.tsa.3 <- as.matrix(SEpreds.peak.tsa[-c(1,19), ]) #without 2001/2002; 2019/2020
+brks <- pretty(range(c(X.tsa.1, X.tsa.2)), n = 14)
+hist(X.tsa.1, breaks = brks,
+     freq = FALSE, col = "grey80",
+     border = "grey40",
+     main = "TSA - Peak Group", xlab = "Anomaly")
+lines(density(X.tsa.1), col = "gray5", lwd = 2)
+hist(X.tsa.2,
+     breaks = brks,
+     freq = FALSE,
+     col = rgb(1, 0, 1, 0.24),
+     border = rgb(1, 0, 1, 0.58),
+     add = TRUE)
+lines(density(X.etio.2), col = "darkmagenta", lwd = 2.5, lty = 2)
+lines(density(X.etio.3), col = "magenta", lwd = 2.5, lty = 2)
+
+
+
+#bivariate KDE for WTIO and ETIO
+
+
+
+
+
+#time series plots for interesting years 2001, 2010, & 2011 (and 2005, 2015)
+
+#predictor colors
+top.col.pred <- "#F2855DFF"
+bot.col.pred <- "#68ABB8FF"
+
+
+#for 2001/2002 peak season
+lag1.date <- pred.df[pred.df$week == 1 & pred.df$year == 2002, ]$date
+lag.date <- rev(pred.df[pred.df$year == 2001, ]$date)
+lag52.date <- rev(pred.df[pred.df$week %in% 51:52 & pred.df$year == 2000, ]$date)
+
+dates.2001 <- c(lag1.date, lag.date, lag52.date)
+
+length(dates.2001)
+length(SEpreds.peak.nino[1,])
+peak.nino2001.df <- data.frame(nino = rev(as.numeric(SEpreds.peak.nino[1,])), date = rev(dates.2001))
+peak.wtio2001.df <- data.frame(wtio = rev(as.numeric(SEpreds.peak.wtio[1,])), date = rev(dates.2001))
+
+
+#ts plot setup
+pred.time <- peak.nino2001.df$date
+#pred.week <- pred.raw$week
+pred.time.range <- range(pred.time)
+
+#yearly ticks
+month(pred.time.range[1])
+month(pred.time.range[2])
+
+x.ticks.pred <- seq(month(pred.time.range[1]), month(pred.time.range[2]), by = -1)
+x.ticks.pred <- ymd(paste0("2001-", x.ticks.pred, "-01"))
+x.pred.reduced <- x.ticks.pred #[1:20]
+
+time.pred.plot <- as.Date(pred.time)
+
+#TODO: setup y-axis
+
+
+
+nino.2001 <- peak.nino2001.df$nino
+
+#envelope plot setup
+#nino:
+over.nino <- nino.2001 >= 0
+nino.top <- nino.2001
+nino.top[!over.nino] <- 0
+nino.bot <- nino.2001
+nino.bot[over.nino] <-0
+
+#TODO: fix the envelope plot
+
+plot(time.pred.plot, nino.2001, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
+     #xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+    bty = "n", cex.lab = 1,  xpd = NA)
+#axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
+#     col = NA, line = 0,
+#     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = nino.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(nino.top)),
+             col = alpha(top.col.pred, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = nino.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(nino.bot)),
+             col = alpha(bot.col.pred, 0.67),
+             lineCol = NA)
+text(x = x.pred.reduced,
+     y = range(nino.2001)[1],
+     labels = paste0(month(x.pred.reduced), "-", year(x.pred.reduced)),
+     cex = 1, col = "black", xpd = NA)
+
+
+
+
+wtio.2001 <- peak.wtio2001.df$wtio
+
+#envelope plot setup
+#nino:
+over.wtio <- wtio.2001 >= 0
+wtio.top <- wtio.2001
+wtio.top[!over.wtio] <- 0
+wtio.bot <- wtio.2001
+wtio.bot[over.wtio] <-0
+
+#TODO: fix the envelope plot
+
+plot(time.pred.plot, wtio.2001, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
+     #xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
+     bty = "n", cex.lab = 1,  xpd = NA)
+#axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
+#     col = NA, line = 0,
+#     col.ticks = "black", col.axis = "black", las =1)
+abline(v = x.ticks.pred[1:(length(x.ticks.pred))],
+       lty = 2, col = "grey", lwd = 2)
+abline(h = 0, lty = 1, col = "grey", lwd = 1)
+envelopePlot(x1 = time.pred.plot,
+             y1 = wtio.top,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(wtio.top)),
+             col = alpha(top.col.pred, 0.67),
+             lineCol = NA)
+envelopePlot(x1 = time.pred.plot,
+             y1 = wtio.bot,
+             x2 = time.pred.plot,
+             y2 = rep(0, length(wtio.bot)),
+             col = alpha(bot.col.pred, 0.67),
+             lineCol = NA)
+text(x = x.pred.reduced,
+     y = range(wtio.2001)[1],
+     labels = paste0(month(x.pred.reduced), "-", year(x.pred.reduced)),
+     cex = 1, col = "black", xpd = NA)
 
 
 
