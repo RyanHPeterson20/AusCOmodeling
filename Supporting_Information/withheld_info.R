@@ -155,16 +155,39 @@ predictor_info_by_year <- function(X, year, standardize = TRUE, n_grid = 2000) {
 }
 
 
-#TODO: take the above code apart
+#TODO: take the above code apart, test to make sure everything works correctly
 X <- etio.std
-year <- 2001
+year <- season.years[1:20] #2001 #or do I pass in all years?
+
+#pass into predictor_info_by_year
+#predictor_info_by_year() internals
+
+yrs <- sort(unique(year))
+#run lapply individually
+res <- lapply(yrs, function(yr) year_vs_rest_w1(X, year, yr, standardize = standardize, n_grid = n_grid))
 
 
 
+#call year_vs_rest_w1()
+#function(X, year, target_year, standardize = TRUE, n_grid = 2000)
+target_year <- 2001
+
+idx_y <- year == target_year #selects target yer
+idx_r <- !idx_y #selects all other years
+
+Xy <- X[idx_y, , drop = FALSE] #X_y
+Xr <- X[idx_r, , drop = FALSE] #X_{-y}
+
+#assume standardized 
+
+#vapply(seq_len(ncol(X)), function(j) wasserstein_1d(Xy[, j], Xr[, j], p = 1, n_grid = n_grid), numeric(1))
+##calls function wasserstein_1d() 
+#compares Xy[, j], Xr[, j], for each j (different lags of a given climate mode)
 
 
-tab <- predictor_info_by_year(X, year)
-tab[order(tab$mean_w1), ]
+
+tab <- predictor_info_by_year(etio.std, year)
+tab[order(tab$mean_w1), ] #gives a weird output
 
 #basic PCA (so that we understand how many dims we need to visualize)
 
