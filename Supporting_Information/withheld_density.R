@@ -12,7 +12,7 @@ suppressMessages( library(MASS))
 suppressMessages(library(colorspace))
 suppressMessages(library(RColorBrewer))
 suppressMessages( library(cmocean)) #ocean colors
-suppressMessages( library(rgl))
+library(hdf5r)
 
 #data
 #import models and data
@@ -278,7 +278,8 @@ IOD.kde.2 <- kde2d(as.numeric(X.wtio.2), as.numeric(X.etio.2), n = 150)
 
 
 image.plot(x = IOD.kde.2$x, y = IOD.kde.2$y, z = IOD.kde.2$z,
-           xlab = "WTIO", ylab = "ETIO", col = cmocean("dense")(36))
+           xlab = "WTIO", ylab = "ETIO", col = rev(cmocean("matter")(36)))
+
 
 #differencing
 iod_diff <- IOD.kde.2
@@ -321,4 +322,34 @@ image.plot(x = iod_diff.2$x, y = iod_diff.2$y, z = iod_diff.2$z, zlim = c(-m, m)
 #TODO: formalize KDE for all withheld variations
 
 # temp hdf5 save function
+write_kde_h5 <- function(k, file = "kde_iod.he5",
+                         group = "/KDE",
+                         overwrite = TRUE) {
+  
+  if (overwrite && file.exists(file)) file.remove(file)
+  
+  h5 <- H5File$new(file, mode = "w")
+  on.exit(h5$close_all(), add = TRUE)
+  
+  g <- h5$create_group(group)
+  
+  # Datasets
+  g[["x"]] <- k$x
+  g[["y"]] <- k$y
+  g[["z"]] <- k$z
+  
+  # Write attributes using create_attr (safe in hdf5r)
+  g$create_attr("description", "Bivariate KDE grid exported from R (HDF5 container).")
+  g$create_attr("nx", length(k$x))
+  g$create_attr("ny", length(k$y))
+  g$create_attr("z_dim", as.integer(dim(k$z)))  # stores c(nx, ny)
+  
+  invisible(TRUE)
+}
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information")
+write_kde_h5(IOD.kde.2, "kde_IOD_wo2019.he5")
+write_kde_h5(IOD.kde, "kde_IOD.he5")
+
 
