@@ -296,12 +296,13 @@ image.plot(x = iod_diff.2$x, y = iod_diff.2$y, z = iod_diff.2$z, zlim = c(-m, m)
 #TODO: formalize KDE for all withheld variations
 
 
-
-
 #SON - bivariate KDE for WTIO and ETIO 
 #setup for limits
 etio.lim <- range(etio.std, na.rm = TRUE) #y axis
 wtio.lim <- range(wtio.std, na.rm = TRUE) #x axis
+
+#double check bandwidth as well (via setting badwidth.nrd)
+
 
 son.kde <- kde2d(as.numeric(son.wtio), as.numeric(son.etio), 
                 lims = c(wtio.lim, etio.lim), n = 200)
@@ -360,6 +361,26 @@ image.plot(x = iod_diff.2$x, y = iod_diff.2$y, z = iod_diff.2$z, zlim = c(-m, m)
 
 
 
+#without 2002/2003 and 2019/2020
+son.kde.2002 <- kde2d(as.numeric(son.wtio[-c(2, 19), ]), as.numeric(son.etio[-c(2, 19),]), 
+                      lims = c(wtio.lim, etio.lim), n = 200)
+
+#setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+#png(filename = "IOD_kde.png", width = 2000, height = 1500, res =275)
+image.plot(x = son.kde.2002$x, y = son.kde.2002$y, z = son.kde.2002$z,
+           xlab = "WTIO", ylab = "ETIO", col = cmocean("dense")(36), 
+           main = "SON : 2002/2003  (& 2019/2020) Withheld")
+
+iod_diff.2 <- son.kde.2002
+iod_diff.2$z <- son.kde.2002$z - son.kde.1$z
+
+m <- max(abs(iod_diff$z), na.rm = TRUE)
+
+#setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+#png(filename = "IOD_kde_2019diff.png", width = 2000, height = 1500, res =275)
+image.plot(x = iod_diff.2$x, y = iod_diff.2$y, z = iod_diff.2$z, zlim = c(-m, m), 
+           xlab = "WTIO", ylab = "ETIO", col =  rev(cmocean("tarn")(31)),
+           main = "2002/2003 - Only 2019/2020 Withheld")
 
 
 
