@@ -193,13 +193,31 @@ olr.std <- scale(pred.matrix[-1, 313:364], center = TRUE, scale = TRUE)
 #son season data (seems to be the most interesting scenario)
 sept.ind <- which(month(pred.df$date) == 9)
 nov.ind <- which(month(pred.df$date) == 11)
-pred.df[sept.ind, ]$week #min ~ 36
-pred.df[nov.ind, ]$week #max ~ 48
+table(pred.df[sept.ind, ]$week) #min ~ 36
+table(pred.df[nov.ind, ]$week) #max ~ 48
 
 son.wtio <- as.matrix(wtio.std[ ,36:48])
 son.etio <- as.matrix(etio.std[ ,36:48])
 
 #TODO: repeat for other `seasons`
+#jja season data
+june.ind <- which(month(pred.df$date) == 6)
+aug.ind <- which(month(pred.df$date) == 8)
+table(pred.df[june.ind, ]$week) #min ~ 23
+table(pred.df[aug.ind, ]$week) #max ~ 35
+
+#mam season dates
+mar.ind <- which(month(pred.df$date) == 3)
+table(pred.df[mar.ind, ]$week) #min ~ 10
+may.ind <- which(month(pred.df$date) == 5)
+table(pred.df[may.ind, ]$week) #max ~ 22
+
+#djf season dates
+dec.ind <- which(month(pred.df$date) == 12)
+table(pred.df[dec.ind, ]$week) #min ~ 49
+feb.ind <- which(month(pred.df$date) == 2)
+table(pred.df[feb.ind, ]$week) #max ~ 9
+
 
 #DMI representation 
 wtio.all <- as.numeric(X.wtio.1)
@@ -303,26 +321,46 @@ wtio.lim <- range(wtio.std, na.rm = TRUE) #x axis
 
 #double check bandwidth as well (via setting badwidth.nrd)
 
-
+#son only IOD 
 son.kde <- kde2d(as.numeric(son.wtio), as.numeric(son.etio), 
                 lims = c(wtio.lim, etio.lim), n = 200)
 
-#setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
-#png(filename = "IOD_kde.png", width = 2000, height = 1500, res =275)
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
+png(filename = "IOD_density_son.png", width = 2000, height = 1500, res =275)
 image.plot(x = son.kde$x, y = son.kde$y, z = son.kde$z,
-           xlab = "WTIO", ylab = "ETIO", col = cmocean("dense")(36), 
-           main = "SON - All Data")
+           xlab = "WTIO", ylab = "ETIO", col = cmocean("deep")(48),
+           legend.args = list(
+             text = "Density",
+             side = 3,
+             line = 0,
+             cex = 1
+           ))
+title("IOD Density: All-Data (SON)", adj = 0)
+abline(h = 0, lty = 2, col = "gray25")
+abline(v = 0, lty = 2, col = "gray25")
+dev.off()
 
 
 #without 2019/2020
 son.kde.1 <- kde2d(as.numeric(son.wtio[-19, ]), as.numeric(son.etio[-19,]), 
                    lims = c(wtio.lim, etio.lim), n = 200)
 
-#setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
-#png(filename = "IOD_kde.png", width = 2000, height = 1500, res =275)
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
+png(filename = "IOD_density_wo2019son.png", width = 2000, height = 1500, res =275)
 image.plot(x = son.kde.1$x, y = son.kde.1$y, z = son.kde.1$z,
-           xlab = "WTIO", ylab = "ETIO", col = cmocean("dense")(36), 
-           main = "SON - 2019/2020 Withheld")
+           xlab = "WTIO", ylab = "ETIO", col = cmocean("deep")(48),
+           legend.args = list(
+             text = "Density",
+             side = 3,
+             line = 0,
+             cex = 1
+           ))
+title("IOD Surface: 2019/2020 Withheld (SON)", adj = 0)
+abline(h = 0, lty = 2, col = "gray25")
+abline(v = 0, lty = 2, col = "gray25")
+dev.off()
+
+
 
 #differencing
 iod_diff <- son.kde.1
@@ -330,12 +368,108 @@ iod_diff$z <- son.kde.1$z - son.kde$z
 
 m <- max(abs(iod_diff$z), na.rm = TRUE)
 
-#setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
-#png(filename = "IOD_kde_2019diff.png", width = 2000, height = 1500, res =275)
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
+png(filename = "IOD_density_wo2019diff.png", width = 2000, height = 1500, res =275)
 image.plot(x = iod_diff$x, y = iod_diff$y, z = iod_diff$z, zlim = c(-m, m), 
            xlab = "WTIO", ylab = "ETIO", col =  rev(cmocean("tarn")(31)),
-           main = "Withheld 2019/2020 - All Data")
-#dev.off()
+           legend.args = list(
+             text = expression(Delta * "Density"),
+             side = 3,
+             line = 0,
+             cex = 1
+           ))
+title("Difference Surface: 2019/2020 Withheld - All Data (SON)", adj = 0)
+abline(h = 0, lty = 2, col = "gray25")
+abline(v = 0, lty = 2, col = "gray25")
+dev.off()
+
+
+#loop through single withheld season
+son.iod.kde <- list()
+son.iod.diff <- list()
+for (i in 1:20) {
+  son.kde.temp <-  kde2d(as.numeric(son.wtio[-c(i), ]), as.numeric(son.etio[-c(i),]), 
+                         lims = c(wtio.lim, etio.lim), n = 200)
+  son.iod.kde[[paste0(seasons[[i]])]] <- son.kde.temp
+  
+  iod_diff.temp <- son.kde.temp
+  iod_diff.temp$z <- son.kde.temp$z - son.kde$z #all data difference
+  
+  son.iod.diff[[paste0(seasons[[i]])]] <- iod_diff.temp
+}
+
+
+
+m.new <- max(sapply(son.iod.diff, function(x) max(abs(x$z)) )) 
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
+for (j in 1:20) {
+  iod.diff.temp <- son.iod.diff[[j]]
+  
+  png(filename = paste0("IOD_AllDatadiff_", seasons[j],"withheld.png"), width = 2000, height = 1500, res =275)  
+  image.plot(x = iod.diff.temp$x, y = iod.diff.temp$y, z = iod.diff.temp$z, zlim = c(-m.new, m.new), 
+             xlab = "WTIO", ylab = "ETIO", col =  rev(cmocean("tarn")(31)),
+             main = paste0("SON Difference: ", seasons[j], " Withheld - All Data"))
+  abline(h = 0, lty = 2)
+  abline(v = 0, lty = 2)
+  dev.off()
+}
+
+
+#get double withheld data
+son.iod.kde2 <- list()
+son.iod.diff2 <- list()
+son.iod2019.diff2 <- list()
+for (i in c(1:18,20)) {
+  son.kde.temp <- kde2d(as.numeric(son.wtio[-c(i,19), ]), as.numeric(son.etio[-c(i,19),]), 
+                        lims = c(wtio.lim, etio.lim), n = 200)
+
+  son.iod.kde2[[paste0(seasons[[i]])]] <- son.kde.temp
+  
+  #add differences
+  iod_diff.temp <- son.kde.temp
+  iod_diff.temp$z <- son.kde.temp$z - son.kde$z #all data difference
+  
+  son.iod.diff2[[paste0(seasons[[i]])]] <- iod_diff.temp
+  
+  iod_diff2019.temp <- son.kde.temp
+  iod_diff2019.temp$z <- son.kde.temp$z - son.kde.1$z #diff from 2019/2020 wh
+  
+  son.iod2019.diff2[[paste0(seasons[[i]])]] <- iod_diff2019.temp
+}  
+
+
+#add for loop and save each individually
+temp.zlim <- c(0, 0.32)
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
+for (i in c(1:18,20)) {
+  #double withheld IOD density
+  #TODO: get a common zlim
+  son.kde.temp <- kde2d(as.numeric(son.wtio[-c(i,19), ]), as.numeric(son.etio[-c(i,19),]), 
+                        lims = c(wtio.lim, etio.lim), n = 200)
+  
+  #TODO: save as data obj. for output
+  
+  png(filename = paste0("IOD_denisty_", seasons[i],"withheld.png"), width = 2000, height = 1500, res =275)  
+  image.plot(x = son.kde.temp$x, y = son.kde.temp$y, z = son.kde.temp$z, zlim = temp.zlim,
+             xlab = "WTIO", ylab = "ETIO", col = cmocean("dense")(36), 
+             main =   paste0("SON: ", seasons[i]," (& 2019-2020) Withheld"))
+  abline(h = 0, lty = 2)
+  abline(v = 0, lty = 2)
+  dev.off()
+  
+  #add differences
+  iod_diff.temp <- son.kde.temp
+  iod_diff.temp$z <- son.kde.temp$z - son.kde.1$z
+  
+  png(filename = paste0("IOD_diff_", seasons[i],"withheld.png"), width = 2000, height = 1500, res =275)  
+  image.plot(x = iod_diff.temp$x, y = iod_diff.temp$y, z = iod_diff.temp$z, zlim = c(-m, m), 
+             xlab = "WTIO", ylab = "ETIO", col =  rev(cmocean("tarn")(31)),
+             main = paste0("SON: ", seasons[i], " - Only 2019-2020 Withheld"))
+  abline(h = 0, lty = 2)
+  abline(v = 0, lty = 2)
+  dev.off()
+}
 
 
 #without 2001/2002 and 2019/2020
@@ -347,6 +481,10 @@ son.kde.2001 <- kde2d(as.numeric(son.wtio[-c(1,19), ]), as.numeric(son.etio[-c(1
 image.plot(x = son.kde.2001$x, y = son.kde.2001$y, z = son.kde.2001$z,
            xlab = "WTIO", ylab = "ETIO", col = cmocean("dense")(36), 
            main = "SON : 2001/2002  (& 2019/2020) Withheld")
+abline(h = 0, lty = 2)
+abline(v = 0, lty = 2)
+
+
 
 iod_diff.2 <- son.kde.2001
 iod_diff.2$z <- son.kde.2001$z - son.kde.1$z
@@ -358,7 +496,8 @@ m <- max(abs(iod_diff$z), na.rm = TRUE)
 image.plot(x = iod_diff.2$x, y = iod_diff.2$y, z = iod_diff.2$z, zlim = c(-m, m), 
            xlab = "WTIO", ylab = "ETIO", col =  rev(cmocean("tarn")(31)),
            main = "2001/2002 - Only 2019/2020 Withheld")
-
+abline(h = 0, lty = 2)
+abline(v = 0, lty = 2)
 
 
 #without 2002/2003 and 2019/2020
@@ -415,4 +554,48 @@ setwd("~/CO_AUS/AusCOmodeling/Supporting_Information")
 write_kde_h5(IOD.kde.2, "kde_IOD_wo2019.he5")
 write_kde_h5(IOD.kde, "kde_IOD.he5")
 
+
+#multiple location/density objects into a single file
+write_kde_list_to_one_he5 <- function(kde_list, file = "kde_collection.he5",
+                                      root = "/KDE", overwrite = TRUE) {
+  if (overwrite && file.exists(file)) file.remove(file)
+  
+  h5 <- H5File$new(file, mode = "w")
+  on.exit(h5$close_all(), add = TRUE)
+  
+  if (is.null(names(kde_list)) || any(names(kde_list) == "")) {
+    names(kde_list) <- sprintf("%03d", seq_along(kde_list))
+  }
+  
+  h5$create_group(root)
+  
+  for (nm in names(kde_list)) {
+    k <- kde_list[[nm]]
+    stopifnot(is.list(k), all(c("x","y","z") %in% names(k)))
+    
+    g <- h5$create_group(paste0(root, "/", nm))
+    
+    x <- as.numeric(k$x)
+    y <- as.numeric(k$y)
+    z <- as.matrix(k$z)
+    
+    g[["x"]] <- x
+    g[["y"]] <- y
+    g[["z"]] <- z
+    
+    g$create_attr("nx", length(x))
+    g$create_attr("ny", length(y))
+    g$create_attr("z_dim", as.integer(dim(z)))
+  }
+  
+  h5[[root]]$create_attr("n_kdes", as.integer(length(kde_list)))
+  invisible(TRUE)
+}
+
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information")
+write_kde_h5(son.kde, "kde_IOD_son.he5")
+write_kde_list_to_one_he5(son.iod.kde, "IOD_kde_single.he5")
+write_kde_list_to_one_he5(son.iod.diff, "IOD_kde_singleDiff.he5")
 

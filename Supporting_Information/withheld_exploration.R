@@ -48,6 +48,12 @@ rm(i, temp_season)
 SE2.lm <- SEmodels[[2]] 
 
 
+#explore the models
+for (i in 1:20) {
+  print(seasons[i])
+  print(summary(SE2.lm.2019[[i]]))
+}
+
 
 #model for predicting 2019/2020 (generalize as needed)
 SE.lm.2019 <- SErefit.wo.years$SE.vary.lm$`2019-2020`
