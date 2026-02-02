@@ -327,8 +327,8 @@ son.kde <- kde2d(as.numeric(son.wtio), as.numeric(son.etio),
 
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
 png(filename = "IOD_density_son.png", width = 2000, height = 1500, res =275)
-image.plot(x = son.kde$x, y = son.kde$y, z = son.kde$z,
-           xlab = "WTIO", ylab = "ETIO", col = cmocean("deep")(48),
+image.plot(x = son.kde$x, y = son.kde$y, z = son.kde$z, zlim = c(0, 0.32),
+           xlab = "WTIO", ylab = "ETIO", col = cmocean("deep")(49),
            legend.args = list(
              text = "Density",
              side = 3,
@@ -347,8 +347,8 @@ son.kde.1 <- kde2d(as.numeric(son.wtio[-19, ]), as.numeric(son.etio[-19,]),
 
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
 png(filename = "IOD_density_wo2019son.png", width = 2000, height = 1500, res =275)
-image.plot(x = son.kde.1$x, y = son.kde.1$y, z = son.kde.1$z,
-           xlab = "WTIO", ylab = "ETIO", col = cmocean("deep")(48),
+image.plot(x = son.kde.1$x, y = son.kde.1$y, z = son.kde.1$z, zlim = c(0, 0.32),
+           xlab = "WTIO", ylab = "ETIO", col = cmocean("deep")(49),
            legend.args = list(
              text = "Density",
              side = 3,
@@ -398,18 +398,24 @@ for (i in 1:20) {
   son.iod.diff[[paste0(seasons[[i]])]] <- iod_diff.temp
 }
 
-
-
 m.new <- max(sapply(son.iod.diff, function(x) max(abs(x$z)) )) 
 
+
+#TODO: update single withheld figure outputs to match the new style
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
 for (j in 1:20) {
   iod.diff.temp <- son.iod.diff[[j]]
   
   png(filename = paste0("IOD_AllDatadiff_", seasons[j],"withheld.png"), width = 2000, height = 1500, res =275)  
   image.plot(x = iod.diff.temp$x, y = iod.diff.temp$y, z = iod.diff.temp$z, zlim = c(-m.new, m.new), 
-             xlab = "WTIO", ylab = "ETIO", col =  rev(cmocean("tarn")(31)),
-             main = paste0("SON Difference: ", seasons[j], " Withheld - All Data"))
+             xlab = "WTIO", ylab = "ETIO", col =  rev(cmocean("tarn")(49)),
+             legend.args = list(
+               text = expression(Delta * "Density"),
+               side = 3,
+               line = 0,
+               cex = 1
+             ))
+title(paste0("Difference Surface: ", seasons[j], " Withheld - All Data (SON)"), adj = 0)
   abline(h = 0, lty = 2)
   abline(v = 0, lty = 2)
   dev.off()
@@ -433,10 +439,53 @@ for (i in c(1:18,20)) {
   son.iod.diff2[[paste0(seasons[[i]])]] <- iod_diff.temp
   
   iod_diff2019.temp <- son.kde.temp
-  iod_diff2019.temp$z <- son.kde.temp$z - son.kde.1$z #diff from 2019/2020 wh
+  iod_diff2019.temp$z <- son.kde.temp$z - son.kde.1$z #diff from 2019/2020 withheld
   
   son.iod2019.diff2[[paste0(seasons[[i]])]] <- iod_diff2019.temp
 }  
+
+
+m.new.diff2 <- max(sapply(son.iod2019.diff2, function(x) max(abs(x$z)) )) 
+
+#new output for double heldout (withheld) years
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
+for (i in c(1:18)) {
+  #double difference
+  png(filename = paste0("IOD_diff_", seasons[i],"withheld.png"), width = 2000, height = 1500, res =275)  
+  image.plot(x = son.iod2019.diff2[[i]]$x, y = son.iod2019.diff2[[i]]$y, 
+             z = son.iod2019.diff2[[i]]$z, zlim = c(-m.new.diff2, m.new.diff2), 
+             xlab = "WTIO", ylab = "ETIO", col =  cmocean("diff")(35), #change back to tarn if this is bad
+             legend.args = list(
+               text = expression(Delta * "Density"),
+               side = 3,
+               line = 0,
+               cex = 1
+             ))
+  abline(h = 0, lty = 2)
+  abline(v = 0, lty = 2)
+  title(paste0("Difference Surface: ", seasons[i], " & 2019-2020 Withheld - Only 2019-2020 Withheld (SON)"), adj = 0, cex.main = 0.825)
+  dev.off()
+  
+  png(filename = paste0("IOD_denisty_", seasons[i],"withheld.png"), width = 2000, height = 1500, res =275)  
+  image.plot(x = son.iod.kde2[[i]]$x, y = son.iod.kde2[[i]]$y, 
+             z = son.iod.kde2[[i]]$z, zlim = c(-0, 0.32),
+             xlab = "WTIO", ylab = "ETIO", col = cmocean("deep")(36), legend.args = list(
+               text = "Density",
+               side = 3,
+               line = 0,
+               cex = 1
+             ))
+  title(paste0("IOD Surface: ", seasons[i] , " & 2019/2020 Withheld (SON)"), adj = 0)
+  abline(h = 0, lty = 2)
+  abline(v = 0, lty = 2)
+  dev.off()
+  
+  
+}
+
+
+
+
 
 
 #add for loop and save each individually

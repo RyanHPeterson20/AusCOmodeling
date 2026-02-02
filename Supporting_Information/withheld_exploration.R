@@ -54,6 +54,11 @@ for (i in 1:20) {
   print(summary(SE2.lm.2019[[i]]))
 }
 
+#w/o 2001-2002 
+summary(SE2.lm.2019[[1]])
+
+#w/o 2002-2003 
+summary(SE2.lm.2019[[2]])
 
 #model for predicting 2019/2020 (generalize as needed)
 SE.lm.2019 <- SErefit.wo.years$SE.vary.lm$`2019-2020`
