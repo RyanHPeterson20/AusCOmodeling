@@ -42,6 +42,8 @@ SE.late <- 3:14
 
 #get data setup
 SEresp.mat <- scale(resp.matrix[,30:58], center = TRUE, scale = FALSE)
+SEresp.peak <- SEresp.mat[ ,14:17]
+SEresp.peak.wide <- SEresp.mat[ ,14:18]
 
 SE.resp <- resp_setup(SEresp.mat, season.weeks, SE.early, SE.mid, SE.late) 
 SE.pred <- pred_setup(SEAus.lag, season.weeks, SE.early, SE.mid, SE.late)
