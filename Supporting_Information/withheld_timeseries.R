@@ -68,7 +68,7 @@ SEpreds.peak.olr <- cbind(SEpreds.peak2.olr, SEpreds.peak51.olr)
 #for 2001/2002 peak season
 pred.df[pred.df$week == 1 & pred.df$year == 2002, ]$date  #lag 1 week 2
 pred.df[pred.df$week == 50 & pred.df$year == 2001, ]$date #lag 1 week 51
-pred.df[pred.df$week == 51 & pred.df$year == 2000, ]$date #lag 52 week 51
+start.2001 <- pred.df[pred.df$week == 51 & pred.df$year == 2000, ]$date #lag 52 week 51
 
 pred.df[51:105, ]$date
 
@@ -76,7 +76,49 @@ pred.df[51:105, ]$date
 
 ##----- time series -----##
 
+#ts setup
+top.col.pred <- "#F2855DFF"
+bot.col.pred <- "#68ABB8FF"
+
+
+#2001/2002 pred data
+nino.anom.2001 <- as.numeric(rev(SEpreds.peak.nino[1, ]))
+wtio.anom.2001 <- as.numeric(rev(SEpreds.peak.wtio[1, ]))
+etio.anom.2001 <- as.numeric(rev(SEpreds.peak.etio[1, ]))
+tsa.anom.2001 <- as.numeric(rev(SEpreds.peak.tsa[1, ]))
+aao.anom.2001 <- as.numeric(rev(SEpreds.peak.aao[1, ]))
+olr.anom.2001 <- as.numeric(rev(SEpreds.peak.olr[1, ]))
+
+
+
+
+#temp functions
+
+
+
 #TODO: test code delete when done.
+
+#select window
+date.start <- ymd(start.2001)
+date.end <- date.start + weeks(54)
+
+pred.dates <- pred.df[pred.df$date >= date.start & pred.df$date <= date.end, ]
+
+pred.time <- as.Date(pred.dates$date)
+pred.time.range <- range(pred.time)
+
+x.ticks.pred <- seq(
+  floor_date(pred.time.range[1], unit = "month"),
+  ceiling_date(pred.time.range[2], unit = "month"),
+  by = "1 month"
+)
+
+x.labs.pred <- ifelse(month(x.ticks.pred) == 1,
+                      format(x.ticks.pred, "%b\n%Y"),
+                      format(x.ticks.pred, "%b"))
+
+# Optional: vertical lines at year boundaries
+x.year.pred <- ymd(paste0(seq(year(pred.time.range[1]), year(pred.time.range[2])), "0101"))
 
 
 ### plots to explore specific (and all) years.
