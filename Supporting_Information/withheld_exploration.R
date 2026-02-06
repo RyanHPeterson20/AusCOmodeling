@@ -122,6 +122,9 @@ for (i in 1:20) {
 
 
 
+##----- time series -----##
+### plots to explore specific (and all) years.
+
 
 #time series plots for interesting years 2001, 2010, & 2011 (and 2005, 2015)
 
