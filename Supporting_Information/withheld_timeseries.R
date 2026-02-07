@@ -1,4 +1,5 @@
 
+
 #libraries
 suppressMessages( library(scales)) #for adjusting opacity
 suppressMessages( library(fields)) #for envelope plot
@@ -313,6 +314,7 @@ for (i in 1:20) {
   png(filename = paste0("SE", season.years[i], "_pred_ts.png"), width = 4600, height = 5400, res = 275)
   par(mfrow = c(6, 1))
   par(oma = c(5, 2.5, 1, 0))   # extra bottom margin for month labels
+  par(mgp = c(4, 2, 0)) # (title, labels, lines)
   par(mar = c(0, 5, 0, 0))
   panel_ts(pred.time, nino.anom.temp, env_nino, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly [W/m^2]", legend_text= "Ni\u00f1o 3.4", pred.year.lines, pred.time.range,
@@ -350,14 +352,55 @@ for (i in 1:20) {
 
 #TODO: response plot
 #get response data
+i <- 1
+
+nino.anom.temp <- as.numeric(rev(SEpreds.peak.nino[i, ]))
+
+#select window (from preds)
+start.temp <- pred.df[pred.df$week == 51 & pred.df$year == season.years[i]-1, ]$date
+
+date.start <- ymd(start.temp)
+date.end <- date.start + weeks(54)
+
+if(epiweek(date.end) != 1){
+  date.end <- date.end + weeks(1)
+}
+
+pred.dates <- pred.df[pred.df$date >= date.start & pred.df$date <= date.end, ]
+
+pred.time <- as.Date(pred.dates$date)
+pred.time.range <- range(pred.time)
+
 
 #setup with 2001/2002 response
 resp.2001 <- SEresp.peak[1, ]
 resp.2001.wide <- SEresp.peak.wide[1, ]
 
 #resp_dates
-resp.df[resp.df$week == 51, ]
+start.peak <- resp.df[resp.df$week == 51 & resp.df$year == season.years[i], ]$date
+end.peak <- resp.df[resp.df$week == 2 & resp.df$year == season.years[i]+1, ]$date
 
+resp.dates <- resp.df[resp.df$date >= start.peak & resp.df$date <= end.peak, ]
+resp.time <- as.Date(resp.dates$date)
 
+xlim.common <- range(c(pred.time, resp.time), na.rm = TRUE)
 
+#test plots
+par(mfrow = c(2, 1))
+par(oma = c(5, 2.5, 1, 0))   # extra bottom margin for month labels
+par(mar = c(0, 5, 0, 0))
+plot(resp.time, resp.2001, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "", col.lab = "black",
+     xlim = xlim.common, bty = "n",
+     cex.lab = 2.75, xpd = NA)
+
+axis(side = 2, cex.axis = 2.25,
+     col = NA, line = -20, col.ticks = "black", col.axis = "black", las = 1)
+
+plot(pred.time, nino.anom.temp, type = "l", col = "black", lwd = 2,
+     xaxt = "n", xlab = "",
+     yaxt = "n", ylab = "test", col.lab = "black",
+     xlim = xlim.common, bty = "n",
+     cex.lab = 2.75, xpd = NA)
 
