@@ -108,9 +108,13 @@ pred.df[which(pred.df$date == temp.date.end), ]
 ##----- time series -----##
 
 #ts setup
+#pred colors
 top.col.pred <- "#F2855DFF"
 bot.col.pred <- "#68ABB8FF"
 
+#response colors
+top.col.resp <- "#C71C1C"
+bot.col.resp <- "#2A5674FF"
 
 
 
@@ -205,6 +209,7 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 }
 
 
+
 #plots
 #TODO: clean this up later
 panel_ts <- function(x, y, env, ylim, ylab, legend_text, year_lines, xlim, 
@@ -235,10 +240,10 @@ panel_ts <- function(x, y, env, ylim, ylab, legend_text, year_lines, xlim,
   #             col = alpha(bot.col.pred, 0.67), lineCol = NA)
   
   # label
-  legend(x = c(xlim[1], xlim[1] + days(30)),
+  legend(x = c(xlim[1] + days(2), xlim[1] + days(32)),
          y = c(ylim[2], ylim[2]),
          legend = legend_text,
-         box.col = NA, bg = NA, xpd = NA, text.col = "grey30", cex = 3)
+         box.col = NA, bg = NA, xpd = NA, text.col = "grey30", cex = 2.5)
   
   if (show_x) {
     axis(1, at = xticks, labels = xlabs, las = 2, cex.axis = 2.0)
@@ -286,10 +291,11 @@ for (i in 1:20) {
   #y tick lines/setup
   
   #max vals
-  y.nino.max <- max(round(range(nino.anom.temp, na.rm = TRUE)))
-  y.wtio.max <- max(round(range(wtio.anom.temp, na.rm = TRUE)))
+  #TODO: clean this up a little more, not happy with this...
+  y.nino.max <- max(abs(range(nino.anom.temp, na.rm = TRUE)))
+  y.wtio.max <- max(abs(range(wtio.anom.temp, na.rm = TRUE)))
   y.etio.max <- max(abs(round(range(etio.anom.temp, na.rm = TRUE))))
-  y.tsa.max  <- max(round(range(tsa.anom.temp,  na.rm = TRUE)))
+  y.tsa.max  <- max(abs(range(tsa.anom.temp,  na.rm = TRUE)))
   y.aao.max  <- max(abs(round(range(aao.anom.temp, na.rm = TRUE))))
   y.olr.max  <- max(abs(round(range(olr.anom.temp, na.rm = TRUE))))
   
@@ -350,57 +356,208 @@ for (i in 1:20) {
 
 
 
-#TODO: response plot
-#get response data
-i <- 1
+#TODO: response-combo plot
 
-nino.anom.temp <- as.numeric(rev(SEpreds.peak.nino[i, ]))
+## finalize for all preds
+## align ylims for resp (w/o 2019, since we can't see variation in other seasons )
+## align ylims for preds across ALL years. 
 
-#select window (from preds)
-start.temp <- pred.df[pred.df$week == 51 & pred.df$year == season.years[i]-1, ]$date
 
-date.start <- ymd(start.temp)
-date.end <- date.start + weeks(54)
+#get ylims
+#pred lims
+pred.range <- range(c(SEpreds.peak.nino, SEpreds.peak.wtio, SEpreds.peak.etio,
+                      SEpreds.peak.tsa, SEpreds.peak.aao, SEpreds.peak.olr), na.rm = TRUE)
 
-if(epiweek(date.end) != 1){
-  date.end <- date.end + weeks(1)
+y.tick.max   <- round(max(abs(pred.range)))
+y.tick.steps <- y.tick.max/2
+y.tick.seq   <- seq(y.tick.steps, y.tick.max - y.tick.steps, by = y.tick.steps)
+y.tick.lab   <- c(-rev(y.tick.seq), 0, y.tick.seq)
+
+#resp lims (w/o 2019/2020)
+resp.range <- range(SEresp.peak[-19, ])
+y.resp.max <- round(max(abs(resp.range)))
+y.resp.tick.steps <- y.resp.max/2
+y.resp.tick.seq   <- seq(y.resp.tick.steps, y.resp.max - y.resp.tick.steps, by = y.resp.max)
+y.resp.tick.lab   <- c(-rev(y.resp.tick.seq), 0, y.resp.tick.seq)
+
+ylim.resp <- c(-y.resp.max, y.resp.max)
+
+#alternate ylim tick labels
+y.resp.lab.alt <- c(-12, -6, 0, 6, 12)
+
+
+
+
+#start loop
+
+for (i in 1:20) {
+  
+  #select window (from preds)
+  start.temp <- pred.df[pred.df$week == 51 & pred.df$year == season.years[i]-1, ]$date
+  
+  date.start <- ymd(start.temp)
+  date.end <- date.start + weeks(54)
+  
+  if(epiweek(date.end) != 1){
+    date.end <- date.end + weeks(1)
+  }
+  
+  pred.dates <- pred.df[pred.df$date >= date.start & pred.df$date <= date.end, ]
+  
+  pred.time <- as.Date(pred.dates$date)
+  pred.time.range <- range(pred.time)
+  
+  #now using above functions
+  #get monthly ticks
+  pred.xt <- make_month_ticks(pred.time.range)
+  
+  #get boundary lines
+  pred.month.lines <- make_month_lines(pred.time.range)
+  pred.year.lines <- make_year_lines(pred.time.range)
+  
+  #preds
+  nino.anom.temp <- as.numeric(rev(SEpreds.peak.nino[i, ]))
+  wtio.anom.temp <- as.numeric(rev(SEpreds.peak.wtio[i, ]))
+  etio.anom.temp <- as.numeric(rev(SEpreds.peak.etio[i, ]))
+  tsa.anom.temp <- as.numeric(rev(SEpreds.peak.tsa[i, ]))
+  aao.anom.temp <- as.numeric(rev(SEpreds.peak.aao[i, ]))
+  olr.anom.temp <- as.numeric(rev(SEpreds.peak.olr[i, ]))
+  
+  #envelope sets
+  env_nino <- split_envelope(nino.anom.temp)
+  env_wtio <- split_envelope(wtio.anom.temp)
+  env_etio <- split_envelope(etio.anom.temp)
+  env_tsa  <- split_envelope(tsa.anom.temp)
+  env_aao  <- split_envelope(aao.anom.temp)
+  env_olr  <- split_envelope(olr.anom.temp)
+  
+  #setup for response
+  resp.temp <- SEresp.peak[i, ]
+  resp.temp.wide <- SEresp.peak.wide[i, ]
+  
+  #resp_dates
+  start.peak <- resp.df[resp.df$week == 51 & resp.df$year == season.years[i], ]$date
+  end.peak <- resp.df[resp.df$week == 2 & resp.df$year == season.years[i]+1, ]$date
+  
+  resp.dates <- resp.df[resp.df$date >= start.peak & resp.df$date <= end.peak, ]
+  resp.time <- as.Date(resp.dates$date)
+  resp.time.range <- range(resp.time)
+  
+  #get boundary lines
+  resp.month.lines <- make_month_lines(resp.time.range)
+  resp.year.lines <- make_year_lines(resp.time.range)
+  
+  xlim.common <- range(c(pred.time, resp.time), na.rm = TRUE)
+  
+  
+  #get segment boundary
+  seg.start <- ymd(start.peak) - weeks(3)
+  seg.end <- ymd(end.peak) + weeks(3)
+  
+  #test plots
+  #TODO: get test output going
+  
+  
+  
+  #figure output
+  setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+  
+  png(filename = paste0("combo_peak_", season.years[i], "_ts.png"), width = 4600, height = 5400, res = 275)
+  par(mfrow = c(7, 1))
+  par(oma = c(6, 2.5, 1, 0))   # extra bottom margin for month labels
+  par(mgp = c(4, 2, 0)) # (title, labels, lines)
+  
+  #response output
+  par(mar = c(0, 5, 0, 0))
+  plot(resp.time, resp.temp, type = "l", col = "black", lwd = 2,
+       xaxt = "n", xlab = "",
+       yaxt = "n", ylab = "", col.lab = "black",
+       xlim = xlim.common, ylim = ylim.resp,  bty = "n",
+       cex.lab = 2.75, xpd = NA)
+  
+  axis(side = 2, at = y.resp.lab.alt, cex.axis = 2.25,
+       col = NA, line = -105, col.ticks = "black", col.axis = "black", las = 1)
+  mtext("CO Anomaly", side = 2, line = -100, cex = 2.0)
+  
+  segments(seg.start, 0, seg.end, 0, lty = 1, col = "grey", lwd = 1)
+  #abline(v = resp.year.lines, lty = 2, col = "grey40", lwd = 2)
+  
+  #monthly lines
+  abline(v = resp.month.lines, lty = 3, col = "grey50", lwd = 1)  # monthly
+  abline(v = resp.month.lines[month(resp.month.lines) == 1], lty = 2, col = "grey40", lwd = 2) # Jan darker
+  
+  legend(x = c(xlim.common[1] - days(3), xlim.common[1] + days(27)),
+         y = c(ylim.resp[2], ylim.resp[2]),
+         legend = paste0("Peak ", seasons[i], " Season"),
+         box.col = NA, bg = NA, xpd = NA, text.col = "grey10", cex = 3.5)
+  
+  draw_envelope_zero(resp.time, resp.temp, top.col.resp, bot.col.resp)
+  
+  #preds
+  par(mar = c(0, 5, 0, 0))
+  panel_ts(pred.time, nino.anom.temp, env_nino, ylim = range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly [W/m^2]", legend_text= "Ni\u00f1o 3.4",  year_lines = pred.year.lines, 
+           xlim = xlim.common,
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+  
+  par(mar = c(0, 5, 0, 0))
+  panel_ts(pred.time, wtio.anom.temp, env_wtio, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly [W/m^2]", legend_text= "WTIO",  year_lines = pred.year.lines, 
+           xlim = xlim.common,
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+  
+  par(mar = c(0, 5, 0, 0))
+  panel_ts(pred.time, etio.anom.temp, env_etio, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly [W/m^2]", legend_text= "ETIO",  year_lines = pred.year.lines, 
+           xlim = xlim.common,
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+  
+  par(mar = c(0, 5, 0, 0))
+  panel_ts(pred.time, tsa.anom.temp, env_tsa, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly [W/m^2]", legend_text= "TSA",  year_lines = pred.year.lines, 
+           xlim = xlim.common,
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+  
+  par(mar = c(0, 5, 0, 0))
+  panel_ts(pred.time, aao.anom.temp, env_aao, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly", legend_text= "SAM (AAO)",  year_lines = pred.year.lines, 
+           xlim = xlim.common,
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+  
+  par(mar = c(1, 5, 0, 0))
+  panel_ts(pred.time, olr.anom.temp, env_olr, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly [W/m^2]", legend_text= "OLR",  year_lines = pred.year.lines, 
+           xlim = xlim.common,
+           show_x = TRUE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+  
+  dev.off()
+
 }
 
-pred.dates <- pred.df[pred.df$date >= date.start & pred.df$date <= date.end, ]
-
-pred.time <- as.Date(pred.dates$date)
-pred.time.range <- range(pred.time)
 
 
-#setup with 2001/2002 response
-resp.2001 <- SEresp.peak[1, ]
-resp.2001.wide <- SEresp.peak.wide[1, ]
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = paste0("all_resp_ts.png"), width = 4600, height = 5400, res = 275)
+par(mfrow = c(4, 5))
+for (i in c(1:18,20)) {
 
-#resp_dates
-start.peak <- resp.df[resp.df$week == 51 & resp.df$year == season.years[i], ]$date
-end.peak <- resp.df[resp.df$week == 2 & resp.df$year == season.years[i]+1, ]$date
+  resp.temp <- SEresp.peak[i, ]
 
-resp.dates <- resp.df[resp.df$date >= start.peak & resp.df$date <= end.peak, ]
-resp.time <- as.Date(resp.dates$date)
+  par(mar = c(5, 5, 4, 0))
+  plot(1:4, resp.temp, type = "l", col = "black", lwd = 2,
+       xaxt = "n", xlab = "Week",
+       yaxt = "n", ylab = "CO Anomaly", col.lab = "black",ylim = ylim.resp,  bty = "n",
+       cex.lab = 2, xpd = NA)
+  title(paste0("Peak ", seasons[i], " Season" ), adj = 0, cex.main = 2)
+  
+  draw_envelope_zero(1:4, resp.temp, top.col.resp, bot.col.resp)
+  
+  axis(side = 2, at = y.resp.lab.alt, cex.axis = 2.25,
+       col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
+  axis(side = 1, at = 1:4, labels = c(51, 52, 1, 2))
+  abline(h =0, lty = 2, lwd = 1, col = "grey50")
+  abline(v = 2.5,  lty = 2, col = "grey40", lwd = 2)
 
-xlim.common <- range(c(pred.time, resp.time), na.rm = TRUE)
-
-#test plots
-par(mfrow = c(2, 1))
-par(oma = c(5, 2.5, 1, 0))   # extra bottom margin for month labels
-par(mar = c(0, 5, 0, 0))
-plot(resp.time, resp.2001, type = "l", col = "black", lwd = 2,
-     xaxt = "n", xlab = "",
-     yaxt = "n", ylab = "", col.lab = "black",
-     xlim = xlim.common, bty = "n",
-     cex.lab = 2.75, xpd = NA)
-
-axis(side = 2, cex.axis = 2.25,
-     col = NA, line = -20, col.ticks = "black", col.axis = "black", las = 1)
-
-plot(pred.time, nino.anom.temp, type = "l", col = "black", lwd = 2,
-     xaxt = "n", xlab = "",
-     yaxt = "n", ylab = "test", col.lab = "black",
-     xlim = xlim.common, bty = "n",
-     cex.lab = 2.75, xpd = NA)
+}
+dev.off()
 
