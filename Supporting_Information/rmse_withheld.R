@@ -235,6 +235,53 @@ rmse.mat.early <- rmse.mat.early[,-1]
 rmse.mat.peak <- rmse.mat.peak[,-1]
 rmse.mat.late <- rmse.mat.late[,-1]
 
+rownames(rmse.mat.early) <- seasons
+colnames(rmse.mat.early) <- seasons
+rownames(rmse.mat.peak) <- seasons
+colnames(rmse.mat.peak) <- seasons
+rownames(rmse.mat.late) <- seasons
+colnames(rmse.mat.late) <- seasons
+
+z.early.single <- t(rmse.mat.early[20:1, ])
+z.peak.single <- t(rmse.mat.peak[20:1, ])
+z.late.single <- t(rmse.mat.late[20:1, ])
+
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmse_early_single.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.early.single, zlim = c(0, max(z.early.single)),
+                    cols = cmocean("deep")(49),
+                    main = " Early Fire-Season: RMSE Withheld-Season" )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmse_peak_single.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.peak.single, zlim =  c(0, max(z.peak.single)),
+                    cols = cmocean("deep")(49),
+                    main = "Peak Fire-Season: RMSE Withheld-Season" )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season ",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmse_late_single.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.late.single, zlim =  c(0, max(z.late.single)),
+                    cols = cmocean("deep")(49),
+                    main = "Late Fire-Season: RMSE Withheld-Season" )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+
 #all data RMSE
 base.rmse.early <- matrix(rep(as.numeric(sapply(base.rmse, function(x) x[1])), 20), ncol = 20)
 base.rmse.peak <- matrix(rep(as.numeric(sapply(base.rmse, function(x) x[2])), 20), ncol = 20)
@@ -251,15 +298,6 @@ colnames(rmse.diff.peak) <- seasons
 rownames(rmse.diff.late) <- seasons
 colnames(rmse.diff.late) <- seasons
 
-
-
-
-which(rmse.diff.peak[,19] > 0 )
-which(rmse.diff.peak[,19] < 0 )
-
-rmse.diff.peak[,19]
-rmse.diff.peak[19,]
-rmse.diff.peak[which(rmse.diff.peak[,19] >0,19 )]
 
 z.early <- t(rmse.diff.early[20:1, ])
 z.peak <- t(rmse.diff.peak[20:1, ])
@@ -298,6 +336,163 @@ dev.off()
 
 
 #TODO: double withhold, update for 2019/2020, 2006/2007, and 2015/2016
+
+
+SE.rmse.early <- matrix(NA, ncol = 20)
+SE.rmse.peak <- matrix(NA, ncol = 20)
+SE.rmse.late <- matrix(NA, ncol = 20)
+for (j in 1:20) {
+  
+  SE.rmse.early <- rbind(SE.rmse.early,  sapply(SE.rmse.wo[[j]], function(x) x[1,]))
+  SE.rmse.peak <- rbind(SE.rmse.peak, sapply(SE.rmse.wo[[j]], function(x) x[2,]))
+  SE.rmse.late <- rbind(SE.rmse.late, sapply(SE.rmse.wo[[j]], function(x) x[3,]))
+  
+}
+
+SE.rmse.early <- SE.rmse.early[-1,]
+SE.rmse.peak <- SE.rmse.peak[-1,]
+SE.rmse.late <- SE.rmse.late[-1,]
+
+rownames(SE.rmse.early) <- seasons
+colnames(SE.rmse.early) <- seasons
+rownames(SE.rmse.peak) <- seasons
+colnames(SE.rmse.peak) <- seasons
+rownames(SE.rmse.late) <- seasons
+colnames(SE.rmse.late) <- seasons
+
+z.early.dbl <- t(SE.rmse.early[20:1, ])
+z.peak.dbl <- t(SE.rmse.peak[20:1, ])
+z.late.dbl <- t(SE.rmse.late[20:1, ])
+
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmse_early_double.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.early.dbl,zlim = c(0, max(z.early.dbl)),
+                    cols = cmocean("deep")(49),
+                    main = " Early Fire-Season: RMSE Double Withheld-Season" )
+mtext("Second Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season (& First Withheld)",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmse_peak_double.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.peak.dbl,zlim =  c(0, max(z.peak.dbl)),
+                    cols = cmocean("deep")(49),
+                    main = "Peak Fire-Season: RMSE Double Withheld-Season" )
+mtext("Second Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season (& First Withheld)",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmse_late_double.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.late.dbl,zlim =  c(0, max(z.late.dbl)),
+                    cols = cmocean("deep")(49),
+                    main = "Late Fire-Season: RMSE Double Withheld-Season" )
+mtext("Second Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season (& First Withheld)",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+
+
+SE.rmse.diff.early <- SE.rmse.early - base.rmse.early
+SE.rmse.diff.peak <- SE.rmse.peak - base.rmse.peak
+SE.rmse.diff.late <- SE.rmse.late - base.rmse.late
+
+rownames(SE.rmse.diff.early) <- seasons
+colnames(SE.rmse.diff.early) <- seasons
+rownames(SE.rmse.diff.peak) <- seasons
+colnames(SE.rmse.diff.peak) <- seasons
+rownames(SE.rmse.diff.late) <- seasons
+colnames(SE.rmse.diff.late) <- seasons
+
+z.early.diff <- t(SE.rmse.diff.early[20:1, ])
+z.peak.diff <- t(SE.rmse.diff.peak[20:1, ])
+z.late.diff <- t(SE.rmse.diff.late[20:1, ])
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmsediff_early_double.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.early.diff, cols = cmocean("balance")(49),
+                    main = expression(" Early Fire-Season: "~Delta*"RMSE (Double Withheld-Season - All-data)") )
+mtext("Second Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season (& First Withheld)",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmsediff_peak_double.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.peak.diff, cols = cmocean("balance")(49),
+                    main = expression(" Peak Fire-Season: "~Delta*"RMSE (Double Withheld-Season - All-data)") )
+mtext("Second Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season (& First Withheld)",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmsediff_late_double.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.late.diff, cols = cmocean("balance")(49),
+                    main = expression(" Late Fire-Season: "~Delta*"RMSE (Double Withheld-Season - All-data)") )
+mtext("Second Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season (& First Withheld)",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+diag(rmse.mat.peak)
+diag(SE.rmse.peak)
+
+test.for.zero(diag(rmse.mat.peak), diag(SE.rmse.peak))
+
+SE.rmse.diff2.early <- SE.rmse.early - diag(SE.rmse.early)
+SE.rmse.diff2.peak <- SE.rmse.peak - diag(SE.rmse.peak)
+SE.rmse.diff2.late <- SE.rmse.late - diag(SE.rmse.late)
+
+rownames(SE.rmse.diff2.early) <- seasons
+colnames(SE.rmse.diff2.early) <- seasons
+rownames(SE.rmse.diff2.peak) <- seasons
+colnames(SE.rmse.diff2.peak) <- seasons
+rownames(SE.rmse.diff2.late) <- seasons
+colnames(SE.rmse.diff2.late) <- seasons
+
+
+z.early.diff2 <- t(SE.rmse.diff2.early[20:1, ])
+z.peak.diff2 <- t(SE.rmse.diff2.peak[20:1, ])
+z.late.diff2 <- t(SE.rmse.diff2.late[20:1, ])
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmsediff_early_double2.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.early.diff2, cols = cmocean("balance")(49),
+                    main = expression(" Early Fire-Season: "~Delta*"RMSE (Double Withheld-Season - Single Withheld-Season)") )
+mtext("Second Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season (& First Withheld)",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmsediff_peak_double2.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.peak.diff2, cols = cmocean("balance")(49),
+                    main = expression(" Peak Fire-Season: "~Delta*"RMSE (Double Withheld-Season - Single Withheld-Season)") )
+mtext("Second Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season (& First Withheld)",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmsediff_late_double2.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.late.diff2, cols = cmocean("balance")(49),
+                    main = expression(" Late Fire-Season: "~Delta*"RMSE (Double Withheld-Season - Single Withheld-Season)") )
+mtext("Second Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season (& First Withheld)",  side=2, line=6.0, cex = 1.25)
+dev.off()
 
 
 
