@@ -19,6 +19,7 @@ library(hdf5r)
 setwd("~/CO_AUS/AusCOmodeling") 
 load("Data/modeldata.rda") #resp/pred data
 load("Data/lagdata.rda") #lagged data
+load("Data/matrixdata.rda") #data as matrix
 load("Data/base_RAMPmodels.rda") #"base" model
 load("Data/validation_refits_wo2019.rda") #RMSE/Preds/Models w/o 2019/2020 data
 load("Data/validation_refits_new.rda") #updated RMSE and Predictions (w/ intervals)
@@ -37,6 +38,13 @@ for (i in 1:(length(season.years)-1)) {
   seasons <- c(seasons, temp_season)
 }
 rm(i, temp_season)
+
+
+
+#group weeks
+SE.early <- 38:50
+SE.mid <- c(51, 52, 1, 2)
+SE.late <- 3:14
 
 
 #Get visualizations of data
@@ -401,26 +409,6 @@ for (i in 1:20) {
 m.new <- max(sapply(son.iod.diff, function(x) max(abs(x$z)) )) 
 
 
-#TODO: update single withheld figure outputs to match the new style
-setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
-for (j in 1:20) {
-  iod.diff.temp <- son.iod.diff[[j]]
-  
-  png(filename = paste0("IOD_AllDatadiff_", seasons[j],"withheld.png"), width = 2000, height = 1500, res =275)  
-  image.plot(x = iod.diff.temp$x, y = iod.diff.temp$y, z = iod.diff.temp$z, zlim = c(-m.new, m.new), 
-             xlab = "WTIO", ylab = "ETIO", col =  rev(cmocean("tarn")(49)),
-             legend.args = list(
-               text = expression(Delta * "Density"),
-               side = 3,
-               line = 0,
-               cex = 1
-             ))
-title(paste0("Difference Surface: ", seasons[j], " Withheld - All Data (SON)"), adj = 0)
-  abline(h = 0, lty = 2)
-  abline(v = 0, lty = 2)
-  dev.off()
-}
-
 
 #get double withheld data
 son.iod.kde2 <- list()
@@ -446,6 +434,30 @@ for (i in c(1:18,20)) {
 
 
 m.new.diff2 <- max(sapply(son.iod2019.diff2, function(x) max(abs(x$z)) )) 
+
+
+
+#single withheld figure outputs to match the new style
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")
+for (j in 1:20) {
+  iod.diff.temp <- son.iod.diff[[j]]
+  
+  png(filename = paste0("IOD_AllDatadiff_", seasons[j],"withheld.png"), width = 2000, height = 1500, res =275)  
+  image.plot(x = iod.diff.temp$x, y = iod.diff.temp$y, z = iod.diff.temp$z, zlim = c(-m.new.diff2, m.new.diff2), 
+             xlab = "WTIO", ylab = "ETIO", col =  rev(cmocean("tarn")(49)),
+             legend.args = list(
+               text = expression(Delta * "Density"),
+               side = 3,
+               line = 0,
+               cex = 1
+             ))
+  title(paste0("Difference Surface: ", seasons[j], " Withheld - All Data (SON)"), adj = 0)
+  abline(h = 0, lty = 2)
+  abline(v = 0, lty = 2)
+  dev.off()
+}
+
+
 
 #new output for double heldout (withheld) years
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures/IOD_density")

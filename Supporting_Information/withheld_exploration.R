@@ -41,6 +41,7 @@ for (i in 1:(length(season.years)-1)) {
 }
 rm(i, temp_season)
 
+
 #get single season models for peak 2019/2020 with additional withheld:
 ## 2001/2002, 2010/2011, and 2011/2012 (along with 2005/2006 and 2016/2017)
 
@@ -49,24 +50,33 @@ SE2.lm <- SEmodels[[2]]
 
 
 #explore the models
-for (i in 1:20) {
-  print(seasons[i])
-  print(summary(SE2.lm.2019[[i]]))
-}
+#for (i in 1:20) {
+#  print(seasons[i])
+#  print(summary(SE2.lm.2019[[i]]))
+#}
 
-#w/o 2001-2002 
-summary(SE2.lm.2019[[1]])
-
-#w/o 2002-2003 
-summary(SE2.lm.2019[[2]])
 
 #model for predicting 2019/2020 (generalize as needed)
 SE.lm.2019 <- SErefit.wo.years$SE.vary.lm$`2019-2020`
 #get all peak models
 SE2.lm.2019 <- lapply(SE.lm.2019, function(z) z[[2]])
 
+vary.peak <- lapply( SErefit.new[[3]], function(x) x[[2]]) 
+
+
 #get only 2019/2020 withheld
 SE.lm.wo2019 <- SE2.lm.2019[[19]]
+
+
+#'best'
+#w/o 2001-2002 
+summary(SE2.lm.2019[[1]])
+
+
+#'worst'
+#w/o 2006-2007 
+summary(SE2.lm.2019[[6]])
+
 
 
 ## ---- Coef/Interaction Figures ---- ##
@@ -81,17 +91,17 @@ setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
 for (i in 1:20) {
   coefs2 <- list(
     base  = SE2.coef,
-    #const = coef(vary.peak.wo2019[[i]]), 
+    const = coef(vary.peak[[19]]), 
     vary  = coef(SE2.lm.2019[[i]])  
   )
   
-  png(filename = paste0("SEcoefs_2019peak_withheld_", season.years[i], ".png"), width = 3400, height = 4400, res = 300)
+  png(filename = paste0("SEcoefsTest_2019peak_withheld_", season.years[i], ".png"), width = 3400, height = 4400, res = 300)
   plot_lagged_coef_panels(
     coefs_named_list = coefs2,
     vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
     coef_range = c(-5, 5),
     main_title = paste0("Peak 2019/2020 Fire Season (", seasons[i], " Withheld)"),   
-    quad_y_jitter = 0.004,
+    quad_y_jitter = 0.000,
     model_cols = c(base="forestgreen", const="darkorange2", vary="royalblue3"))
   dev.off()
 }

@@ -5,6 +5,8 @@
 suppressMessages( library(scales)) #for adjusting opacity
 suppressMessages( library(fields)) #for envelope plot
 suppressMessages( library(Metrics)) #measurement metrics
+suppressMessages( library(cmocean)) #ocean colors
+
 
 #data
 #import models and data
@@ -22,9 +24,10 @@ source("Functions/modeling_functions.R")
 
 
 #updated heatmap with rwb
-heatmap_fields_rwb0 <- function(z, x = NULL, y = NULL,
+heatmap_fields_cols <- function(z, x = NULL, y = NULL,
                                 zlim = NULL,            # if NULL, uses symmetric max(abs(z))
-                                nlevels = 101,          # odd number keeps 0 exactly centered
+                                nlevels =49,
+                                cols = NULL,
                                 main = NULL,
                                 xlab = NULL,
                                 ylab = NULL,
@@ -63,7 +66,7 @@ heatmap_fields_rwb0 <- function(z, x = NULL, y = NULL,
   
   # Red -> White -> Blue, with white at 0
   # We explicitly build a diverging palette
-  cols <- colorRampPalette(c("blue3", "white", "red3"))(nlevels)
+  #cols <- colorRampPalette(c("blue3", "white", "red3"))(nlevels)
   
   # margins: leave room for vertical x labels
   op <- par(no.readonly = TRUE)
@@ -121,6 +124,18 @@ rmse.wo2019 <- as.numeric(rmse.peak.wo2019)
 seasons[order(rmse.wo2019)]
 rmse.wo2019[order(rmse.wo2019)]
 
+ordered.2019.rmse <- data.frame(seasons[order(rmse.wo2019)], rmse.wo2019[order(rmse.wo2019)])
+
+
+i <- 15 #2015/2016
+rmse.peak <- SE.rmse[[i]][2,]
+rmse.peak.wo2015 <- lapply(SE.rmse.wo[[i]], function(x)  x[2,])
+
+rmse.wo2015 <- as.numeric(rmse.peak.wo2015)
+seasons[order(rmse.wo2015)]
+rmse.wo2015[order(rmse.wo2015)]
+
+
 #updated RMSE (for single withheld figures)
 base.rmse <- lapply(SE.rmse, function(x)  x[,1]) #get base pred rmse
 
@@ -146,7 +161,7 @@ for (k in 1:length(seasons)) {
 
 #get linear models (for varying (single withheld))
 SE.rmse.single <- NULL
-
+SE.predict.single <- NULL
  #withheld year (model year)
 for (i in 1:20) {
     
@@ -159,6 +174,10 @@ for (i in 1:20) {
   
   SErmse.yearly <- matrix(NA, ncol = 3)
   colnames(SErmse.yearly) <- c("early", "peak", "late")
+  #SEpredict.yearly <- matrix(NA, ncol = 3)
+  #colnames(SEpredict.yearly) <- c("early", "peak", "late")
+  
+  SEpredict.yearly <- NULL
   for (k in 1:20) {  #prediction year
     
     #data w/ season (test/validation)
@@ -192,9 +211,11 @@ for (i in 1:20) {
     
     rmse.late <- rmse(y.valid.late, pred.late$fit)
     
+    SEpredict.yearly[[seasons[k]]] <- list(early = pred.early$fit, peak = pred.mid$fit, late = pred.late$fit)
     SErmse.yearly <- rbind(SErmse.yearly, cbind(rmse.early, rmse.mid, rmse.late))
   }
   SE.rmse.single[[seasons[i]]] <- as.data.frame(SErmse.yearly[-1, ])
+  SE.predict.single[[seasons[i]]] <- SEpredict.yearly
 } 
 
 
@@ -214,7 +235,7 @@ rmse.mat.early <- rmse.mat.early[,-1]
 rmse.mat.peak <- rmse.mat.peak[,-1]
 rmse.mat.late <- rmse.mat.late[,-1]
 
-
+#all data RMSE
 base.rmse.early <- matrix(rep(as.numeric(sapply(base.rmse, function(x) x[1])), 20), ncol = 20)
 base.rmse.peak <- matrix(rep(as.numeric(sapply(base.rmse, function(x) x[2])), 20), ncol = 20)
 base.rmse.late <- matrix(rep(as.numeric(sapply(base.rmse, function(x) x[3])), 20), ncol = 20)
@@ -231,14 +252,365 @@ rownames(rmse.diff.late) <- seasons
 colnames(rmse.diff.late) <- seasons
 
 
-which(rmse.diff.peak[,19] >0 )
 
-rmse.diff.peak[,which(rmse.diff.peak[,19] >0 )]
 
+which(rmse.diff.peak[,19] > 0 )
+which(rmse.diff.peak[,19] < 0 )
+
+rmse.diff.peak[,19]
+rmse.diff.peak[19,]
+rmse.diff.peak[which(rmse.diff.peak[,19] >0,19 )]
+
+z.early <- t(rmse.diff.early[20:1, ])
 z.peak <- t(rmse.diff.peak[20:1, ])
+z.late <- t(rmse.diff.late[20:1, ])
 
+#TODO: update
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmsediff_early_single.png", width = 3500, height = 3000, res = 300)
 par(oma = c(4, 4, 2, 3))  
-heatmap_fields_rwb0(z = z.peak, main = expression(" Peak Fire-Season: "~Delta*"RMSE (All-data - Withheld-Season)") )
+heatmap_fields_cols(z = z.early, cols = cmocean("balance")(49),
+                    main = expression(" Early Fire-Season: "~Delta*"RMSE (Withheld-Season-All-data)") )
 mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
 mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmsediff_peak_single.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.peak, cols = cmocean("balance")(49),
+                    main = expression(" Peak Fire-Season: "~Delta*"RMSE (Withheld-Season-All-data)") )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "rmsediff_late_single.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.late, cols = cmocean("balance")(49),
+                    main = expression(" Late Fire-Season: "~Delta*"RMSE (Withheld-Season-All-data)") )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+
+#TODO: double withhold, update for 2019/2020, 2006/2007, and 2015/2016
+
+
+
+
+
+#compare pred lines
+#(we need to show how far the 2019/2020 season is)
+#get data setup
+SEresp.mat <- scale(resp.matrix[,30:58], center = TRUE, scale = FALSE)
+SEresp.peak <- SEresp.mat[ ,14:17]
+SEresp.peak.wide <- SEresp.mat[ ,13:18]
+
+#actual data (max)
+which.max(SEresp.peak[-19, ])
+max(SEresp.peak[-19, ])
+
+#get predictions
+preds.2019 <- lapply(SE.predict.single, function(x) x[[19]])
+
+#get double withheld preds
+preds.wo.2019 <- lapply(SErefit.wo.years$preds[["2019-2020"]], function(x) x$vary.fit)
+
+#`best`
+preds.peak.wo2019 <- preds.wo.2019$`2019-2020`[14:17]
+preds.peak.wo2001 <- preds.wo.2019$`2001-2002`[14:17]
+preds.peak.wo2016 <- preds.wo.2019$`2016-2017`[14:17]
+preds.peak.wo2010 <- preds.wo.2019$`2010-2011`[14:17]
+preds.peak.wo2011 <- preds.wo.2019$`2011-2012`[14:17]
+preds.peak.wo2005 <- preds.wo.2019$`2005-2006`[14:17]
+
+
+#`worst`
+preds.peak.wo2006 <- preds.wo.2019$`2006-2007`[14:17]
+preds.peak.wo2018 <- preds.wo.2019$`2018-2019`[14:17]
+preds.peak.wo2004 <- preds.wo.2019$`2004-2005`[14:17]
+preds.peak.wo2003 <- preds.wo.2019$`2003-2004`[14:17]
+preds.peak.wo2013 <- preds.wo.2019$`2013-2014`[14:17]
+
+#plot comparisons
+ylim.resp <- c(-13, 20)
+y.resp.lab.alt <- c(-12, -6, 0, 6, 12, 18)
+
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "peak_resp_comp.png", width = 3600, height = 2400, res = 275)
+par(mar = c(5, 5, 4, 14))
+plot(1:4, SEresp.peak[6,], type = "l", col = "firebrick", lwd = 2, #2006/2007
+     xaxt = "n", xlab = "Week",
+     yaxt = "n", ylab = "CO Anomaly", col.lab = "black",ylim = ylim.resp,  bty = "n",
+     cex.lab = 2, xpd = NA)
+axis(side = 2, at = y.resp.lab.alt, cex.axis = 2,
+     col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
+axis(side = 1, at = 1:4, labels = c(51, 52, 1, 2), cex.axis = 2)
+abline(h =0, lty = 2, lwd = 2, col = "grey35")
+#abline(v = 2.5,  lty = 2, col = "grey40", lwd = 2)
+title("Peak Season Comparisons", adj = 0, cex.main = 2)
+
+#other season lines
+#lines(1:4, SEresp.peak[2,], col = "firebrick", lwd = 2, lty = 2 ) #2002/2003
+#lines(1:4, SEresp.peak[3,], col = "firebrick", lwd = 2, lty = 3 ) #2003/2004
+lines(1:4, SEresp.peak[5,], col = "firebrick", lwd = 2, lty = 4 ) #2005/2006
+lines(1:4, SEresp.peak[15,], col = "firebrick", lwd = 2, lty = 5 ) #2015/2016
+
+#pred lintes
+lines(1:4, preds.peak.wo2019, lwd = 2, col = "darkorange3" )
+lines(1:4, preds.peak.wo2001, lwd = 2, lty = 2, col = "royalblue3")
+lines(1:4, preds.peak.wo2016, lwd = 2, lty = 3, col = "royalblue4" )
+lines(1:4, preds.peak.wo2010, lwd = 2, lty = 4, col = "magenta4" )
+#lines(1:4, preds.peak.wo2011, lwd = 2, lty = 5 )
+#lines(1:4, preds.peak.wo2005, lwd = 2, lty = 6 )
+
+legend("topright", inset=c(-0.26,0), cex = 1.5,
+       title = "2019/2020 Preds.",
+       legend=c("w/o 2019/2020","& w/o 2001/2002",
+                "& w/o 2016/2017", "& w/o 2010/2011"),
+       col = c("darkorange3","royalblue3","royalblue3","royalblue4"),
+       lty=1:4, lwd=2, xpd=NA)
+
+legend("topright", inset=c(-0.22, 0.3), cex = 1.5,
+       title = "Other Season Data",
+       legend=c("2005/2006", "2006/2007","2015/2016"),
+       col = "firebrick",
+       lty=c(4,1,5), lwd=2, xpd=NA)
+dev.off()
+
+
+#plot comparisons
+ylim.resp.2019 <- c(-13, 50)
+y.resp.lab.2019 <- c(-12,  0, 12, 24, 36, 48)
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "peak_resp_comp_2019.png", width = 3600, height = 2400, res = 275)
+par(mar = c(5, 5, 4, 14))
+plot(1:4, SEresp.peak[6,], type = "l", col = "firebrick", lwd = 2, #2006/2007
+     xaxt = "n", xlab = "Week",
+     yaxt = "n", ylab = "CO Anomaly", col.lab = "black",ylim = ylim.resp.2019,  bty = "n",
+     cex.lab = 2, xpd = NA)
+axis(side = 2, at = y.resp.lab.2019, cex.axis = 2,
+     col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
+axis(side = 1, at = 1:4, labels = c(51, 52, 1, 2), cex.axis = 2)
+abline(h =0, lty = 2, lwd = 2, col = "grey35")
+#abline(v = 2.5,  lty = 2, col = "grey40", lwd = 2)
+title("Peak Season Comparisons", adj = 0, cex.main = 2)
+
+lines(1:4, SEresp.peak[19,], col = "magenta3", lwd = 2.5, lty = 1 )
+
+#other season lines
+#lines(1:4, SEresp.peak[2,], col = "firebrick", lwd = 2, lty = 2 ) #2002/2003
+#lines(1:4, SEresp.peak[3,], col = "firebrick", lwd = 2, lty = 3 ) #2003/2004
+lines(1:4, SEresp.peak[5,], col = "firebrick", lwd = 2, lty = 4 ) #2005/2006
+lines(1:4, SEresp.peak[15,], col = "firebrick", lwd = 2, lty = 5 ) #2015/2016
+
+#pred lintes
+lines(1:4, preds.peak.wo2019, lwd = 2, col = "darkorange3" )
+lines(1:4, preds.peak.wo2001, lwd = 2, lty = 2, col = "royalblue3")
+lines(1:4, preds.peak.wo2016, lwd = 2, lty = 3, col = "royalblue4" )
+lines(1:4, preds.peak.wo2010, lwd = 2, lty = 4, col = "magenta4" )
+#lines(1:4, preds.peak.wo2011, lwd = 2, lty = 5 )
+#lines(1:4, preds.peak.wo2005, lwd = 2, lty = 6 )
+
+legend("topright", inset=c(-0.26,0), cex = 1.5,
+       title = "2019/2020 Predictions",
+       legend=c("w/o 2019/2020","& w/o 2001/2002",
+                "& w/o 2016/2017", "& w/o 2010/2011"),
+       col = c("darkorange3","royalblue3","royalblue3","royalblue4"),
+       lty=1:4, lwd=2, xpd=NA)
+
+legend("topright", inset=c(-0.22, 0.3), cex = 1.5,
+       title = "Peak Season Data",
+       legend=c("2019/2020", "2005/2006", "2006/2007","2015/2016"),
+       col = c("magenta4", rep("firebrick", 3)),
+       lty=c(1, 4,1,5), lwd=2, xpd=NA)
+dev.off()
+
+
+
+
+
+#plot comparisons
+ylim.resp.2019 <- c(-13, 50)
+y.resp.lab.2019 <- c(-12,  0, 12, 24, 36, 48)
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "peak_resp_pred_2019.png", width = 3600, height = 2400, res = 275)
+par(mar = c(5, 5, 4, 14))
+plot(1:4, SEresp.peak[6,], type = "n", col = "firebrick", lwd = 2, #2006/2007
+     xaxt = "n", xlab = "Week",
+     yaxt = "n", ylab = "CO Anomaly", col.lab = "black",ylim = ylim.resp.2019,  bty = "n",
+     cex.lab = 2, xpd = NA)
+axis(side = 2, at = y.resp.lab.2019, cex.axis = 2,
+     col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
+axis(side = 1, at = 1:4, labels = c(51, 52, 1, 2), cex.axis = 2)
+abline(h =0, lty = 2, lwd = 2, col = "grey35")
+#abline(v = 2.5,  lty = 2, col = "grey40", lwd = 2)
+title("Peak Season Comparisons (Top 5)", adj = 0, cex.main = 2)
+
+lines(1:4, SEresp.peak[19,], col = "magenta3", lwd = 2.5, lty = 1 )
+
+#other season lines
+#lines(1:4, SEresp.peak[2,], col = "firebrick", lwd = 2, lty = 2 ) #2002/2003
+#lines(1:4, SEresp.peak[3,], col = "firebrick", lwd = 2, lty = 3 ) #2003/2004
+#lines(1:4, SEresp.peak[5,], col = "firebrick", lwd = 2, lty = 4 ) #2005/2006
+#lines(1:4, SEresp.peak[15,], col = "firebrick", lwd = 2, lty = 5 ) #2015/2016
+
+#pred lintes
+lines(1:4, preds.peak.wo2019, lwd = 2, col = "darkorange3" )
+lines(1:4, preds.peak.wo2001, lwd = 2, lty = 2, col = "royalblue3")
+lines(1:4, preds.peak.wo2016, lwd = 2, lty = 3, col = "royalblue4" )
+lines(1:4, preds.peak.wo2010, lwd = 2, lty = 4, col = "magenta4" )
+lines(1:4, preds.peak.wo2011, lwd = 2, lty = 3, col = "magenta4"  ) 
+lines(1:4, preds.peak.wo2005, lwd = 2, lty = 2, col = "cyan4"  )
+
+legend("topright", inset=c(-0.28,0), cex = 1.5,
+       title = "2019/2020 Predictions",
+       legend=c("w/o 2019/2020","& w/o 2001/2002",
+                "& w/o 2016/2017", "& w/o 2010/2011", 
+                "& w/o 2011/2012", "& w/o 2005/2006"),
+       col = c("darkorange3","royalblue3","royalblue4", "magenta4", "magenta4", "cyan4"),
+       lty=c(1:4, 3,2), lwd=2, xpd=NA)
+
+legend("topright", inset=c(-0.21, 0.34), cex = 1.5,
+       title = "Peak Season Data",
+       legend=c("2019/2020"),
+       col = c("magenta3"),
+       lty=c(1), lwd=2, xpd=NA)
+dev.off()
+
+
+
+
+
+#plot comparisons
+ylim.resp.2019 <- c(-13, 50)
+y.resp.lab.2019 <- c(-12,  0, 12, 24, 36, 48)
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "peak_resp_pred2_2019.png", width = 3600, height = 2400, res = 275)
+par(mar = c(5, 5, 4, 14))
+plot(1:4, SEresp.peak[6,], type = "n", col = "firebrick", lwd = 2, #2006/2007
+     xaxt = "n", xlab = "Week",
+     yaxt = "n", ylab = "CO Anomaly", col.lab = "black",ylim = ylim.resp.2019,  bty = "n",
+     cex.lab = 2, xpd = NA)
+axis(side = 2, at = y.resp.lab.2019, cex.axis = 2,
+     col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
+axis(side = 1, at = 1:4, labels = c(51, 52, 1, 2), cex.axis = 2)
+abline(h =0, lty = 2, lwd = 2, col = "grey35")
+#abline(v = 2.5,  lty = 2, col = "grey40", lwd = 2)
+title("Peak Season Comparisons (Bottom 5)", adj = 0, cex.main = 2)
+
+lines(1:4, SEresp.peak[19,], col = "magenta3", lwd = 2.5, lty = 1 )
+
+#other season lines
+#lines(1:4, SEresp.peak[2,], col = "firebrick", lwd = 2, lty = 2 ) #2002/2003
+#lines(1:4, SEresp.peak[3,], col = "firebrick", lwd = 2, lty = 3 ) #2003/2004
+#lines(1:4, SEresp.peak[5,], col = "firebrick", lwd = 2, lty = 4 ) #2005/2006
+#lines(1:4, SEresp.peak[15,], col = "firebrick", lwd = 2, lty = 5 ) #2015/2016
+
+#pred lintes
+lines(1:4, preds.peak.wo2019, lwd = 2, col = "darkorange3" )
+lines(1:4, preds.peak.wo2006, lwd = 2, lty = 2, col = "coral3")
+lines(1:4, preds.peak.wo2018, lwd = 2, lty = 3, col = "coral4" )
+lines(1:4, preds.peak.wo2004, lwd = 2, lty = 4, col = "chartreuse3" )
+lines(1:4, preds.peak.wo2003, lwd = 2, lty = 3, col = "chartreuse3"  ) 
+lines(1:4, preds.peak.wo2013, lwd = 2, lty = 2, col = "midnightblue"  )
+
+legend("topright", inset=c(-0.28,0), cex = 1.5,
+       title = "2019/2020 Predictions",
+       legend=c("w/o 2019/2020","& w/o 2006/2007",
+                "& w/o 2018/2019", "& w/o 2004/2005", 
+                "& w/o 2003/2004", "& w/o 2013/2014"),
+       col = c("darkorange3","coral3","coral4", "chartreuse3", "chartreuse3", "midnightblue"),
+       lty=c(1:4, 3,2), lwd=2, xpd=NA)
+
+legend("topright", inset=c(-0.21, 0.34), cex = 1.5,
+       title = "Peak Season Data",
+       legend=c("2019/2020"),
+       col = c("magenta3"),
+       lty=c(1), lwd=2, xpd=NA)
+dev.off()
+
+
+
+#plot comparisons
+ylim.resp.2019 <- c(-13, 50)
+y.resp.lab.2019 <- c(-12,  0, 12, 24, 36, 48)
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "peak_resp_w2019.png", width = 3600, height = 2400, res = 275)
+par(mar = c(5, 5, 4, 14))
+plot(1:4, SEresp.peak[6,], type = "l", col = "firebrick", lwd = 2, #2006/2007
+     xaxt = "n", xlab = "Week",
+     yaxt = "n", ylab = "CO Anomaly", col.lab = "black",ylim = ylim.resp.2019,  bty = "n",
+     cex.lab = 2, xpd = NA)
+axis(side = 2, at = y.resp.lab.2019, cex.axis = 2,
+     col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
+axis(side = 1, at = 1:4, labels = c(51, 52, 1, 2), cex.axis = 2)
+abline(h =0, lty = 2, lwd = 2, col = "grey35")
+#abline(v = 2.5,  lty = 2, col = "grey40", lwd = 2)
+title("Peak Season Comparisons", adj = 0, cex.main = 2)
+
+lines(1:4, SEresp.peak[19,], col = "magenta3", lwd = 2.5, lty = 1 )
+
+#other season lines
+lines(1:4, SEresp.peak[2,], col = "firebrick", lwd = 2, lty = 2 ) #2002/2003
+lines(1:4, SEresp.peak[3,], col = "firebrick", lwd = 2, lty = 3 ) #2003/2004
+lines(1:4, SEresp.peak[5,], col = "firebrick", lwd = 2, lty = 4 ) #2005/2006
+lines(1:4, SEresp.peak[15,], col = "firebrick", lwd = 2, lty = 5 ) #2015/2016
+
+
+legend("topright", inset=c(-0.22, 0.3), cex = 1.5,
+       title = "Peak Season Data",
+       legend=c("2019/2020", "2002/2003", "2003/2004",  "2005/2006", "2006/2007","2015/2016"),
+       col = c("magenta4", rep("firebrick", 5)),
+       lty=c(1, 2,3,4,1,5), lwd=2, xpd=NA)
+dev.off()
+
+
+
+#plot comparisons
+ylim.resp.2019 <- c(-13, 50)
+y.resp.lab.2019 <- c(-12,  0, 12, 24, 36, 48)
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = "peak_resp_comp_2019_alt.png", width = 3600, height = 2400, res = 275)
+par(mar = c(5, 5, 4, 14))
+plot(1:4, SEresp.peak[6,], type = "l", col = "firebrick", lwd = 2, #2006/2007
+     xaxt = "n", xlab = "Week",
+     yaxt = "n", ylab = "CO Anomaly", col.lab = "black",ylim = ylim.resp.2019,  bty = "n",
+     cex.lab = 2, xpd = NA)
+axis(side = 2, at = y.resp.lab.2019, cex.axis = 2,
+     col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
+axis(side = 1, at = 1:4, labels = c(51, 52, 1, 2), cex.axis = 2)
+abline(h =0, lty = 2, lwd = 2, col = "grey35")
+#abline(v = 2.5,  lty = 2, col = "grey40", lwd = 2)
+title("Peak Season Comparisons", adj = 0, cex.main = 2)
+
+lines(1:4, SEresp.peak[19,], col = "magenta3", lwd = 2.5, lty = 1 )
+
+#other season lines
+#lines(1:4, SEresp.peak[2,], col = "firebrick", lwd = 2, lty = 2 ) #2002/2003
+#lines(1:4, SEresp.peak[3,], col = "firebrick", lwd = 2, lty = 3 ) #2003/2004
+lines(1:4, SEresp.peak[5,], col = "firebrick", lwd = 2, lty = 4 ) #2005/2006
+lines(1:4, SEresp.peak[15,], col = "firebrick", lwd = 2, lty = 5 ) #2015/2016
+
+
+
+legend("topright", inset=c(-0.22, 0.3), cex = 1.5,
+       title = "Peak Season Data",
+       legend=c("2019/2020", "2005/2006", "2006/2007","2015/2016"),
+       col = c("magenta4", rep("firebrick", 3)),
+       lty=c(1, 4,1,5), lwd=2, xpd=NA)
+dev.off()
+
+
 
