@@ -50,7 +50,7 @@ SEhc.ward$order <- c(1:29)
 #figures
 #TODO: update figures to align with paper/SI style
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
-png(filename = "NEclust_dend.png", width = 3600, height = 1200, res = 300)
+png(filename = "SI_NEclust_dend.png", width = 3600, height = 1200, res = 300)
 par(mar = c(5, 5, 4, 0))
 stats:::plot.hclust(NEhc.ward,  hang = -1, labels = FALSE, bty = "n", sub = "", ylab = "Height",
                     xlab = "Week", axes = FALSE, cex.lab = 1.25, main = "", lwd = 1.5)
@@ -68,7 +68,7 @@ dev.off()
 
 
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
-png(filename = "SEclust_dend.png", width = 3600, height = 1200, res = 300)
+png(filename = "SI_SEclust_dend.png", width = 3600, height = 1200, res = 300)
 par(mar = c(5, 5, 4, 0))
 stats:::plot.hclust(SEhc.ward,  hang = -1, labels = FALSE, bty = "n", sub = "", ylab = "Height",
                     xlab = "Week", axes = FALSE, cex.lab = 1.25, main = "", lwd = 1.5)
