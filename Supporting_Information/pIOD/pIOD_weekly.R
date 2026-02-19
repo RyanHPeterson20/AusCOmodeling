@@ -12,12 +12,16 @@ suppressMessages(library(abind))
 
 #data load
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/pIOD/Data_SST")
+load("sst_oisst.rda") #monthly oisst anomaly 
+load("pIOD_pca.rda") #pIOD pca 
 #1990-present
 nc.OISST.weekly1 <- nc_open("~/CO_AUS/AusCOmodeling/Supporting_Information/pIOD/Data_SST/sst.wkmean.1990-present.nc")
 #1981-1989
 nc.OISST.weekly2 <- nc_open("~/CO_AUS/AusCOmodeling/Supporting_Information/pIOD/Data_SST/sst.wkmean.1981-1989.nc")
 #OISST land sea mask
 nc.OISST.lsm <- nc_open("~/CO_AUS/AusCOmodeling/Supporting_Information/pIOD/Data_SST/lsmask.nc")
+
+
 
 #function import
 #TODO: update pIOD_functions.R with necessary functions
@@ -44,6 +48,14 @@ pIOD_maxLon <- 100
 pIOD_minLon <- 40 
 pIOD_maxLat <- 5
 pIOD_minLat <- -5
+
+#location range
+lon.values.IOD <- lon.wide[lon.wide <= pIOD_maxLon & lon.wide >= pIOD_minLon]
+lon.range.IOD <- range(which(lon.wide <= pIOD_maxLon & lon.wide >= pIOD_minLon))
+
+lat.values.IOD <- lat.wide[lat.wide <= pIOD_maxLat & lat.wide >= pIOD_minLat]
+lat.range.IOD <- range(which(lat.wide <= pIOD_maxLat & lat.wide >= pIOD_minLat))
+
 
 
 #weekly 1:1990-present (2023)
@@ -105,8 +117,11 @@ times.oisst <- c(times2, times1)
 lat.range.base <- range(which(lat.grid <= (wide_maxLat) & lat.grid >= (wide_minLat)))
 lon.range.base <- range(which(lon.grid <= (wide_maxLon) & lon.grid >= (wide_minLon)))
 
+lat.values.base <- lat.grid[lat.grid <= (wide_maxLat) & lat.grid >=  (wide_minLat)]
+lon.values.base <- lon.grid[lon.grid <= (wide_maxLon) & lon.grid >= (wide_minLon)]
+
 sst.oisst.weekbase <- sst.oisst.weekly[lon.range.base[1]:lon.range.base[2], lat.range.base[1]:lat.range.base[2], ]
-#dim(sst.oisst.weekbase)
+dim(sst.oisst.weekbase)
 
 
 ##Land Sea Mask
@@ -197,10 +212,130 @@ son.sstnew.weekly <- sst.weekly.new[,,son.weeks.new]
 
 years.new <- 1982:2021
 
+#oisst weekly anoms
+oisst.son.mean <- oisst.list$mean
+oisst.son.anom <- oisst.list$anom
+oisst.son.coef <- oisst.list$coef
+
+dim(son.sst.weekly) #1982- 2015
+dim(son.sstnew.weekly) #1982-2021
+#son.sst.weekly <- son.sstnew.weekly
+#dim(son.sst.weekly)
+
+years.base <- years.new
+son.years <- son.years.new
+
+#first anom (mean)
+dim(oisst.son.mean)
+son.anom.weekly <- sweep(son.sstnew.weekly, MARGIN = c(1,2), STATS = oisst.son.mean, FUN = "-")
+
+#second anom (trend)
+dim(oisst.son.coef)
+son.anom.weekly <- sweep(son.sstnew.weekly,  MARGIN = c(1,2), STATS = oisst.son.coef[,,1], FUN = "-")
+
+
+#get detrend
+son.weekly.anom <- NULL
+for (j in 1:length(years.base)){
+  temp.years <- which(son.years == years.base[j])
+  
+  temp.anom <- sweep(son.anom.weekly[,,temp.years],  MARGIN = c(1,2), STATS = oisst.son.coef[,,2]*j, FUN = "-")
+  son.weekly.anom <- abind(son.weekly.anom, temp.anom, along = 3)
+  
+}
+
+dim(son.weekly.anom)
+
+
+#interpolate
+son.weekly.sstanom <- sst.interp(son.weekly.anom, lon.values.base, lat.values.base, grid.list)
+
+dim(son.weekly.sstanom)
+
+#recall associated dates
+#1982-2015
+son.weeks <- which(month(times.base) %in% c(9, 10, 11))
+son.dates <- times.base[son.weeks]
+
+#1982-2021
+son.weeks.new <- which(month(times.new) %in% c(9, 10, 11))
+son.dates.new <- times.new[son.weeks.new]
+
+
+#pIOD region
+son.piod <- son.weekly.sstanom[lon.range.IOD[1]:lon.range.IOD[2], lat.range.IOD[1]:lat.range.IOD[2], ]
+
+son.dim <- dim(son.piod)
+
+nx <- son.dim[1]
+ny <- son.dim[2]
+
+#manual pca (son-only)
+son.pca.pIOD <- pca.pIOD
+
+#get seasonal spatial loadings
+son.iod.eof <- son.pca.pIOD$EOF
+
+#get seasonal PCs
+son.pc.iod <- son.pca.pIOD$PC
+
+#eof vector setup
+son.eof1.mat <- matrix(son.iod.eof[,1], nrow = nx, ncol = ny, byrow = TRUE)
+son.eof2.mat <- matrix(son.iod.eof[,2], nrow = nx, ncol = ny, byrow = TRUE)
+son.eof1.vec <- as.vector(son.eof1.mat)
+son.eof2.vec <- as.vector(son.eof2.mat)
 
 
 
+#son weekly pcs
+son.pc.mean <- mean(son.pc.iod)
+son.pc.std <- sd(son.pc.iod)
+son.weekly.pc <- matrix(NA, ncol = 2)
+colnames(son.weekly.pc) <- c("PC1", "PC2")
+for (i in 1:son.dim[3]) {
+  temp.vec <- as.vector(son.piod[,,i])
+  temp.na <- is.finite(temp.vec) & is.finite(son.eof1.vec) & is.finite(son.eof2.vec)
+  
+  temp.y <- temp.vec[temp.na]
+  #temp.X <- cbind(mam.eof1.vec[temp.na], mam.eof2.vec[temp.na])
+  
+  #regress onto eofs (loadings)
+  a1 <- sum(temp.y * son.eof1.vec[temp.na])
+  a2 <- sum(temp.y * son.eof2.vec[temp.na])
+  
+  #standardized PCs
+  #temp.pc1 <- -scale(a1)
+  #temp.pc2 <- scale(a2)
+  
+  son.weekly.pc <- rbind(son.weekly.pc, c(a1, a2))
+}
+son.weekly.pc <- son.weekly.pc[-1, ]
 
+
+son.pc <- data.frame(PC1 = -scale(son.weekly.pc[,1]), PC2 = scale(son.weekly.pc[,2]))
+
+s.index.son <- (son.pc$PC1 + son.pc$PC2)/sqrt(2)
+m.index.son <- (son.pc$PC1 - son.pc$PC2)/sqrt(2)
+
+son.pIOD.df <- data.frame(index = son.weeks.new, s.index = s.index.son, m.index = m.index.son,
+                          PC1 = son.pc$PC1, PC2 = son.pc$PC2)
+
+son.pIOD.df$time <- son.dates.new
+son.pIOD.df$year <- year(son.dates.new)
+son.pIOD.df$week <- epiweek(son.dates.new)
+
+rownames(son.pIOD.df) <- NULL
+
+#output for use elsewhere
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/pIOD/Data_SST")
+save(son.pIOD.df, file = "pIODweekly_pca.rda")
+
+
+#test plot
+plot(1:length(s.index.son), s.index.son, type = "l",  col = "firebrick",ylim=range(s.index.son, m.index.son))
+lines(1:length(s.index.son), m.index.son, col = "darkgreen")
+abline(h=c(1.5, 1.25), lty = 2, col = c("firebrick", "darkgreen"))
+title("SON- Weekly", adj = 0)
 
 
 

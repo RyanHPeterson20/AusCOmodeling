@@ -17,10 +17,10 @@ source("prep_function.R")
 #boundary setup
 #Indian Ocean region 
 #TODO: update here and other files so that we have a slightly larger range (e.g. 20 -> 21, -20 -> -21, etc. )
-wide_maxLon <- 120
-wide_minLon <- 30
-wide_maxLat <- 20
-wide_minLat <- -20
+wide_maxLon <- 121
+wide_minLon <- 29
+wide_maxLat <- 21
+wide_minLat <- -21
 
 #pIOD (40, -5) X (100, 5), equatorial Indian Ocean region
 pIOD_maxLon <- 100
@@ -92,6 +92,10 @@ D <- pca.pIOD$D
 
 #eof
 sst.eof <- pca.pIOD$EOF
+
+#save pca output
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/pIOD/Data_SST")
+save(pca.pIOD, file = "pIOD_pca.rda")
 
 
 #TODO: update later
