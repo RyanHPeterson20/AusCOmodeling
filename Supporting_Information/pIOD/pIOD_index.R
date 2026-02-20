@@ -113,31 +113,49 @@ ind.2019 <- which(pIOD.df$year == 2019)
 #ind.2019 <- which(son.pred.df$year == 2019)
 
 
-#png(filename = "wtio_mindexSON.png", width = 2000, height = 1200, res = 250)
 
-par(mar = c(5, 5, 3, 5))
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+
+png(filename = "wtio_mindexSON.png", width = 2000, height = 1200, res = 250)
+par(mar = c(4.25, 4.25, 3, 2))
 plot(wtio.son, m.index.son, pch = 19, cex = 0.89,
      xlab = "WTIO", ylab = "M-Index",
      cex.lab = 1.15, 
      axes = FALSE)
-
+axis(1, cex.axis = 1.05)
+axis(2, cex.axis = 1.05)                      
+box()
 points(wtio.son[ind.2019], m.index.son[ind.2019], pch = 19, cex = 0.89, col = "firebrick")
 #text(-0.45, 2, paste0("Cor = ", round(wtio.son.cor, 3)), adj = 0 )
-title("SON: WTIO and M-Index", adj = 0)
+title("SON: WTIO and M-Index", adj = 0, cex = 1.1)
+legend("bottomright",
+       legend = c("2019"),
+       pch = 19,
+       col = "firebrick",
+       #bty    = "n",               # no box; remove if you want a box
+       cex = 0.89, 
+       xpd = TRUE)
+dev.off()
 
-#dev.off()
 
-
-#png(filename = "etio_sindexSON.png", width = 2000, height = 1200, res = 250)
-
-par(mar = c(5, 5, 3, 5))
+png(filename = "etio_sindexSON.png", width = 2000, height = 1200, res = 250)
+par(mar = c(4.25, 4.25, 3, 2))
 plot(etio.son, s.index.son, pch = 19, cex = 0.89,
-     xlab = "ETIO", ylab = "S-Index")
+     xlab = "ETIO", ylab = "S-Index",
+     cex.lab = 1.15, 
+     axes = FALSE)
+axis(1, cex.axis = 1.05)
+axis(2, cex.axis = 1.05)                      
+box()
 points(etio.son[ind.2019], s.index.son[ind.2019], pch = 19, cex = 0.89, col = "firebrick")
 #text(-1.75, -1.5, paste0("Cor = ", round(etio.son.cor, 3)), adj = 0 )
-title("SON: ETIO and S-Index", adj = 0)
-
-#dev.off()
-
-
+title("SON: ETIO and S-Index", adj = 0, cex = 1.1)
+legend("topright",
+       legend = c("2019"),
+       pch = 19,
+       col = "firebrick",
+       #bty    = "n",               # no box; remove if you want a box
+       cex = 0.89, 
+       xpd = TRUE)
+dev.off()
 
