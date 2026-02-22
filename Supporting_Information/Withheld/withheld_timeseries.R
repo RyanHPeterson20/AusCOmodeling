@@ -313,13 +313,15 @@ for (i in 1:20) {
   env_aao  <- split_envelope(aao.anom.temp)
   env_olr  <- split_envelope(olr.anom.temp)
   
+  #figures vars ()
+  
   
   #figure output
   setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
   
   png(filename = paste0("SE", season.years[i], "_pred_ts.png"), width = 4600, height = 5400, res = 275)
   par(mfrow = c(6, 1))
-  par(oma = c(5, 2.5, 1, 0))   # extra bottom margin for month labels
+  par(oma = c(5, 3.5, 1, 0))   # extra bottom margin for month labels
   par(mgp = c(4, 2, 0)) # (title, labels, lines)
   par(mar = c(0, 5, 0, 0))
   panel_ts(pred.time, nino.anom.temp, env_nino, range(c(-y.tick.max, y.tick.max)),
@@ -352,6 +354,9 @@ for (i in 1:20) {
            show_x = TRUE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
   
   dev.off()
+  
+  
+  
 }
 
 

@@ -5,6 +5,7 @@ library(ncdf4)
 library(fields)
 library(maps)
 library(RColorBrewer)
+library(cmocean)
 
 setwd("~/CO_AUS/AusCOmodeling/Data") 
 
@@ -142,6 +143,7 @@ png(filename = "MeanCO_climatemodes_new.png",  width = 4145, height = 1200, res 
 par(mar = c(3.5, 3.5, 1.75, 0.5))
 image.plot(
   lon.new, lat.sub, z_clip,
+  #col = cmocean("matter")(55),
   col = cols,
   breaks = breaks,              # forces uniform colorbar bins
   zlim = c(zmin, zmax),         # locks scale
@@ -204,6 +206,7 @@ png(filename = "relDiffCO_Aus_new.png", width = 4145, height = 1200, res = 300)
 par(mar = c(3.5, 3.5, 1.75, 0.5))
 image.plot(
   lon.new, lat.sub, z_clip.rel.diff,
+  #col = cmocean("balance")(101),
   col = cols,
   breaks = breaks,
   zlim = zlim,
@@ -225,14 +228,14 @@ mtext("Latitude",  side=2, line=2.25, cex = 1.25) #y-axis
 
 lines(x.newest, y.new, col = "gray7", lwd = 0.8)
 
-rect(lon_to_plotx(ne.aus$x1), ne.aus$y1, lon_to_plotx(ne.aus$x2), ne.aus$y2, border = "gray12", lwd = 1.75, lty = 1)
-rect(lon_to_plotx(se.aus$x1), se.aus$y1, lon_to_plotx(se.aus$x2), se.aus$y2, border = "gray12", lwd = 1.75, lty = 1)
+#rect(lon_to_plotx(ne.aus$x1), ne.aus$y1, lon_to_plotx(ne.aus$x2), ne.aus$y2, border = "gray12", lwd = 1.75, lty = 1)
+rect(lon_to_plotx(se.aus$x1), se.aus$y1, lon_to_plotx(se.aus$x2), se.aus$y2, border = "gray10", lwd = 1.85, lty = 1)
 
-xmid <- 0.5 * (lon_to_plotx(ne.aus$x1) + lon_to_plotx(ne.aus$x2))
-text(xmid, ne.aus$y1 + 11, ne.aus$lab, cex = 1.1, col = "gray12")
+#xmid <- 0.5 * (lon_to_plotx(ne.aus$x1) + lon_to_plotx(ne.aus$x2))
+#text(xmid, ne.aus$y1 + 11, ne.aus$lab, cex = 1.1, col = "gray12")
 
 xmid <- 0.5 * (lon_to_plotx(se.aus$x1) + lon_to_plotx(se.aus$x2))
-text(xmid, se.aus$y1 + 4, se.aus$lab, cex = 1.1, col = "gray12")
+text(xmid, se.aus$y1 + 3, se.aus$lab, cex = 1.05, col = "gray10")
 
 dev.off()
 

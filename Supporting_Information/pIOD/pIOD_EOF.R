@@ -108,13 +108,12 @@ sst.piod.mat <- matrix(sst.son.anom, nrow =  ny * nx, ncol = nt)
 pc1.son <- sst.piod.mat %*% PC1
 pc2.son <- sst.piod.mat %*% PC2
 
-#TODO: get D[1] or D[2] from above pca/svd
+#get D[1] or D[2] from above pca/svd
 eof1.son <- matrix(pc1.son/D[1], nrow = nx, ncol = ny)
-eof2.son <- matrix(pc2.son/D[2], nrow = nx, ncol = ny) #is D[2] correct here?
+eof2.son <- matrix(pc2.son/D[2], nrow = nx, ncol = ny) 
 
 
 #spatial eof for strong and weak
-#TODO: double check the values here (specifically the /0.5)
 strong.son <- (eof1.son + eof2.son)/sqrt(2)
 moderate.son <- (eof1.son - eof2.son)/sqrt(2)
 

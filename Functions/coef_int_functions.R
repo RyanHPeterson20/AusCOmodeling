@@ -125,6 +125,7 @@ pretty_var_label <- function(var) {
          toupper(var))
 }
 
+
 # ---- FIXED: uses ONLY base graphics in interaction panel for perfect alignment ----
 plot_lagged_coef_panels <- function(coefs_named_list,
                                     vars_order = c("nino","wtio","etio","tsa","aao","olr"),
@@ -137,7 +138,18 @@ plot_lagged_coef_panels <- function(coefs_named_list,
                                     line_width = 2,
                                     quad_y_jitter = 0.10,
                                     x_offsets = c(base = 0, const = 0, vary=0),
-                                    model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2")) {
+                                    model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+                                    add_legends = FALSE,
+                                    legend_inset_terms = c(0.000, 0.10),
+                                    legend_inset_model = c(0.00, 0.00),
+                                    legend_cex_terms = 2.25,
+                                    legend_cex_model = 2.0,
+                                    legend_pt_bg = alpha_col("gray32", 0.65),
+                                    legend_terms = c("Ni\u00f1o 3.4", "WTIO", "ETIO", "TSA", "SAM", "OLR", "Interaction"),
+                                    legend_terms_pch = c(21, 24, 25, 22, 23, 10, 11),
+                                    legend_terms_pt_cex = c(2.25, 1.8, 1.8, 2.25, 2.25, 2.25, 1.8),
+                                    legend_models = c("All-Data", "Fixed-Selection", "Withheld-Season"),
+                                    legend_model_keys = c("base", "const", "vary")) {
   
   stopifnot(is.list(coefs_named_list), length(coefs_named_list) >= 1)
   stopifnot(!is.null(names(coefs_named_list)))
@@ -150,7 +162,7 @@ plot_lagged_coef_panels <- function(coefs_named_list,
   #x_offsets <- c(base = -0.25, const = 0.25, vary=0)
   
   # pch by variable (add olr)
-  pch_map <- c(nino=21, wtio=24, etio=25, tsa=22, aao=23, olr=21)
+  pch_map <- c(nino=21, wtio=24, etio=25, tsa=22, aao=23, olr=10)
   
   # combine into one df
   df <- do.call(rbind, Map(coef_to_df, coefs_named_list, names(coefs_named_list)))
@@ -165,7 +177,7 @@ plot_lagged_coef_panels <- function(coefs_named_list,
   n_left <- length(vars_order)
   mat <- cbind(seq_len(n_left), rep(n_left + 1, n_left))
   layout(mat, widths=c(1.75, 1.25), heights=rep(1, n_left))
-  par(oma=c(2,1.5,2.5,1))
+  par(oma=c(1.25, 1.25, 1.25, 0.25))
   
   plot_one_var <- function(var, panel_i) {
     sub <- df_main[tolower(df_main$var)==tolower(var), , drop=FALSE]
@@ -175,7 +187,7 @@ plot_lagged_coef_panels <- function(coefs_named_list,
     
     plot(NA, NA, xlim=xlim_lag, ylim=coef_range,
          xlab=if (panel_i==n_left) "Lag" else "",
-         ylab=if (tolower(var)=="etio") "Coefficients" else "",
+         ylab= "",
          cex.axis=cex_num, cex.lab=cex_label)
     
     abline(h=0, lty=2, lwd=1.5)
@@ -203,7 +215,7 @@ plot_lagged_coef_panels <- function(coefs_named_list,
       
       points(s2$lag + xoff, s2$value,
              pch=pch_val,
-             col=out_col,
+             col= if (tolower(var)=="olr") bg_col else out_col,
              bg=bg_col,
              cex=2.1)
       
@@ -308,6 +320,40 @@ plot_lagged_coef_panels <- function(coefs_named_list,
       }
     }
   }
+  
+  
+  # ---- legends (optional), drawn in the right interaction panel ----
+  if (isTRUE(add_legends)) {
+    par(xpd = NA)
+    
+    legend("topright",
+           inset = legend_inset_terms,
+           title = "Terms",
+           cex = legend_cex_terms,
+           legend = legend_terms,
+           pch = legend_terms_pch,
+           col = "grey4",
+           pt.bg = legend_pt_bg,
+           pt.cex = legend_terms_pt_cex)
+    
+    # map model keys to colors from model_cols
+    model_cols_for_legend <- unname(model_cols[legend_model_keys])
+    
+    legend("topright",
+           inset = legend_inset_model,
+           title = "Model",
+           cex = legend_cex_model,
+           legend = legend_models,
+           pch = 15,
+           col = model_cols_for_legend,
+           pt.cex = 2.25)
+  }
+  
+  mtext("Coefficients",
+        side = 2,
+        outer = TRUE,
+        line = -0.5,
+        cex = 1.25)
   
   invisible(NULL)
 }

@@ -445,11 +445,14 @@ dev.off()
 
 
 
+lab.cex <- 3.05
+legend.cex <- 3.25
 
+#TODO: update this figures
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
 
-setwd("~/CO_AUS/AusCOmodeling/Figures")
-
-png(filename = "SEpred_ts.png", width = 5200, height = 6000, res = 250)
+#png(filename = "SEpred_ts.png", width = 5200, height = 6000, res = 250)
+png(filename = "SI_pred_ts.png", width = 5000, height = 6000, res = 250)
 par(mfrow = c(6, 1))
 
 par(mar = c(0, 5, 0, 0))
@@ -462,7 +465,7 @@ plot(time.pred.plot, nino.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
      yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
      xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
-     ylim = range(y.nino.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+     ylim = range(y.nino.ticks), bty = "n", cex.lab = lab.cex,  xpd = NA)
 axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
      col = NA, line = 0,
      col.ticks = "black", col.axis = "black", las =1)
@@ -485,14 +488,14 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
        legend = "Ni\u00f1o 3.4",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 3)
+       xpd = NA, text.col = "grey30", cex = legend.cex)
 
 #wtio sub-figure
 plot(time.pred.plot, wtio.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
      yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
      xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
-     ylim = range(y.wtio.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+     ylim = range(y.wtio.ticks), bty = "n", cex.lab = lab.cex,  xpd = NA)
 axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
      col = NA, line = 0,
      col.ticks = "black", col.axis = "black", las =1)
@@ -515,14 +518,14 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
        legend = "WTIO",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 3)
+       xpd = NA, text.col = "grey30", cex = legend.cex)
 
 #etio sub-figure
 plot(time.pred.plot, etio.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
      yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
      xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
-     ylim = range(y.etio.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+     ylim = range(y.etio.ticks), bty = "n", cex.lab = lab.cex,  xpd = NA)
 axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
      col = NA, line = 0,
      col.ticks = "black", col.axis = "black", las =1)
@@ -545,14 +548,14 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
        legend = "ETIO",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 3)
+       xpd = NA, text.col = "grey30", cex = legend.cex)
 
 #tsa sub-figure
 plot(time.pred.plot, tsa.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
      yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
      xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
-     ylim = range(y.tsa.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+     ylim = range(y.tsa.ticks), bty = "n", cex.lab = lab.cex,  xpd = NA)
 axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
      col = NA, line = 0,
      col.ticks = "black", col.axis = "black", las =1)
@@ -575,14 +578,14 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
        legend = "TSA",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 3)
+       xpd = NA, text.col = "grey30", cex = legend.cex)
 
 #aao (sam) sub-figure
 plot(time.pred.plot, aao.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
      yaxt = "n", ylab = "Anomaly", col.lab = "black",
      xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
-     ylim = range(y.aao.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+     ylim = range(y.aao.ticks), bty = "n", cex.lab = lab.cex,  xpd = NA)
 axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
      col = NA, line = 0,
      col.ticks = "black", col.axis = "black", las =1)
@@ -605,7 +608,7 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
        legend = "SAM",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 3)
+       xpd = NA, text.col = "grey30", cex = legend.cex)
 
 
 #olr sub-figure
@@ -613,7 +616,7 @@ plot(time.pred.plot, olr.anom.std, type = "l", col = "black", lwd = 2,
      xaxt = "n", xlab = "",
      yaxt = "n", ylab = "Anomaly [W/m^2]", col.lab = "black",
      xlim = c(as.Date(pred.time.range[1]) + months(7), as.Date(pred.time.range[2]) - months(7)),
-     ylim = range(y.olr.ticks), bty = "n", cex.lab = 2.75,  xpd = NA)
+     ylim = range(y.olr.ticks), bty = "n", cex.lab = lab.cex,  xpd = NA)
 axis(side = 2, at = y.tick.lab, cex.axis = 2.25, 
      col = NA, line = 0,
      col.ticks = "black", col.axis = "black", las =1)
@@ -636,7 +639,7 @@ legend(x = c(ymd("2000-11-01"), ymd("2002-01-01")),
        y = c(4, 4),
        legend = "OLR",
        box.col = NA, bg = NA,
-       xpd = NA, text.col = "grey30", cex = 3)
+       xpd = NA, text.col = "grey30", cex = legend.cex)
 
 text(x = x.pred.reduced + months(6),
      y = range(y.olr.ticks)[1]-0.5,
@@ -644,6 +647,8 @@ text(x = x.pred.reduced + months(6),
      cex = 3, col = "black", xpd = NA)
 
 dev.off()
+
+
 
 
 #TODO: previous (old) figures, move everything below to a new file (e.g. SI ts figures) or delete
@@ -684,6 +689,9 @@ resp.top <- NE.anom.std
 resp.top[!over] <- 0
 resp.bot <- NE.anom.std
 resp.bot[over] <- 0
+
+
+
 
 #TODO: update these to align with the primary sub-figures
 setwd("~/CO_AUS/AusCOmodeling/Figures")

@@ -10,7 +10,7 @@ suppressMessages( library(scales)) #for adjusting opacity
 setwd("~/CO_AUS/AusCOmodeling") 
 load("Data/modeldata.rda") #resp/pred data
 load("Data/base_RAMPmodels.rda") #"base" model
-#load("Data/loyo_models.rda") #leave one year out models/refits
+load("Data/loyo_models.rda") #leave one year out models/refits
 load("Data/validation_refits_new.rda") #updated RMSE and Predictions (w/ intervals)
 load("Data/validation_refits_wo2019.rda") #RMSE/Preds/Models w/o 2019/2020 data
 
@@ -51,7 +51,8 @@ vary.early <- lapply( SErefit.new[[3]], function(x) x[[1]])
 vary.peak <- lapply( SErefit.new[[3]], function(x) x[[2]]) 
 vary.late <- lapply( SErefit.new[[3]], function(x) x[[3]]) 
 
-#varying models w/o 2019/2020
+#varying models w/o 2019/2020 (double-withheld)
+#TODO: figure out where SErefit.wo2019 comes from (that is, .rda file)
 vary.early.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[1]])
 vary.peak.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[2]]) 
 vary.late.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[3]]) 
@@ -61,6 +62,101 @@ vary.late.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[3]])
 SE1.coef <- coef(SE1.lm)
 SE2.coef <- coef(SE2.lm)
 SE3.coef <- coef(SE3.lm)
+
+
+#early models
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/Coef_Int")
+for (i in 1:20) {
+  
+  coefs1 <- list(
+    base  = SE1.coef,
+    #const = coef(const.early[[i]]), 
+    vary  = coef(vary.early[[i]])  
+  )
+  
+  png(filename = paste0("SI_SEcoefs_early_", season.years[i], ".png"),  width = 2750, height = 4750, res = 300)
+  plot_lagged_coef_panels(
+    coefs_named_list = coefs1,
+    cex_num = 1.5,
+    cex_label = 1.75,
+    vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+    coef_range = c(-5, 5),
+    main_title = paste0("Early Fire Season (", seasons[i], " Withheld)"),   
+    quad_y_jitter = 0.004,
+    model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+    add_legends = FALSE,
+    legend_inset_terms = c(0.000, 0.00),
+    legend_inset_model = c(0.00, 0.16),
+    legend_cex_terms = 1.80,
+    legend_cex_model = 1.50,
+    legend_models = c("All-Data", "Withheld-Season"),
+    legend_model_keys = c("base", "vary"))
+  dev.off()
+
+}
+
+
+#peak models
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/Coef_Int")
+for (i in 1:20) {
+  coefs2 <- list(
+    base  = SE2.coef,
+    #const = coef(vary.peak.wo2019[[i]]), 
+    vary  = coef(vary.peak[[i]])  
+  )
+  
+  png(filename = paste0("SI_SEcoefs_peak_", season.years[i], ".png"),  width = 2750, height = 4750, res = 300)
+  plot_lagged_coef_panels(
+    coefs_named_list = coefs2,
+    cex_num = 1.5,
+    cex_label = 1.75,
+    vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+    coef_range = c(-5, 5),
+    main_title = paste0("Peak Fire Season (", seasons[i], " Withheld)"),   
+    quad_y_jitter = 0.004,
+    model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+    add_legends = FALSE,
+    legend_inset_terms = c(0.000, 0.00),
+    legend_inset_model = c(0.00, 0.16),
+    legend_cex_terms = 1.80,
+    legend_cex_model = 1.50,
+    legend_models = c("All-Data", "Withheld-Season"),
+    legend_model_keys = c("base", "vary"))
+  dev.off()
+}
+
+
+#late models
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/Coef_Int")
+for (i in 1:20) {
+  
+  coefs3 <- list(
+    base  = SE3.coef,
+    #const = coef(vary.late.wo2019[[i]]), 
+    vary  = coef(vary.late[[i]])  
+  )
+  
+  png(filename = paste0("SI_SEcoefs_late_", season.years[i], ".png"),  width = 2750, height = 4750, res = 300)
+  plot_lagged_coef_panels(
+    coefs_named_list = coefs3,
+    cex_num = 1.5,
+    cex_label = 1.75,
+    vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+    coef_range = c(-5, 5),
+    main_title = paste0("Late Fire Season (", seasons[i], " Withheld)"),   
+    quad_y_jitter = 0.004,
+    model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+    add_legends = TRUE,
+    legend_inset_terms = c(0.000, 0.05),
+    legend_inset_model = c(0.00, 0.00),
+    legend_cex_terms = 1.80,
+    legend_cex_model = 1.44,
+    legend_models = c("All-Data", "Withheld-Season"),
+    legend_model_keys = c("base", "vary"))
+  dev.off()
+}
+
+
 
 
 
@@ -192,6 +288,9 @@ for (i in 1:20) {
     model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"))
   dev.off()
 }
+
+
+
 
 
 #2001/2002
