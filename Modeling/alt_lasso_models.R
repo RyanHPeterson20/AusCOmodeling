@@ -188,6 +188,12 @@ for (i in 19) {
   SE.vary.LM[[seasons[i]]] <- SE.var
 }  
 
+SE.base.lm <- list(SE1.lm, SE2.lm, SE3.lm)
+
+SEmodels.dmi <- list(SE.base.lm, SE.const.LM, SE.vary.LM)
+setwd("~/CO_AUS/AusCOmodeling/Data") 
+save(SEmodels.dmi, file = "dmi_models.rda")
+
 
 coef(SE1.lm)
 coef(SE.const.LM$`2019-2020`[[1]])

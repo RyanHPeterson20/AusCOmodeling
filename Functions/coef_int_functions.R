@@ -117,6 +117,7 @@ alpha_col <- function(col, a=0.6) adjustcolor(col, alpha.f=a)
 pretty_var_label <- function(var) {
   switch(tolower(var),
          nino = "Ni\u00f1o 3.4",
+         dmi = "DMI",
          wtio = "WTIO",
          etio = "ETIO",
          tsa  = "TSA",
@@ -129,6 +130,7 @@ pretty_var_label <- function(var) {
 # ---- FIXED: uses ONLY base graphics in interaction panel for perfect alignment ----
 plot_lagged_coef_panels <- function(coefs_named_list,
                                     vars_order = c("nino","wtio","etio","tsa","aao","olr"),
+                                    pch_map = c(nino=21, wtio=24, etio=25, tsa=22, aao=23, olr=10),
                                     xlim_lag = c(1,52),
                                     coef_range = c(-5,5),
                                     main_title = NULL,
@@ -162,7 +164,7 @@ plot_lagged_coef_panels <- function(coefs_named_list,
   #x_offsets <- c(base = -0.25, const = 0.25, vary=0)
   
   # pch by variable (add olr)
-  pch_map <- c(nino=21, wtio=24, etio=25, tsa=22, aao=23, olr=10)
+  #pch_map <- c(nino=21, wtio=24, etio=25, tsa=22, aao=23, olr=10)
   
   # combine into one df
   df <- do.call(rbind, Map(coef_to_df, coefs_named_list, names(coefs_named_list)))
@@ -191,7 +193,7 @@ plot_lagged_coef_panels <- function(coefs_named_list,
          cex.axis=cex_num, cex.lab=cex_label)
     
     abline(h=0, lty=2, lwd=1.5)
-    text(x=3, y=coef_range[2]-0.85, labels=pretty_var_label(var),
+    text(x=3, y=coef_range[2]-0.75, labels=pretty_var_label(var),
          col="gray12", cex=cex_subtitle)
     
     if (panel_i==1 && !is.null(main_title)) {

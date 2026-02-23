@@ -112,6 +112,10 @@ pred.df[which(pred.df$date == temp.date.end), ]
 top.col.pred <- "#F2855DFF"
 bot.col.pred <- "#68ABB8FF"
 
+top.col.lag <- "tomato3"
+bot.col.lag <- "skyblue4"
+
+
 #response colors
 top.col.resp <- "#C71C1C"
 bot.col.resp <- "#2A5674FF"
@@ -213,27 +217,36 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 #plots
 #TODO: clean this up later
 panel_ts <- function(x, y, env, ylim, ylab, legend_text, year_lines, xlim, 
-                     show_x = FALSE, xticks, xlabs, month_lines) {
+                     show_x = FALSE, xticks, xlabs, month_lines,
+                     lag_x = FALSE, lag.val) {
   plot(x, y, type = "l", col = "black", lwd = 2,
        xaxt = "n", xlab = "",
        yaxt = "n", ylab = ylab, col.lab = "black",
        xlim = xlim, ylim = ylim, bty = "n",
        cex.lab = 2.75, xpd = NA)
+  #mtext(ylab, side = 2, outer = TRUE, line = 0, cex = 1.25)
   
   axis(side = 2, at = y.tick.lab, cex.axis = 2.25,
        col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
   
-  abline(h = 0, lty = 1, col = "grey", lwd = 1)
+  abline(h = 0, lty = 1, col = "grey50", lwd = 1)
   
   # year boundaries
-  abline(v = year_lines, lty = 2, col = "grey40", lwd = 2)
+  abline(v = year_lines, lty = 2, col = "grey30", lwd = 2)
   
   #monthly lines
-  abline(v = month_lines, lty = 3, col = "grey50", lwd = 1)  # monthly
-  abline(v = month_lines[month(month_lines) == 1], lty = 2, col = "grey40", lwd = 2) # Jan darker
+  abline(v = month_lines, lty = 3, col = "grey30", lwd = 2)  # monthly
+  abline(v = month_lines[month(month_lines) == 1], lty = 2, col = "grey30", lwd = 2) # Jan darker
   
   # envelope
-  draw_envelope_zero(x, y, top.col.pred, bot.col.pred)
+  draw_envelope_zero(x, y, top.col.pred, bot.col.pred, alpha = 0.50)
+  if (lag_x) {
+    lag.week <- 51 - lag.val
+    lag.index <- which(week(pred.time) == lag.week)
+    lag.index <- lag.index:(lag.index+3)
+    
+    draw_envelope_zero(x[lag.index], y[lag.index], top.col.lag, bot.col.lag,  alpha = 0.85)
+  }
   #envelopePlot(x1 = x, y1 = env$top, x2 = x, y2 = rep(0, length(env$top)),
   #             col = alpha(top.col.pred, 0.67), lineCol = NA)
   #envelopePlot(x1 = x, y1 = env$bot, x2 = x, y2 = rep(0, length(env$bot)),
@@ -246,16 +259,17 @@ panel_ts <- function(x, y, env, ylim, ylab, legend_text, year_lines, xlim,
          box.col = NA, bg = NA, xpd = NA, text.col = "grey30", cex = 2.5)
   
   if (show_x) {
-    axis(1, at = xticks, labels = xlabs, las = 2, cex.axis = 2.0)
+    axis(1, at = xticks, labels = xlabs, las = 2, cex.axis = 2.75, line = 1)
   }
 }
 
 
 
-#test for all years
-
-
+#pred only lags 1 to 52
+ylim.all <- NULL
 for (i in 1:20) {
+  #temp
+  #i <- 15
   
   nino.anom.temp <- as.numeric(rev(SEpreds.peak.nino[i, ]))
   wtio.anom.temp <- as.numeric(rev(SEpreds.peak.wtio[i, ]))
@@ -304,6 +318,8 @@ for (i in 1:20) {
   y.tick.seq   <- seq(y.tick.steps, y.tick.max - y.tick.steps, by = y.tick.steps)
   y.tick.lab   <- c(-rev(y.tick.seq), 0, y.tick.seq)
   
+  #get overall ylim range 
+  ylim.all <- c(ylim.all, y.tick.max)
   
   #envelope sets
   env_nino <- split_envelope(nino.anom.temp)
@@ -319,7 +335,7 @@ for (i in 1:20) {
   #figure output
   setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
   
-  png(filename = paste0("SE", season.years[i], "_pred_ts.png"), width = 4600, height = 5400, res = 275)
+  png(filename = paste0("SE", season.years[i], "_pred_ts.png"), width = 4800, height = 5600, res = 275)
   par(mfrow = c(6, 1))
   par(oma = c(5, 3.5, 1, 0))   # extra bottom margin for month labels
   par(mgp = c(4, 2, 0)) # (title, labels, lines)
@@ -355,9 +371,180 @@ for (i in 1:20) {
   
   dev.off()
   
+}
+
+
+
+#specific year exploration 2006/2007, 2015/2016, 2019/2020
+years <- c(6,15,19)
+y.tick.max <- max(ylim.all)
+for (i in years) {
   
+  nino.anom.temp <- as.numeric(rev(SEpreds.peak.nino[i, ]))
+  wtio.anom.temp <- as.numeric(rev(SEpreds.peak.wtio[i, ]))
+  etio.anom.temp <- as.numeric(rev(SEpreds.peak.etio[i, ]))
+  tsa.anom.temp <- as.numeric(rev(SEpreds.peak.tsa[i, ]))
+  aao.anom.temp <- as.numeric(rev(SEpreds.peak.aao[i, ]))
+  olr.anom.temp <- as.numeric(rev(SEpreds.peak.olr[i, ]))
+  
+  
+  #select window
+  start.temp <- pred.df[pred.df$week == 51 & pred.df$year == season.years[i]-1, ]$date
+  
+  date.start <- ymd(start.temp)
+  date.end <- date.start + weeks(54)
+  
+  if(epiweek(date.end) != 1){
+    date.end <- date.end + weeks(1)
+  }
+  
+  pred.dates <- pred.df[pred.df$date >= date.start & pred.df$date <= date.end, ]
+  
+  pred.time <- as.Date(pred.dates$date)
+  pred.time.range <- range(pred.time)
+  #test weekly change for xlim
+  pred.time.range[1] <- pred.time.range[1] + weeks(1)
+  
+  #now using above functions
+  #get monthly ticks
+  pred.xt <- make_month_ticks(pred.time.range)
+  
+  #get boundary lines
+  pred.month.lines <- make_month_lines(pred.time.range)
+  pred.year.lines <- make_year_lines(pred.time.range)
+  
+  #y tick lines/setup
+  y.tick.steps <- round(y.tick.max/2, 1)
+  y.tick.seq   <- seq(y.tick.steps, y.tick.max - y.tick.steps, by = y.tick.steps)
+  y.tick.lab   <- c(-rev(y.tick.seq), 0, y.tick.seq)
+  
+
+  #envelope sets
+  env_nino <- split_envelope(nino.anom.temp)
+  env_wtio <- split_envelope(wtio.anom.temp)
+  env_etio <- split_envelope(etio.anom.temp)
+  env_tsa  <- split_envelope(tsa.anom.temp)
+  env_aao  <- split_envelope(aao.anom.temp)
+  env_olr  <- split_envelope(olr.anom.temp)
+  
+  #figures vars ()
+  
+  
+  #figure output
+  setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/Time_Series")
+  
+  png(filename = paste0("SI_SE", season.years[i], "_pred_ts.png"), width = 4800, height = 5600, res = 275)
+  par(mfrow = c(6, 1))
+  par(oma = c(7, 4, 1, 0))   # extra bottom margin for month labels
+  par(mgp = c(4, 0.25, 0)) # (title, labels, lines)
+  par(mar = c(0, 5, 0, 0))
+  panel_ts(pred.time, nino.anom.temp, env_nino, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly [W/m^2]", legend_text= "Ni\u00f1o 3.4", pred.year.lines, pred.time.range,
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
+           lag_x = TRUE, lag.val = 40)
+  
+  par(mar = c(0, 5, 0, 0))
+  panel_ts(pred.time, wtio.anom.temp, env_wtio, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly [W/m^2]", legend_text=  "WTIO", pred.year.lines, pred.time.range,
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
+           lag_x = TRUE, lag.val = 14)
+  
+  par(mar = c(0, 5, 0, 0))
+  panel_ts(pred.time, etio.anom.temp, env_etio, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly [W/m^2]", legend_text=  "ETIO", pred.year.lines, pred.time.range,
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
+           lag_x = TRUE, lag.val = 7)
+  
+  par(mar = c(0, 5, 0, 0))
+  panel_ts(pred.time, tsa.anom.temp, env_tsa, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly [W/m^2]", legend_text=  "TSA", pred.year.lines, pred.time.range,
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+  
+  par(mar = c(0, 5, 0, 0))
+  panel_ts(pred.time, aao.anom.temp, env_aao, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly", legend_text=  "SAM", pred.year.lines, pred.time.range,
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+  
+  par(mar = c(1, 5, 0, 0))
+  panel_ts(pred.time, olr.anom.temp, env_olr, range(c(-y.tick.max, y.tick.max)),
+           ylab = "Anomaly [W/m^2]", legend_text=  "OLR", pred.year.lines, pred.time.range,
+           show_x = TRUE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+  
+  dev.off()
   
 }
+
+
+#repeat above for 2006, 2015, and 2019 and overlay the associated all-data model lags
+#pred colors
+top.col.pred <- "#F2855DFF"
+bot.col.pred <- "#68ABB8FF"
+
+top.col.lag <- "tomato3"
+bot.col.lag <- "skyblue4"
+
+
+panel_ts(pred.time, wtio.anom.temp, env_wtio, range(c(-y.tick.max, y.tick.max)),
+         ylab = "Anomaly [W/m^2]", legend_text=  "WTIO", pred.year.lines, pred.time.range,
+         show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
+         lag_x = FALSE, lag.val = 14)
+
+
+#nino lag 40
+lag <- 40
+lag.week <- 51 - lag
+lag.index <- which(week(pred.time) == lag.week)
+lag.index <- lag.index:(lag.index+3)
+pred.time[lag.index]
+
+#panel_ts() adding in alternate color for specific lags
+#params:
+x = pred.time
+y = nino.anom.temp 
+env = env_nino
+ylim = range(c(-y.tick.max, y.tick.max))
+ylab = "Anomaly [W/m^2]"
+legend_text = "Ni\u00f1o 3.4"
+year_lines = pred.year.lines
+xlim = pred.time.range
+show_x = FALSE
+xticks = pred.xt$ticks
+xlabs = pred.xt$labs
+month_lines = pred.month.lines
+  plot(x, y, type = "l", col = "black", lwd = 2,
+       xaxt = "n", xlab = "",
+       yaxt = "n", ylab = ylab, col.lab = "black",
+       xlim = xlim, ylim = ylim, bty = "n",
+       cex.lab = 2.75, xpd = NA)
+  
+  axis(side = 2, at = y.tick.lab, cex.axis = 2.25,
+       col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
+  
+  abline(h = 0, lty = 1, col = "grey", lwd = 1)
+  
+  # year boundaries
+  abline(v = year_lines, lty = 2, col = "grey40", lwd = 2)
+  
+  #monthly lines
+  abline(v = month_lines, lty = 3, col = "grey50", lwd = 1)  # monthly
+  abline(v = month_lines[month(month_lines) == 1], lty = 2, col = "grey40", lwd = 2) # Jan darker
+  
+  # envelope
+  draw_envelope_zero(x, y, top.col.pred, bot.col.pred,  alpha = 0.55)
+  draw_envelope_zero(x[lag.index], y[lag.index], top.col.lag, bot.col.lag,  alpha = 0.85)
+  #envelopePlot(x1 = x, y1 = env$top, x2 = x, y2 = rep(0, length(env$top)),
+  #             col = alpha(top.col.pred, 0.67), lineCol = NA)
+  #envelopePlot(x1 = x, y1 = env$bot, x2 = x, y2 = rep(0, length(env$bot)),
+  #             col = alpha(bot.col.pred, 0.67), lineCol = NA)
+  
+  # label
+  legend(x = c(xlim[1] + days(2), xlim[1] + days(32)),
+         y = c(ylim[2], ylim[2]),
+         legend = legend_text,
+         box.col = NA, bg = NA, xpd = NA, text.col = "grey30", cex = 2.5)
+  
+  if (show_x) {
+    axis(1, at = xticks, labels = xlabs, las = 2, cex.axis = 2.0)}
 
 
 
