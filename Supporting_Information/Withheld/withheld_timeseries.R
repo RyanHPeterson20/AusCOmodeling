@@ -37,6 +37,8 @@ SE.late <- 3:14
 
 #get data setup
 SEresp.mat <- scale(resp.matrix[,30:58], center = TRUE, scale = FALSE)
+SEresp.early <- SEresp.mat[ ,9:13]
+SEresp.late <- SEresp.mat[ ,18:22]
 SEresp.peak <- SEresp.mat[ ,14:17]
 SEresp.peak.wide <- SEresp.mat[ ,13:18]
   
@@ -246,6 +248,17 @@ panel_ts <- function(x, y, env, ylim, ylab, legend_text, year_lines, xlim,
     lag.index <- lag.index:(lag.index+3)
     
     draw_envelope_zero(x[lag.index], y[lag.index], top.col.lag, bot.col.lag,  alpha = 0.85)
+    
+    y.lag.max <- max(y[lag.index], na.rm = TRUE)
+    y.lag.text <- ifelse(y.lag.max < 0, 0, y.lag.max)
+    
+    
+    legend(x = c(x[lag.index[1]] - days(9), x[lag.index[1]] - days(9)),
+           y = c(y.lag.text+1.5, y.lag.text+1.5),
+           legend = paste0("Lag ", lag.val),
+           box.col = NA, bg = NA, xpd = NA, text.col = "grey28", cex = 2.5)
+    
+    
   }
   #envelopePlot(x1 = x, y1 = env$top, x2 = x, y2 = rep(0, length(env$top)),
   #             col = alpha(top.col.pred, 0.67), lineCol = NA)
@@ -441,7 +454,7 @@ for (i in years) {
   panel_ts(pred.time, nino.anom.temp, env_nino, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly [W/m^2]", legend_text= "Ni\u00f1o 3.4", pred.year.lines, pred.time.range,
            show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
-           lag_x = TRUE, lag.val = 40)
+           lag_x = FALSE, lag.val = 40)
   
   par(mar = c(0, 5, 0, 0))
   panel_ts(pred.time, wtio.anom.temp, env_wtio, range(c(-y.tick.max, y.tick.max)),
@@ -453,7 +466,7 @@ for (i in years) {
   panel_ts(pred.time, etio.anom.temp, env_etio, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly [W/m^2]", legend_text=  "ETIO", pred.year.lines, pred.time.range,
            show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
-           lag_x = TRUE, lag.val = 7)
+           lag_x = TRUE, lag.val = 8)
   
   par(mar = c(0, 5, 0, 0))
   panel_ts(pred.time, tsa.anom.temp, env_tsa, range(c(-y.tick.max, y.tick.max)),
@@ -482,70 +495,6 @@ bot.col.pred <- "#68ABB8FF"
 
 top.col.lag <- "tomato3"
 bot.col.lag <- "skyblue4"
-
-
-panel_ts(pred.time, wtio.anom.temp, env_wtio, range(c(-y.tick.max, y.tick.max)),
-         ylab = "Anomaly [W/m^2]", legend_text=  "WTIO", pred.year.lines, pred.time.range,
-         show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
-         lag_x = FALSE, lag.val = 14)
-
-
-#nino lag 40
-lag <- 40
-lag.week <- 51 - lag
-lag.index <- which(week(pred.time) == lag.week)
-lag.index <- lag.index:(lag.index+3)
-pred.time[lag.index]
-
-#panel_ts() adding in alternate color for specific lags
-#params:
-x = pred.time
-y = nino.anom.temp 
-env = env_nino
-ylim = range(c(-y.tick.max, y.tick.max))
-ylab = "Anomaly [W/m^2]"
-legend_text = "Ni\u00f1o 3.4"
-year_lines = pred.year.lines
-xlim = pred.time.range
-show_x = FALSE
-xticks = pred.xt$ticks
-xlabs = pred.xt$labs
-month_lines = pred.month.lines
-  plot(x, y, type = "l", col = "black", lwd = 2,
-       xaxt = "n", xlab = "",
-       yaxt = "n", ylab = ylab, col.lab = "black",
-       xlim = xlim, ylim = ylim, bty = "n",
-       cex.lab = 2.75, xpd = NA)
-  
-  axis(side = 2, at = y.tick.lab, cex.axis = 2.25,
-       col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
-  
-  abline(h = 0, lty = 1, col = "grey", lwd = 1)
-  
-  # year boundaries
-  abline(v = year_lines, lty = 2, col = "grey40", lwd = 2)
-  
-  #monthly lines
-  abline(v = month_lines, lty = 3, col = "grey50", lwd = 1)  # monthly
-  abline(v = month_lines[month(month_lines) == 1], lty = 2, col = "grey40", lwd = 2) # Jan darker
-  
-  # envelope
-  draw_envelope_zero(x, y, top.col.pred, bot.col.pred,  alpha = 0.55)
-  draw_envelope_zero(x[lag.index], y[lag.index], top.col.lag, bot.col.lag,  alpha = 0.85)
-  #envelopePlot(x1 = x, y1 = env$top, x2 = x, y2 = rep(0, length(env$top)),
-  #             col = alpha(top.col.pred, 0.67), lineCol = NA)
-  #envelopePlot(x1 = x, y1 = env$bot, x2 = x, y2 = rep(0, length(env$bot)),
-  #             col = alpha(bot.col.pred, 0.67), lineCol = NA)
-  
-  # label
-  legend(x = c(xlim[1] + days(2), xlim[1] + days(32)),
-         y = c(ylim[2], ylim[2]),
-         legend = legend_text,
-         box.col = NA, bg = NA, xpd = NA, text.col = "grey30", cex = 2.5)
-  
-  if (show_x) {
-    axis(1, at = xticks, labels = xlabs, las = 2, cex.axis = 2.0)}
-
 
 
 #TODO: response-combo plot
@@ -753,3 +702,44 @@ for (i in c(1:18,20)) {
 }
 dev.off()
 
+#TODO: formalize everything below or DELETE
+#response only TS
+
+i <- 2
+range(c(SEresp.early[-19, ], SEresp.peak[-19, ], SEresp.late[-19, ]))
+
+#setup for response
+resp.temp <- c(SEresp.early[i, ], SEresp.peak[i, ], SEresp.late[i, ])
+
+line.col <- rainbow(19)
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/Temp_Figures")
+png(filename = paste0("respone_test.png"), width = 3600, height = 1800, res = 275)
+#response output
+par(mar = c(4, 5, 1, 0))
+plot(NA, NA, type = "l", col = "black", lwd = 2,
+     xaxt= "n", xlab = "Week",
+     yaxt = "n", ylab = "CO Anomaly", col.lab = "black",
+     xlim = c(1,14), ylim = c(-28, 28), bty = "n",
+     cex.lab = 2.0, xpd = NA)
+
+axis(side = 2)
+axis(side = 1, at = 1:14, labels = c(46:52, 1:7))
+abline(h =0, lty = 3, lwd = 1, col = "grey50")
+abline(v = c(5.5, 9.5), lwd = 1, lty = 2, col = "grey30")
+
+
+#mtext("CO Anomaly", side = 2, line = 1, cex = 1.25)
+
+for (i in c(1:18,20)) {
+  
+resp.temp <- c(SEresp.early[i, ], SEresp.peak[i, ], SEresp.late[i, ])
+lines(1:14, resp.temp, col = line.col[i], lwd = 1.5)
+
+}
+
+dev.off()
+
+
+#test load in data (SE Aus raw mopitt and )
+setwd("~/CO_AUS/AusCOmodeling/Data")
