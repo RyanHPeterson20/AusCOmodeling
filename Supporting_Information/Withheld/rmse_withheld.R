@@ -809,3 +809,59 @@ dev.off()
 
 
 
+#single year predictions
+# from: SE.predict.single 
+#outer (first list) is the withheld year
+#inner (second list) is the prediction year
+
+#for 2002/03
+SE.preds.2002 <- lapply(SE.predict.single, function(x) x[[2]])
+
+SEpreds2002.wo2019 <- c(SE.preds.2002$`2019-2020`$early, SE.preds.2002$`2019-2020`$peak, SE.preds.2002$`2019-2020`$late)
+SEpreds2002.wo2002 <- c(SE.preds.2002$`2002-2003`$early, SE.preds.2002$`2002-2003`$peak, SE.preds.2002$`2002-2003`$late)
+SEresp.2002 <- c(SE.resp.valid$`2002-2003`$early, SE.resp.valid$`2002-2003`$mid, SE.resp.valid$`2002-2003`$late)
+
+pred.range <- range(SEresp.2002, SEpreds2002.wo2002, SEpreds2002.wo2019)
+
+plot(1:29, SEresp.2002, type = "l", ylim = pred.range,  main = "2002/2003")
+lines(1:29, SEpreds.wo2002, col = "firebrick", lty = 2)
+lines(1:29, SEpreds2002.wo2019, col = "firebrick4", lty = 4)
+abline(h = 0, lty = 3, col = "grey30")
+abline(v = c(13.5, 17.5), lty = 2, col = "grey30")
+
+
+
+
+#for 2003/04
+SE.preds.2003 <- lapply(SE.predict.single, function(x) x[[3]])
+
+SEpreds2003.wo2019 <- c(SE.preds.2003$`2019-2020`$early, SE.preds.2003$`2019-2020`$peak, SE.preds.2003$`2019-2020`$late)
+SEpreds2003.wo2003 <- c(SE.preds.2003$`2003-2004`$early, SE.preds.2003$`2003-2004`$peak, SE.preds.2003$`2003-2004`$late)
+SEresp.2003 <- c(SE.resp.valid$`2003-2004`$early, SE.resp.valid$`2003-2004`$mid, SE.resp.valid$`2003-2004`$late)
+
+pred.range <- range(SEresp.2003, SEpreds2003.wo2003, SEpreds2003.wo2019)
+
+plot(1:29, SEresp.2003, type = "l", ylim = pred.range, main = "2003/2004")
+lines(1:29, SEpreds2003.wo2003, col = "firebrick", lty = 2)
+lines(1:29, SEpreds2003.wo2019, col = "firebrick4", lty = 4)
+abline(h = 0, lty = 3, col = "grey30")
+abline(v = c(13.5, 17.5), lty = 2, col = "grey30")
+
+
+
+#for 2005/06
+SE.preds.2005 <- lapply(SE.predict.single, function(x) x[[5]])
+
+SEpreds2005.wo2019 <- c(SE.preds.2005$`2019-2020`$early, SE.preds.2005$`2019-2020`$peak, SE.preds.2005$`2019-2020`$late)
+SEpreds2005.wo2005 <- c(SE.preds.2005$`2005-2006`$early, SE.preds.2005$`2005-2006`$peak, SE.preds.2005$`2005-2006`$late)
+SEresp.2005 <- c(SE.resp.valid$`2005-2006`$early, SE.resp.valid$`2005-2006`$mid, SE.resp.valid$`2005-2006`$late)
+
+pred.range <- range(SEresp.2005, SEpreds2005.wo2005, SEpreds2005.wo2019)
+
+plot(1:29, SEresp.2005, type = "l", ylim = pred.range, main = "2005/2006")
+lines(1:29, SEpreds2005.wo2005, col = "firebrick", lty = 2)
+lines(1:29, SEpreds2005.wo2019, col = "firebrick4", lty = 4)
+abline(h = 0, lty = 3, col = "grey30")
+abline(v = c(13.5, 17.5), lty = 2, col = "grey30")
+
+
