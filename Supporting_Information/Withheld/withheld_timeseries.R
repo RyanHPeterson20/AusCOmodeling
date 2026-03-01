@@ -389,7 +389,7 @@ for (i in 1:20) {
 
 
 #specific year exploration 2006/2007, 2015/2016, 2019/2020
-years <- c(6,15,19)
+years <- c(2,3,5,6,11,15,19)
 y.tick.max <- max(ylim.all)
 for (i in years) {
   
@@ -454,7 +454,7 @@ for (i in years) {
   panel_ts(pred.time, nino.anom.temp, env_nino, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly [W/m^2]", legend_text= "Ni\u00f1o 3.4", pred.year.lines, pred.time.range,
            show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
-           lag_x = FALSE, lag.val = 40)
+           lag_x = TRUE, lag.val = 40)
   
   par(mar = c(0, 5, 0, 0))
   panel_ts(pred.time, wtio.anom.temp, env_wtio, range(c(-y.tick.max, y.tick.max)),
@@ -466,17 +466,19 @@ for (i in years) {
   panel_ts(pred.time, etio.anom.temp, env_etio, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly [W/m^2]", legend_text=  "ETIO", pred.year.lines, pred.time.range,
            show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
-           lag_x = TRUE, lag.val = 8)
+           lag_x = TRUE, lag.val = 7)
   
   par(mar = c(0, 5, 0, 0))
   panel_ts(pred.time, tsa.anom.temp, env_tsa, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly [W/m^2]", legend_text=  "TSA", pred.year.lines, pred.time.range,
-           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines, 
+           lag_x = TRUE, lag.val = 29)
   
   par(mar = c(0, 5, 0, 0))
   panel_ts(pred.time, aao.anom.temp, env_aao, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly", legend_text=  "SAM", pred.year.lines, pred.time.range,
-           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
+           show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
+           lag_x = TRUE, lag.val = 9)
   
   par(mar = c(1, 5, 0, 0))
   panel_ts(pred.time, olr.anom.temp, env_olr, range(c(-y.tick.max, y.tick.max)),

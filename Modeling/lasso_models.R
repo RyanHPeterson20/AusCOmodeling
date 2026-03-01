@@ -615,7 +615,7 @@ rmse.late <- list(late.base.rmse, late.const.rmse, late.vary.rmse)
 
 #temp model validation
 setwd("~/CO_AUS/AusCOmodeling/Data") 
-save(rmse.season, rmse.weekly, rmse.early, rmse.mid,rmse.late, file = "rmse.rda")
+save(rmse.season, rmse.weekly, rmse.early, rmse.mid, rmse.late, file = "rmse.rda")
 
 #temp output, update LOYO loop for all years
 preds.2019.base <- list(pred.base.early, pred.base.mid, pred.base.late)

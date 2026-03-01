@@ -236,7 +236,7 @@ line.wd <- 2.40
 
 setwd("~/CO_AUS/AusCOmodeling/Figures/Correlation")
 
-png(filename = "SEcor_all.png", width = 4200, height = 2400, res = 250)
+png(filename = "SEcor_all.png", width = 5100, height = 2200, res = 250)
 par(mfrow = c(2, 3))
 par(oma = c(4, 4, 2, 0))  
 par(mar = c(2, 2, 1.5, 1.5))
@@ -294,6 +294,7 @@ text( 2, 0.95, "ETIO", cex  = cex.main, adj = 0)
 #title("Nino", adj = 0, cex = 2.)
 legend("topright", 
       title = "All-Data",
+      inset =  c(0.25, 0),
       legend = c("Early", "Peak", "Late"),
       col = c("cyan4", "firebrick", "slateblue4"),
       x.intersp = 3,
@@ -301,18 +302,17 @@ legend("topright",
       adj = c(0.5, 0.5),
       lty = 1,
       lwd = 2, 
-      cex = 1.25)
+      cex = 1.5)
 legend("topright",
-       inset =  c(0.00, 0.21),
        title = "2019/2020 Withheld",
        legend = c("Early", "Peak", "Late"),
        col = c("cyan4", "firebrick", "slateblue4"),
        lty = 4,
        x.intersp = 3,
        seg.len = 3.5,
-       adj = c(0.5, 0.5), 
-       lwd = 2, 
-       cex = 1.25)
+       adj = c(0.5, 0.5),
+       lwd = 2,
+       cex = 1.5)
 
 ##tsa
 #par(mar = c(4, 4, 1.5, 1.5))

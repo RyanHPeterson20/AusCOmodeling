@@ -37,6 +37,7 @@ SE1.lm <- SEmodels[[1]]
 SE2.lm <- SEmodels[[2]]
 SE3.lm <- SEmodels[[3]]
 
+
 #SEmodels.loyo
 #SE.const.LM <- SEmodels.loyo[[2]]
 #SE.vary.LM <- SEmodels.loyo[[3]]
@@ -56,6 +57,7 @@ vary.late <- lapply( SErefit.new[[3]], function(x) x[[3]])
 vary.early.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[1]])
 vary.peak.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[2]]) 
 vary.late.wo2019 <- lapply( SErefit.wo2019[[3]], function(x) x[[3]]) 
+
 
 ## ---- Coeff/Interaction Figures ---- ##
 ## setup
