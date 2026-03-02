@@ -158,6 +158,7 @@ z.peak.single <- t(rmse.mat.peak[5:1,])
 z <- z.peak.single
 y <- seq_len(ncol(z))
 x <- seq_len(nrow(z))
+
 x_n = 20
 y_n = 5
 xi <- unique(round(seq(1, nrow(z), length.out = x_n)))

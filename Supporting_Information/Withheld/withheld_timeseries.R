@@ -243,20 +243,23 @@ panel_ts <- function(x, y, env, ylim, ylab, legend_text, year_lines, xlim,
   # envelope
   draw_envelope_zero(x, y, top.col.pred, bot.col.pred, alpha = 0.50)
   if (lag_x) {
-    lag.week <- 51 - lag.val
-    lag.index <- which(week(pred.time) == lag.week)
-    lag.index <- lag.index:(lag.index+3)
-    
-    draw_envelope_zero(x[lag.index], y[lag.index], top.col.lag, bot.col.lag,  alpha = 0.85)
-    
-    y.lag.max <- max(y[lag.index], na.rm = TRUE)
-    y.lag.text <- ifelse(y.lag.max < 0, 0, y.lag.max)
-    
-    
-    legend(x = c(x[lag.index[1]] - days(9), x[lag.index[1]] - days(9)),
-           y = c(y.lag.text+1.5, y.lag.text+1.5),
-           legend = paste0("Lag ", lag.val),
-           box.col = NA, bg = NA, xpd = NA, text.col = "grey28", cex = 2.5)
+    for (j in lag.val) {
+      lag.week <- 51 - j
+      lag.index <- which(week(pred.time) == lag.week)
+      lag.index <- lag.index:(lag.index+3)
+      
+      draw_envelope_zero(x[lag.index], y[lag.index], top.col.lag, bot.col.lag,  alpha = 0.85)
+      
+      y.lag.max <- max(y[lag.index], na.rm = TRUE)
+      y.lag.text <- ifelse(y.lag.max < 0, 0, y.lag.max)
+      
+      
+      legend(x = c(x[lag.index[1]] - days(9), x[lag.index[1]] - days(9)),
+             y = c(y.lag.text+1.5, y.lag.text+1.5),
+             legend = paste0("Lag ", j),
+             box.col = NA, bg = NA, xpd = NA, text.col = "grey28", cex = 2.5)
+    }
+
     
     
   }
@@ -389,7 +392,9 @@ for (i in 1:20) {
 
 
 #specific year exploration 2006/2007, 2015/2016, 2019/2020
-years <- c(2,3,5,6,11,15,19)
+years <- c(2,3,5,6,15,19)
+pos.ind <- c(2,3,5,6,15)
+
 y.tick.max <- max(ylim.all)
 for (i in years) {
   
@@ -448,25 +453,26 @@ for (i in years) {
   
   png(filename = paste0("SI_SE", season.years[i], "_pred_ts.png"), width = 4800, height = 5600, res = 275)
   par(mfrow = c(6, 1))
-  par(oma = c(7, 4, 1, 0))   # extra bottom margin for month labels
+  par(oma = c(7, 4, 5.5, 0))   # extra bottom margin for month labels
   par(mgp = c(4, 0.25, 0)) # (title, labels, lines)
-  par(mar = c(0, 5, 0, 0))
+  par(mar = c(0, 5, 1, 0))
   panel_ts(pred.time, nino.anom.temp, env_nino, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly [W/m^2]", legend_text= "Ni\u00f1o 3.4", pred.year.lines, pred.time.range,
            show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
            lag_x = TRUE, lag.val = 40)
+  title(paste0(seasons[i], " Wildfire Season"), adj = 0, cex.main = 3.0, xpd = TRUE, outer = TRUE)
   
   par(mar = c(0, 5, 0, 0))
   panel_ts(pred.time, wtio.anom.temp, env_wtio, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly [W/m^2]", legend_text=  "WTIO", pred.year.lines, pred.time.range,
            show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
-           lag_x = TRUE, lag.val = 14)
+           lag_x = TRUE, lag.val = c(14, 46))
   
   par(mar = c(0, 5, 0, 0))
   panel_ts(pred.time, etio.anom.temp, env_etio, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly [W/m^2]", legend_text=  "ETIO", pred.year.lines, pred.time.range,
            show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
-           lag_x = TRUE, lag.val = 7)
+           lag_x = TRUE, lag.val = c(7,33))
   
   par(mar = c(0, 5, 0, 0))
   panel_ts(pred.time, tsa.anom.temp, env_tsa, range(c(-y.tick.max, y.tick.max)),
@@ -478,13 +484,15 @@ for (i in years) {
   panel_ts(pred.time, aao.anom.temp, env_aao, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly", legend_text=  "SAM", pred.year.lines, pred.time.range,
            show_x = FALSE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines,
-           lag_x = TRUE, lag.val = 9)
+           lag_x = TRUE, lag.val = c(9, 21))
   
   par(mar = c(1, 5, 0, 0))
   panel_ts(pred.time, olr.anom.temp, env_olr, range(c(-y.tick.max, y.tick.max)),
            ylab = "Anomaly [W/m^2]", legend_text=  "OLR", pred.year.lines, pred.time.range,
            show_x = TRUE, xticks = pred.xt$ticks, xlabs = pred.xt$labs, month_lines = pred.month.lines)
   
+  
+
   dev.off()
   
 }
@@ -703,6 +711,40 @@ for (i in c(1:18,20)) {
 
 }
 dev.off()
+
+
+pos.ind <- c(2,3,5,6,15)
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/Time_Series")
+png(filename = paste0("SI_pos_respTS.png"), width = 3500, height = 1250, res = 300)
+par(oma = c(0.5, 0.5, 0.5, 0.5)) 
+par(mfrow = c(1, 5))
+for (i in pos.ind) {
+  
+  resp.temp <- SEresp.peak[i, ]
+  
+  par(mar = c(5, 5, 4, 0))
+  plot(1:4, resp.temp, type = "l", col = "black", lwd = 2,
+       xaxt = "n", xlab = "",
+       yaxt = "n", ylab = "", col.lab = "black",ylim = ylim.resp,  bty = "n",
+       cex.lab = 2, xpd = NA)
+  title(paste0("Peak ", seasons[i], " Season" ), adj = 0, cex.main = 1.25)
+  
+  draw_envelope_zero(1:4, resp.temp, top.col.resp, bot.col.resp)
+  
+  axis(side = 2, at = y.resp.lab.alt, cex.axis = 1.25,
+       col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
+  axis(side = 1, at = 1:4, labels = c(51, 52, 1, 2), cex.axis = 1.15)
+  abline(h =0, lty = 2, lwd = 1, col = "grey50")
+  abline(v = 2.5,  lty = 2, col = "grey40", lwd = 2)
+  mtext("Week", side=1, line=3, cex = 1.25)
+  if (i == pos.ind[1]) {
+    mtext("CO Anomaly",  side=2, line=3, cex = 1.25)
+  }
+  
+}
+dev.off()
+
 
 #TODO: formalize everything below or DELETE
 #response only TS

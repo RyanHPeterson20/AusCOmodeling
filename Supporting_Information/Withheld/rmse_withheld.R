@@ -335,9 +335,67 @@ dev.off()
 
 
 
+#TODO: use the above code but for a reduced seasonal frame (e.g. some positive seasons)
+#select for some seasons 
+pos.ind <- c(2,3,5,6,15)
+
+z.peak <- t(rmse.diff.peak[rev(pos.ind), ])
+
+z.diff <- z.peak
+y <- seq_len(ncol(z.diff))
+x <- seq_len(nrow(z.diff))
+
+x_n = 20
+y_n = 5 #reduce down to 5 ()
+xi <- unique(round(seq(1, nrow(z.diff), length.out = x_n)))
+yi <- unique(round(seq(1, ncol(z.diff), length.out = y_n)))
+
+x_at <- x[xi]
+y_at <- y[yi]
+
+x_lab <- rownames(z.diff)[xi]
+y_lab <- colnames(z.diff)[yi]
+
+diff.max <- max(abs(z.diff))
+
+
+#"test" plot
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+png(filename = "rmsediff_peak_single.png", width = 3500, height = 2000, res = 300)
+par(oma = c(4, 4, 0.5, 0.5)) 
+image.plot(x, y, z.diff, zlim =  c(-diff.max, diff.max), 
+           col = cmocean("balance")(49), xaxt = "n", yaxt = "n",
+           xlab = "", ylab = "",
+           legend.args = list(
+             text = expression(Delta * "RMSE"),
+             side = 3,
+             line = 0,
+             cex = 1.1
+           ))
+axis(1, at = x_at, labels = x_lab, las = 2, cex.axis = 1.25)
+axis(2, at = y_at, labels = y_lab, las = 1, cex.axis = 1.25)
+title(expression(" Peak-Season: "~Delta*"RMSE (Withheld-Season-All-data)"), adj = 0, cex.main = 1.5)
+mtext("Withheld-Season", side=1, line=7.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.5, cex = 1.25)
+dev.off()
+
+
+
+
+#update when prepped/done
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+png(filename = "rmsediff_peak_single.png", width = 3500, height = 3000, res = 300)
+par(oma = c(4, 4, 2, 3))  
+heatmap_fields_cols(z = z.peak, cols = cmocean("balance")(49),
+                    main = expression(" Peak Fire-Season: "~Delta*"RMSE (Withheld-Season-All-data)") )
+mtext("Withheld-Season", side=1, line=6.0, cex = 1.25)
+mtext("Prediction Season",  side=2, line=6.0, cex = 1.25)
+dev.off()
+
+
+
+
 #TODO: double withhold, update for 2019/2020, 2006/2007, and 2015/2016
-
-
 SE.rmse.early <- matrix(NA, ncol = 20)
 SE.rmse.peak <- matrix(NA, ncol = 20)
 SE.rmse.late <- matrix(NA, ncol = 20)
