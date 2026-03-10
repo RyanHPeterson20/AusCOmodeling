@@ -14,9 +14,12 @@ c. SEresp_ts_new2.png from  ~/Figures/ts_figures.R line 402
 Fig 2.
 a. SEpreds2019_fig2a_New.png from  ~/Figures/model_figures.R line 167
 	Note: Predictions for 2019/2020
-b. SI_SEcoefs_early_2019.png from  ~/Figures/new_coef_int_figures.R line 190
-c. SI_SEcoefs_peak_2019.png from  ~/Figures/new_coef_int_figures.R line 210
-d. SI_SEcoefs_late_2019.png from  ~/Figures/new_coef_int_figures.R line 230
+b. SI_SEcoefs_early_2019.png from  ~/Figures/new_coef_int_figures.R line 190 (update the line)
+	Note: New function WIP; update location when done.
+c. SI_SEcoefs_peak_2019.png from  ~/Figures/new_coef_int_figures.R line 210 (update the line)
+	Note: New function WIP; update location when done.
+d. SI_SEcoefs_late_2019.png from  ~/Figures/new_coef_int_figures.R line 230 (update the line)
+	Note: New function WIP; update location when done.
 
 
 
