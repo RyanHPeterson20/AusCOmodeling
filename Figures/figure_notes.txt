@@ -3,17 +3,22 @@ figure_notes:
 Updated 3/9/2026
 
 Fig 1.
-a. MeanCO_climatemodes_new2.png from co_map_figures.R line 142
-b. relDiffCO_Aus_new2.png from co_map_figures.R line 207
-c. SEresp_ts_new2.png from ts_figures.R line 402 
+a. MeanCO_climatemodes_new2.png from ~/Figures/co_map_figures.R line 142
+	Note: Mean CO 2001-2019 Peak-Season
+b. relDiffCO_Aus_new2.png from  ~/Figures/co_map_figures.R line 207
+	Note: Relative difference between 2019/2020 and Mean CO 2001-2019 for Peak-Season
+c. SEresp_ts_new2.png from  ~/Figures/ts_figures.R line 402 
+	Note: CO anomalies between 2001-2020 (time series)
 
 
 Fig 2.
+a. SEpreds2019_fig2a_New.png from  ~/Figures/model_figures.R line 167
+	Note: Predictions for 2019/2020
+b. SI_SEcoefs_early_2019.png from  ~/Figures/new_coef_int_figures.R line 190
+c. SI_SEcoefs_peak_2019.png from  ~/Figures/new_coef_int_figures.R line 210
+d. SI_SEcoefs_late_2019.png from  ~/Figures/new_coef_int_figures.R line 230
 
 
 
-
-Figure 1. Map and time series of data:
--Time-series sub-figure: of response and predictor data. 
--- Modify existing plots from: `CO_base_viz.rmd` (time series sections)
--- Response time-series, for NE Aus (top) and SE Aus (bottom) 
+Fig 3.
+a. (Update)...
