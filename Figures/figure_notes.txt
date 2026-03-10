@@ -5,7 +5,7 @@ Updated 3/9/2026
 Fig 1.
 a. MeanCO_climatemodes_new2.png from co_map_figures.R line 142
 b. relDiffCO_Aus_new2.png from co_map_figures.R line 207
-c.
+c. SEresp_ts_new2.png from ts_figures.R line 402 
 
 
 Fig 2.

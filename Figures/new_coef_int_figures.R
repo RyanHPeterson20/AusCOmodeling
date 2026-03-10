@@ -160,6 +160,95 @@ for (i in 1:20) {
 
 
 
+#full 2019/2020 output
+
+
+
+i <- 19
+coefs1 <- list(
+  base  = SE1.coef,
+  #const = coef(const.early[[i]]), 
+  vary  = coef(vary.early[[i]])  
+)
+
+coefs2 <- list(
+  base  = SE2.coef,
+  #const = coef(vary.peak.wo2019[[i]]), 
+  vary  = coef(vary.peak[[i]])  
+)
+
+coefs3 <- list(
+  base  = SE3.coef,
+  #const = coef(vary.late.wo2019[[i]]), 
+  vary  = coef(vary.late[[i]])  
+)
+
+
+#early models
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+
+png(filename = paste0("SI_SEcoefs_early_", season.years[i], ".png"),  width = 2200, height = 5100, res = 300)
+plot_lagged_coef_panels(
+  coefs_named_list = coefs1,
+  cex_num = 1.65,
+  cex_label = 2.0,
+  cex_subtitle = 1.5,
+  vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+  coef_range = c(-5, 5),
+  main_title = paste0("(b) Early-Season (2019/2020 Withheld)"),   
+  quad_y_jitter = 0.004,
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  add_legends = FALSE,
+  legend_inset_terms = c(0.000, 0.00),
+  legend_inset_model = c(0.00, 0.16),
+  legend_cex_terms = 1.80,
+  legend_cex_model = 1.50,
+  legend_models = c("All-Data", "Withheld-Season"),
+  legend_model_keys = c("base", "vary"))
+dev.off()
+
+png(filename = paste0("SI_SEcoefs_peak_", season.years[i], ".png"),  width = 2200, height = 5100, res = 300)
+plot_lagged_coef_panels(
+  coefs_named_list = coefs2,
+  cex_num = 1.65,
+  cex_label = 2.0,
+  cex_subtitle = 1.5,
+  vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+  coef_range = c(-5, 5),
+  main_title = paste0("(c) Peak-Season (2019/2020 Withheld)"),   
+  quad_y_jitter = 0.004,
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  add_legends = FALSE,
+  legend_inset_terms = c(0.000, 0.00),
+  legend_inset_model = c(0.00, 0.16),
+  legend_cex_terms = 1.30,
+  legend_cex_model = 1.30,
+  legend_models = c("All-Data", "Withheld-Season"),
+  legend_model_keys = c("base", "vary"))
+dev.off()
+
+png(filename = paste0("SI_SEcoefs_late_", season.years[i], ".png"),  width = 2200, height = 5100, res = 300)
+plot_lagged_coef_panels(
+  coefs_named_list = coefs3,
+  cex_num = 1.65,
+  cex_label = 2.0,
+  cex_subtitle = 1.5,
+  vars_order = c("nino","wtio", "etio", "tsa","aao", "olr"),  # include OLR panel
+  coef_range = c(-5, 5),
+  main_title = paste0("(d) Late-Season (2019/2020 Withheld)"),   
+  quad_y_jitter = 0.004,
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  add_legends = TRUE,
+  legend_inset_terms = c(0.000, 0.05),
+  legend_inset_model = c(0.00, 0.00),
+  legend_cex_terms = 1.35,
+  legend_cex_model = 1.25,
+  legend_models = c("All-Data", "Withheld-Season"),
+  legend_model_keys = c("base", "vary"))
+dev.off()
+
+
+
 
 
 #varying models w.o 2019/2020

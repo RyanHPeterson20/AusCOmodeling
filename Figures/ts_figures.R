@@ -399,9 +399,9 @@ dev.off()
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
 #png(filename = "SEresp_ts.png", width = 5200, height = 1000, res = 250)
-png(filename = "SEresp_ts_new.png", width = 6800, height = 1250, res = 300)
+png(filename = "SEresp_ts_new2.png", width = 4145, height = 990, res = 300)
 
-par(mar = c(1, 7, 1, 0))
+par(mar = c(1.2, 1.2, 2, 4.8))
 #par(oma = c(2, 1, 1, 0))
 #par(mgp = c(4,1,0))
 
@@ -411,12 +411,15 @@ plot(time.resp.plot, SE.anom, type = "l", col = "black", lwd = 2,
      yaxt = "n", ylab = "", col.lab = "black",
      xlim = c(as.Date(resp.time.range[1]) + months(7), as.Date(resp.time.range[2]) - months(7)),
      ylim = range(y.SE.ticks), bty = "n", cex.lab = 2.25,  xpd = NA)
-axis(side = 2, at = y.SE.ticks, cex.axis = 2.3, 
+axis(side = 4, at = y.SE.ticks, cex.axis = 1.30, 
      col = NA, line = 0,
      col.ticks = "black", col.axis = "black", las =1)
-mtext("CO Anomaly [ppb]", side = 2, line = 4.5,  cex = 2.1) #adjust to (ppb)
+mtext("CO Anomaly [ppb]", side = 4, line = 2.55, cex = 1.0) #adjust to (ppb)
+
+title("(c) Southeast Australia CO Anomalies 2001 to 2020", adj = 0.06, cex.main = 1.30)
+
 abline(v = x.ticks.resp[1:(length(x.ticks.resp))],
-       lty = 2, col = "grey30", lwd = 2)
+       lty = 2, col = "grey30", lwd = 1.72)
 abline(h = 0, lty = 1, col = "grey", lwd = 1)
 envelopePlot(x1 = time.resp.plot,
              y1 = seaus.top,
@@ -437,9 +440,9 @@ envelopePlot(x1 = time.resp.plot,
 #       box.col = NA, bg = NA,
 #       xpd = NA, text.col = "grey30", cex = 2)
 text(x = x.pred.reduced + months(6),
-     y = range(y.SE.ticks)[1]-0.5,
+     y = range(y.SE.ticks)[1]-3.75,
      labels = year(x.pred.reduced),
-     cex = 2.3, col = "black", xpd = NA)
+     cex = 1.30, col = "black", xpd = NA)
 
 dev.off()
 

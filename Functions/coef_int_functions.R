@@ -179,13 +179,13 @@ plot_lagged_coef_panels <- function(coefs_named_list,
   n_left <- length(vars_order)
   mat <- cbind(seq_len(n_left), rep(n_left + 1, n_left))
   layout(mat, widths=c(1.75, 1.25), heights=rep(1, n_left))
-  par(oma=c(1.25, 1.25, 1.25, 0.25))
+  par(oma=c(1.05, 1.05, 0.5, 0.25))
   
   plot_one_var <- function(var, panel_i) {
     sub <- df_main[tolower(df_main$var)==tolower(var), , drop=FALSE]
     
     par(mar=c(if (panel_i==n_left) 4.5 else 3, 4.75,
-              if (panel_i==1) 2.5 else 1, 1))
+              if (panel_i==1) 2.25 else 1, 1))
     
     plot(NA, NA, xlim=xlim_lag, ylim=coef_range,
          xlab=if (panel_i==n_left) "Lag" else "",
@@ -193,11 +193,11 @@ plot_lagged_coef_panels <- function(coefs_named_list,
          cex.axis=cex_num, cex.lab=cex_label)
     
     abline(h=0, lty=2, lwd=1.5)
-    text(x=3, y=coef_range[2]-0.75, labels=pretty_var_label(var),
+    text(x=3, y=coef_range[2]-0.75, labels=pretty_var_label(var), adj = 0,
          col="gray12", cex=cex_subtitle)
     
     if (panel_i==1 && !is.null(main_title)) {
-      title(main_title, adj=0, cex.main=2.0, line=1)
+      title(main_title, adj=0.11, cex.main=1.75, line = -0.8, outer = TRUE)
     }
     
     if (nrow(sub)==0) return(invisible(NULL))
@@ -235,7 +235,7 @@ plot_lagged_coef_panels <- function(coefs_named_list,
   for (i in seq_along(vars_order)) plot_one_var(vars_order[i], i)
   
   # ---- right panel: interactions + quadratic terms ----
-  par(mar=c(4.5, 1, 2.5, 1))
+  par(mar=c(4.5, 1, 2.25, 1))
   plot(0,0,type="n", ylim=c(0,1), xlim=coef_range,
        yaxt="n", ylab="", xlab="Coefficients",
        cex.axis=cex_num, cex.lab=cex_label)
