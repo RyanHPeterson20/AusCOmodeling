@@ -139,8 +139,8 @@ breaks <- seq(zmin, zmax, length.out = ncol + 1)  # evenly spaced
 
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-png(filename = "MeanCO_climatemodes_new.png",  width = 4145, height = 1200, res = 300)
-par(mar = c(3.5, 3.5, 1.75, 0.5))
+png(filename = "MeanCO_climatemodes_new2.png",  width = 4145, height = 1220, res = 300)
+par(mar = c(3.5, 3.5, 2.0, 0.5))
 image.plot(
   lon.new, lat.sub, z_clip,
   #col = cmocean("matter")(55),
@@ -162,6 +162,8 @@ box()
 
 mtext("Longitude", side=1, line=2.25, cex = 1.25) #x-axis
 mtext("Latitude",  side=2, line=2.25, cex = 1.25) #y-axis
+
+title("(a) Mean Peak-Season CO 2001 to 2019", adj = 0, cex.main = 1.25)
 
 lines(x.newest, y.new, col = "gray76", lwd = 0.8)
 
@@ -202,8 +204,8 @@ breaks <- seq(zlim[1], zlim[2], length.out = ncol + 1)
 #difference for 2019/2020
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-png(filename = "relDiffCO_Aus_new.png", width = 4145, height = 1200, res = 300)
-par(mar = c(3.5, 3.5, 1.75, 0.5))
+png(filename = "relDiffCO_Aus_new2.png", width = 4145, height = 1220, res = 300)
+par(mar = c(3.5, 3.5, 2.0, 0.5))
 image.plot(
   lon.new, lat.sub, z_clip.rel.diff,
   #col = cmocean("balance")(101),
@@ -225,6 +227,8 @@ box()
 
 mtext("Longitude", side=1, line=2.25, cex = 1.25) #x-axis
 mtext("Latitude",  side=2, line=2.25, cex = 1.25) #y-axis
+
+title("(b) Peak-Season 2019/2020 Relative Difference from Mean CO", adj = 0, cex.main = 1.25)
 
 lines(x.newest, y.new, col = "gray7", lwd = 0.8)
 

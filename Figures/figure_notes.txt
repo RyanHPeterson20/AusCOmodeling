@@ -1,5 +1,17 @@
 figure_notes:
 
+Updated 3/9/2026
+
+Fig 1.
+a. MeanCO_climatemodes_new2.png from co_map_figures.R line 142
+b. relDiffCO_Aus_new2.png from co_map_figures.R line 207
+c.
+
+
+Fig 2.
+
+
+
 
 Figure 1. Map and time series of data:
 -Time-series sub-figure: of response and predictor data. 
