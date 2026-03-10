@@ -127,25 +127,20 @@ pretty_var_label <- function(var) {
 }
 
 
-
 # ---- FIXED: uses ONLY base graphics in interaction panel for perfect alignment ----
 plot_lagged_coef_panels <- function(coefs_named_list,
                                     vars_order = c("nino","wtio","etio","tsa","aao","olr"),
                                     pch_map = c(nino=21, wtio=24, etio=25, tsa=22, aao=23, olr=10),
                                     xlim_lag = c(1,52),
                                     coef_range = c(-5,5),
-                                    coef_range_int = coef_range,
                                     main_title = NULL,
                                     cex_num = 1.2,
                                     cex_label = 1.4,
                                     cex_subtitle = 1.4,
                                     line_width = 2,
                                     quad_y_jitter = 0.10,
-                                    int_y_jitter = 0,
-                                    int_x_jitter = 0,
                                     x_offsets = c(base = 0, const = 0, vary=0),
                                     model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
-                                    model_lty  = c(base=2, const=2, vary=2),
                                     add_legends = FALSE,
                                     legend_inset_terms = c(0.000, 0.10),
                                     legend_inset_model = c(0.00, 0.00),
@@ -197,7 +192,7 @@ plot_lagged_coef_panels <- function(coefs_named_list,
          ylab= "",
          cex.axis=cex_num, cex.lab=cex_label)
     
-    abline(h=0, lty=1, lwd=0.9, col = "gray12")
+    abline(h=0, lty=2, lwd=1.5)
     text(x=3, y=coef_range[2]-0.75, labels=pretty_var_label(var), adj = 0,
          col="gray12", cex=cex_subtitle)
     
@@ -241,154 +236,89 @@ plot_lagged_coef_panels <- function(coefs_named_list,
   
   # ---- right panel: interactions + quadratic terms ----
   par(mar=c(4.5, 1, 2.25, 1))
-  plot(0,0,type="n", ylim=c(0,1), xlim=coef_range_int,
+  plot(0,0,type="n", ylim=c(0,1), xlim=coef_range,
        yaxt="n", ylab="", xlab="Coefficients",
        cex.axis=cex_num, cex.lab=cex_label)
-  abline(v=0, lty=1, lwd=0.9, col = "gray12")
+  abline(v=0, lty=2, lwd=1.5)
   
   # allow drawing beyond plot region like your example
   par(xpd = NA)
   
   # --- draw interactions (V connectors + PERFECTLY ALIGNED horizontals) ---
   if (nrow(df_int) > 0) {
-    
-    # int_y_jitter: pre-compute per-(model, anchor_term, iterm) y-offsets.
-    # For each model, for each anchor point (left or right term), collect all
-    # interaction terms that touch that anchor and assign an evenly-spaced
-    # sequence centred at 0.  This resets independently per panel and per model,
-    # so lines from different panels never share a global offset, and models
-    # never interfere with each other.
-    int_y_off <- new.env(parent = emptyenv())
-    for (mdl in names(coefs_named_list)) {
-      mdl_ints <- df_int[df_int$model == mdl, , drop = FALSE]
-      if (nrow(mdl_ints) == 0) next
-      for (anch in unique(c(mdl_ints$left_term, mdl_ints$right_term))) {
-        touching <- unique(mdl_ints$term[mdl_ints$left_term  == anch |
-                                           mdl_ints$right_term == anch])
-        n    <- length(touching)
-        offs <- if (n > 1)
-          seq(-(n - 1)/2, (n - 1)/2, length.out = n) * int_y_jitter
-        else 0
-        for (j in seq_along(touching))
-          int_y_off[[paste(mdl, anch, touching[j], sep = "|")]] <- offs[j]
-      }
-    }
-    
-    # int_x_jitter: keyed by iterm only (spreads vertical lines in x-space)
-    unique_int_terms <- unique(df_int$term)
-    n_int <- length(unique_int_terms)
-    x_jitter_seq <- setNames(
-      if (n_int > 1)
-        seq(-(n_int - 1)/2, (n_int - 1)/2, length.out = n_int) * int_x_jitter
-      else 0,
-      unique_int_terms
-    )
-    
     for (r in seq_len(nrow(df_int))) {
       iterm <- df_int$term[r]
       lterm <- df_int$left_term[r]
       rterm <- df_int$right_term[r]
-      xjoff <- x_jitter_seq[[iterm]]
       
       for (model in names(coefs_named_list)) {
-        subm <- df_int[df_int$model == model & df_int$term == iterm, , drop = FALSE]
-        if (nrow(subm) == 0) next
+        subm <- df_int[df_int$model==model & df_int$term==iterm, , drop=FALSE]
+        if (nrow(subm)==0) next
         
-        k1 <- paste(model, lterm, sep = "|")
-        k2 <- paste(model, rterm, sep = "|")
+        k1 <- paste(model, lterm, sep="|")
+        k2 <- paste(model, rterm, sep="|")
         if (is.null(anchors[[k1]]) || is.null(anchors[[k2]])) next
         
         a1 <- anchors[[k1]]
         a2 <- anchors[[k2]]
         
-        # y-jitter looked up per anchor independently: y1 and y2 each draw
-        # from their own panel's sequence, so they can differ from each other
-        y1_joff <- { ky <- paste(model, lterm, iterm, sep = "|")
-        if (!is.null(int_y_off[[ky]])) int_y_off[[ky]] else 0 }
-        y2_joff <- { ky <- paste(model, rterm, iterm, sep = "|")
-        if (!is.null(int_y_off[[ky]])) int_y_off[[ky]] else 0 }
+        # convert anchors (ndc) into THIS panel's user coords
+        x1 <- grconvertX(a1$from_x, from="ndc", to="user")
+        y1 <- grconvertY(a1$from_y, from="ndc", to="user")
+        x2 <- grconvertX(a2$from_x, from="ndc", to="user")
+        y2 <- grconvertY(a2$from_y, from="ndc", to="user")
         
-        x1 <- grconvertX(a1$from_x, from = "ndc", to = "user")
-        y1 <- grconvertY(a1$from_y, from = "ndc", to = "user") + y1_joff
-        x2 <- grconvertX(a2$from_x, from = "ndc", to = "user")
-        y2 <- grconvertY(a2$from_y, from = "ndc", to = "user") + y2_joff
-        
-        # xint_j: coefficient value shifted by x-jitter; horizontals terminate
-        # here so they remain connected to the vertical line
-        xint   <- subm$value[1]
-        xint_j <- xint + xjoff
+        xint <- subm$value[1]
         
         col_link <- if (model %in% names(model_cols)) model_cols[[model]] else "grey40"
-        lty_link <- if (model %in% names(model_lty))  model_lty[[model]]  else 2
         
-        # horizontals from each anchor, terminating at the (x-jittered) vertical
-        segments(x1, y1, xint_j, y1, col = col_link, lty = lty_link, lwd = line_width)
-        segments(x2, y2, xint_j, y2, col = col_link, lty = lty_link, lwd = line_width)
+        # horizontals that align with the V connectors
+        segments(x1, y1, xint, y1, col=col_link, lty=2, lwd=line_width)
+        segments(x2, y2, xint, y2, col=col_link, lty=2, lwd=line_width)
         
-        # V connector at xint_j; ymid sits between the two (independently jittered) arms
+        # V connector
         ymid <- (y1 + y2) / 2
-        segments(xint_j, y1, xint_j, ymid, col = col_link, lty = lty_link, lwd = line_width)
-        segments(xint_j, y2, xint_j, ymid, col = col_link, lty = lty_link, lwd = line_width)
+        segments(xint, y1, xint, ymid, col=col_link, lty=2, lwd=line_width)
+        segments(xint, y2, xint, ymid, col=col_link, lty=2, lwd=line_width)
         
-        points(xint_j, ymid, pch = 11,
-               col = alpha_col(col_link, 0.99),
-               bg  = alpha_col(col_link, 0.95),
-               cex = 2)
+        # interaction point
+        points(xint, ymid, pch=11,
+               col=alpha_col(col_link, 0.99),
+               bg =alpha_col(col_link, 0.95),
+               cex=2)
       }
     }
   }
   
   # --- draw quadratic terms (single-anchor horizontal + point) ---
   if (nrow(df_quad) > 0) {
-    
-    # quad_y_jitter: pre-compute per-(model, base_term, qterm) y-offsets.
-    # First term for each (model, anchor) gets offset 0; subsequent terms
-    # alternate +j, -j, +2j, -2j, ...  Resets independently per model.
-    quad_y_off <- new.env(parent = emptyenv())
-    for (mdl in names(coefs_named_list)) {
-      mdl_quads <- df_quad[df_quad$model == mdl, , drop = FALSE]
-      if (nrow(mdl_quads) == 0) next
-      for (bt in unique(mdl_quads$base_term)) {
-        qt_grp <- mdl_quads[mdl_quads$base_term == bt, , drop = FALSE]
-        n      <- nrow(qt_grp)
-        # multiplier sequence: 0, +1, -1, +2, -2, ...
-        mults  <- numeric(n)
-        if (n > 1) for (j in 2:n)
-          mults[j] <- if (j %% 2 == 0) j / 2 else -((j - 1) / 2)
-        offs <- mults * quad_y_jitter
-        for (j in seq_len(n))
-          quad_y_off[[paste(mdl, bt, qt_grp$term[j], sep = "|")]] <- offs[j]
-      }
-    }
+    jitter_sign <- rep(c(1, -1), length.out = nrow(df_quad))
     
     for (r in seq_len(nrow(df_quad))) {
       qterm <- df_quad$term[r]
       bterm <- df_quad$base_term[r]
       
       for (model in names(coefs_named_list)) {
-        subm <- df_quad[df_quad$model == model & df_quad$term == qterm, , drop = FALSE]
-        if (nrow(subm) == 0) next
+        subm <- df_quad[df_quad$model==model & df_quad$term==qterm, , drop=FALSE]
+        if (nrow(subm)==0) next
         
-        k <- paste(model, bterm, sep = "|")
+        k <- paste(model, bterm, sep="|")
         if (is.null(anchors[[k]])) next
         
         a <- anchors[[k]]
         
-        x_base <- grconvertX(a$from_x, from = "ndc", to = "user")
-        y_base <- grconvertY(a$from_y, from = "ndc", to = "user")
+        x_base <- grconvertX(a$from_x, from="ndc", to="user")
+        y_base <- grconvertY(a$from_y, from="ndc", to="user")
         
-        yoff_key <- paste(model, bterm, qterm, sep = "|")
-        yoff <- if (!is.null(quad_y_off[[yoff_key]])) quad_y_off[[yoff_key]] else 0
-        yq   <- y_base + yoff
-        xq   <- subm$value[1]
+        yq <- y_base + jitter_sign[r] * quad_y_jitter
+        xq <- subm$value[1]
         
         col_link <- if (model %in% names(model_cols)) model_cols[[model]] else "grey40"
         bg_col   <- if (model %in% names(model_bgs))  model_bgs[[model]]  else alpha_col(col_link, 0.5)
         out_col  <- if (model %in% names(model_outline)) model_outline[[model]] else "black"
-        lty_link <- if (model %in% names(model_lty))  model_lty[[model]]  else 2
         
-        segments(x_base, yq, xq, yq, col = col_link, lty = lty_link, lwd = line_width)
-        points(xq, yq, pch = 25, col = out_col, bg = bg_col, cex = 2)
+        segments(x_base, yq, xq, yq, col=col_link, lty=2, lwd=line_width)
+        points(xq, yq, pch=25, col=out_col, bg=bg_col, cex=2)
       }
     }
   }
@@ -429,6 +359,4 @@ plot_lagged_coef_panels <- function(coefs_named_list,
   
   invisible(NULL)
 }
-
-
 

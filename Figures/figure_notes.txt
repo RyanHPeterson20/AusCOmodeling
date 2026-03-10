@@ -1,6 +1,6 @@
 figure_notes:
 
-Updated 3/9/2026
+Updated 3/10/2026
 
 Fig 1.
 a. MeanCO_climatemodes_new2.png from ~/Figures/co_map_figures.R line 142
