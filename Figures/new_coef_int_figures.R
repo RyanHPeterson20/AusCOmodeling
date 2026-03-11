@@ -16,8 +16,9 @@ load("Data/validation_refits_wo2019.rda") #RMSE/Preds/Models w/o 2019/2020 data
 
 #load functions
 #source("Functions/coef_int_functions.R")
-source("Functions/coef_int_functions_test.R") #testing new function(s)
-source("Functions/coef_int_plot.R") #testing new function(s)
+#source("Functions/coef_int_plot.R") #new function(s)
+source("Figures/coef_int_plot.R") #most up to date version is in the Figures folder. 
+
 
 #season years/weeks
 season.weeks <- c(38:52, 1:14)
@@ -101,12 +102,11 @@ NE3.coef <- coef(NE3.lm)
 #test output with SE aus 2019/2020
 i <- 19
 
-
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/SEAus")
 
 coefs1 <- list(
   base  = SE1.coef,
-  #const = coef(const.early[[i]]), 
+  #const = coef(SE.const.early[[i]]), 
   vary  = coef(SE.vary.early[[i]])  
 )
 
@@ -121,10 +121,11 @@ plot_lagged_coef_panels(
   lwd_ref = 0.5, 
   vars_order = c("nino","etio", "wtio", "tsa","aao", "olr"),  # include OLR panel
   coef_range = c(-5, 5),
-  main_title = paste0("(b) Early-Season (2019/2020 Withheld)"),   
+  main_title = paste0("(a) Early-Season (2019/2020 Withheld)"),   
   quad_y_jitter = 0.004,
   int_y_jitter = 0.003,
   int_x_jitter = 0.003,
+  auto_jitter = TRUE,
   model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
   model_lty  = c(base=2, const=2, vary=5),
   add_legends = TRUE,
@@ -142,7 +143,7 @@ setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/SEAus")
 
 coefs2 <- list(
   base  = SE2.coef,
-  #const = coef(const.early[[i]]), 
+  #const = coef(SE.const.peak[[i]]), 
   vary  = coef(SE.vary.peak[[i]])  
 )
 
@@ -162,6 +163,7 @@ plot_lagged_coef_panels(
   quad_y_jitter = 0.004,
   int_y_jitter = 0.003,
   int_x_jitter = 0.000,
+  auto_jitter = TRUE,
   model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
   model_lty  = c(base=2, const=2, vary=5),
   add_legends = TRUE,
@@ -180,13 +182,90 @@ setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/SEAus")
 
 coefs3 <- list(
   base  = SE3.coef,
-  #const = coef(const.early[[i]]), 
+  #const = coef(SE.const.late[[i]]), 
   vary  = coef(SE.vary.late[[i]])  
 )
 
-png(filename = paste0("SI_SEcoefs_late_", season.years[i], "_new.png"),  width = 2200, height = 3950, res = 300)
+png(filename = paste0("SI_SEcoefs_late_", season.years[i], "_new.png"),  width = 2250, height = 3850, res = 300)
 plot_lagged_coef_panels(
   coefs_named_list = coefs3,
+  coef_range_int = c(-3, 3),
+  cex_lab = 1.5,
+  cex_var_label = 1.25,
+  var_label_pos = 1.5, 
+  lty_ref = 1, 
+  lwd_ref = 0.5, 
+  vars_order = c("nino","etio", "wtio", "tsa","aao", "olr"),  # include OLR panel
+  coef_range = c(-5, 5),
+  main_title = paste0("(c) Late-Season (2019/2020 Withheld)"),   
+  quad_y_jitter = 0.004,
+  int_y_jitter = 0.003,
+  int_x_jitter = 0.004,
+  auto_jitter = TRUE,
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  model_lty  = c(base=2, const=6, vary=5),
+  add_legends = TRUE,
+  legend_inset_terms = c(0.000, 0.05),
+  legend_inset_model = c(0.00, 0.00),
+  legend_cex_terms = 1.35,
+  legend_cex_model = 1.25,
+  legend_models = c("All-Data", "Withheld-Season"),
+  legend_model_keys = c("base", "vary"))
+dev.off()
+
+
+# NE Aus plots
+i <- 19
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/NEAus")
+
+coefs1 <- list(
+  base  = NE1.coef,
+  const = coef(NE.const.early[[i]]), 
+  vary  = coef(NE.vary.early[[i]])  
+)
+
+png(filename = paste0("SI_NEcoefs_early_", season.years[i], "_new.png"),  width = 2200, height = 3950, res = 300)
+plot_lagged_coef_panels(
+  coefs_named_list = coefs1,
+  coef_range_int = c(-3, 3),
+  cex_lab = 1.5,
+  cex_var_label = 1.25,
+  var_label_pos = 1.5, 
+  lty_ref = 1, 
+  lwd_ref = 0.5, 
+  vars_order = c("nino","etio", "wtio", "tsa","aao", "olr"),  # include OLR panel
+  coef_range = c(-5, 5),
+  main_title = paste0("(a) Early-Season (2019/2020 Withheld)"),   
+  quad_y_jitter = 0.004,
+  int_y_jitter = 0.003,
+  int_x_jitter = 0.003,
+  auto_jitter = TRUE,
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  model_lty  = c(base=2, const=6, vary=5),
+  add_legends = TRUE,
+  legend_inset_terms = c(0.000, 0.05),
+  legend_inset_model = c(0.00, 0.00),
+  legend_cex_terms = 1.35,
+  legend_cex_model = 1.25,
+  legend_models = c("All-Data", "Withheld-Season"),
+  legend_model_keys = c("base", "vary"))
+dev.off()
+
+
+#NE peak
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/NEAus")
+
+coefs2 <- list(
+  base  = NE2.coef,
+  const = coef(NE.const.peak[[i]]), 
+  vary  = coef(NE.vary.peak[[i]])  
+)
+
+
+png(filename = paste0("SI_NEcoefs_peak_", season.years[i], "_new.png"),  width = 2200, height = 3950, res = 300)
+plot_lagged_coef_panels(
+  coefs_named_list = coefs2,
   coef_range_int = c(-3, 3),
   cex_lab = 1.5,
   cex_var_label = 1.25,
@@ -198,9 +277,10 @@ plot_lagged_coef_panels(
   main_title = paste0("(b) Peak-Season (2019/2020 Withheld)"),   
   quad_y_jitter = 0.004,
   int_y_jitter = 0.003,
-  int_x_jitter = 0.004,
+  int_x_jitter = 0.000,
+  auto_jitter = TRUE,
   model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
-  model_lty  = c(base=2, const=2, vary=5),
+  model_lty  = c(base=2, const=6, vary=5),
   add_legends = TRUE,
   legend_inset_terms = c(0.000, 0.05),
   legend_inset_model = c(0.00, 0.00),
@@ -212,10 +292,45 @@ dev.off()
 
 
 
+#NE late
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/NEAus")
+
+coefs3 <- list(
+  base  = NE3.coef,
+  #const = coef(NE.const.late[[i]]), 
+  vary  = coef(NE.vary.late[[i]])  
+)
+
+png(filename = paste0("SI_NEcoefs_late_", season.years[i], "_new.png"),  width = 2250, height = 3950, res = 300)
+plot_lagged_coef_panels(
+  coefs_named_list = coefs3,
+  coef_range_int = c(-3, 3),
+  cex_lab = 1.5,
+  cex_var_label = 1.25,
+  var_label_pos = 1.5, 
+  lty_ref = 1, 
+  lwd_ref = 0.5, 
+  vars_order = c("nino","etio", "wtio", "tsa","aao", "olr"),  # include OLR panel
+  coef_range = c(-5, 5),
+  main_title = paste0("(c) Late-Season (2019/2020 Withheld)"),   
+  quad_y_jitter = 0.004,
+  int_y_jitter = 0.003,
+  int_x_jitter = 0.004,
+  auto_jitter = TRUE,
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  model_lty  = c(base=2, const=6, vary=5),
+  add_legends = TRUE,
+  legend_inset_terms = c(0.000, 0.05),
+  legend_inset_model = c(0.00, 0.00),
+  legend_cex_terms = 1.35,
+  legend_cex_model = 1.25,
+  legend_models = c("All-Data", "Withheld-Season"),
+  legend_model_keys = c("base", "vary"))
+dev.off()
 
 
 
-
+#TODO: update (or delete) everything below; potentially 
 
 #early models
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/Coef_Int")

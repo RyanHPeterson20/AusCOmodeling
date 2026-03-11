@@ -11,7 +11,8 @@ load("Data/modeldata.rda") #resp/pred data
 load("Data/dmi_models.rda") #pred models with dmi
 
 #load functions
-source("Functions/coef_int_functions.R")
+#source("Functions/coef_int_functions.R")
+source("Figures/coef_int_plot.R") #testing new function(s)
 
 #season years/weeks
 season.weeks <- c(38:52, 1:14)
@@ -52,24 +53,31 @@ coefs1 <- list(
   vary  = coef(vary.early[[1]])  
 )
 
-setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/Coef_Int")
-png(filename = paste0("SI_dmi_early_2019.png"),  width = 2750, height = 4750, res = 300)
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/SEAus_DMI")
+png(filename = paste0("SI_dmi_early_2019.png"),  width = 2200, height = 3950, res = 300)
 plot_lagged_coef_panels(
   coefs_named_list = coefs1,
-  cex_num = 1.5,
-  cex_label = 1.75,
-  cex_subtitle = 1.75,
-  vars_order = c("nino", "dmi", "tsa", "aao", "olr"),  # include OLR panel
-  pch_map = c(nino=21, dmi=24, tsa=22, aao=23, olr=10),
+  coef_range_int = c(-3, 3),
+  cex_lab = 1.5,
+  cex_var_label = 1.25,
+  var_label_pos = 1.5, 
+  lty_ref = 1, 
+  lwd_ref = 0.5, 
+  vars_order = c("nino","dmi", "tsa","aao", "olr"),  # include OLR panel
+  pch_map = c(nino = 21, dmi = 24, tsa  = 22, aao  = 23, olr  = 10),
   coef_range = c(-5, 5),
-  main_title = paste0("Early Fire Season (2019/2020 Withheld)"),   
+  main_title = paste0("(a) Early-Season (2019/2020 Withheld)"),   
   quad_y_jitter = 0.004,
+  int_y_jitter = 0.003,
+  int_x_jitter = 0.003,
+  auto_jitter = TRUE,
   model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
-  add_legends = FALSE,
-  legend_inset_terms = c(0.000, 0.00),
-  legend_inset_model = c(0.00, 0.16),
-  legend_cex_terms = 1.80,
-  legend_cex_model = 1.50,
+  model_lty  = c(base=2, const=2, vary=5),
+  add_legends = TRUE,
+  legend_inset_terms = c(0.000, 0.05),
+  legend_inset_model = c(0.00, 0.00),
+  legend_cex_terms = 1.35,
+  legend_cex_model = 1.25,
   legend_models = c("All-Data", "Withheld-Season"),
   legend_model_keys = c("base", "vary"))
 dev.off()
@@ -84,24 +92,31 @@ coefs2 <- list(
   vary  = coef(vary.peak[[1]])  
 )
 
-setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/Coef_Int")
-png(filename = paste0("SI_dmi_peak_2019.png"),  width = 2750, height = 4750, res = 300)
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/SEAus_DMI")
+png(filename = paste0("SI_dmi_peak_2019.png"),  width = 2200, height = 3950, res = 300)
 plot_lagged_coef_panels(
   coefs_named_list = coefs2,
-  cex_num = 1.5,
-  cex_label = 1.75,
-  cex_subtitle = 1.75,
-  vars_order = c("nino", "dmi", "tsa", "aao", "olr"),  # include OLR panel
-  pch_map = c(nino=21, dmi=24, tsa=22, aao=23, olr=10),
+  coef_range_int = c(-3, 3),
+  cex_lab = 1.5,
+  cex_var_label = 1.25,
+  var_label_pos = 1.5, 
+  lty_ref = 1, 
+  lwd_ref = 0.5, 
+  vars_order = c("nino","dmi", "tsa","aao", "olr"),  # include OLR panel
+  pch_map = c(nino = 21, dmi = 24, tsa  = 22, aao  = 23, olr  = 10),
   coef_range = c(-5, 5),
-  main_title = paste0("Peak Fire Season (2019/2020 Withheld)"),   
+  main_title = paste0("(b) Peak-Season (2019/2020 Withheld)"),   
   quad_y_jitter = 0.004,
+  int_y_jitter = 0.003,
+  int_x_jitter = 0.003,
+  auto_jitter = TRUE,
   model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
-  add_legends = FALSE,
-  legend_inset_terms = c(0.000, 0.00),
-  legend_inset_model = c(0.00, 0.16),
-  legend_cex_terms = 1.80,
-  legend_cex_model = 1.50,
+  model_lty  = c(base=2, const=2, vary=5),
+  add_legends = TRUE,
+  legend_inset_terms = c(0.000, 0.05),
+  legend_inset_model = c(0.00, 0.00),
+  legend_cex_terms = 1.35,
+  legend_cex_model = 1.25,
   legend_models = c("All-Data", "Withheld-Season"),
   legend_model_keys = c("base", "vary"))
 dev.off()
@@ -115,27 +130,31 @@ coefs3 <- list(
   vary  = coef(vary.late[[1]])  
 )
 
-setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/Coef_Int")
-png(filename = paste0("SI_dmi_late_2019.png"),  width = 2750, height = 4750, res = 300)
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures/SEAus_DMI")
+png(filename = paste0("SI_dmi_late_2019.png"), width = 2200, height = 3950, res = 300)
 plot_lagged_coef_panels(
   coefs_named_list = coefs3,
-  cex_num = 1.5,
-  cex_label = 1.75,
-  cex_subtitle = 1.75,
-  vars_order = c("nino", "dmi", "tsa", "aao", "olr"),  # include OLR panel
-  pch_map = c(nino=21, dmi=24, tsa=22, aao=23, olr=10),
+  coef_range_int = c(-3, 3),
+  cex_lab = 1.5,
+  cex_var_label = 1.25,
+  var_label_pos = 1.5, 
+  lty_ref = 1, 
+  lwd_ref = 0.5, 
+  vars_order = c("nino","dmi", "tsa","aao", "olr"),  # include OLR panel
+  pch_map = c(nino = 21, dmi = 24, tsa  = 22, aao  = 23, olr  = 10),
   coef_range = c(-5, 5),
-  main_title = paste0("Late Fire Season (2019/2020 Withheld)"),   
+  main_title = paste0("(c) Late-Season (2019/2020 Withheld)"),   
   quad_y_jitter = 0.004,
+  int_y_jitter = 0.003,
+  int_x_jitter = 0.003,
+  auto_jitter = TRUE,
   model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  model_lty  = c(base=2, const=2, vary=5),
   add_legends = TRUE,
-  legend_inset_terms = c(0.000, 0.06),
+  legend_inset_terms = c(0.000, 0.05),
   legend_inset_model = c(0.00, 0.00),
-  legend_cex_terms = 1.80,
-  legend_cex_model = 1.50,
-  legend_terms = c("Ni\u00f1o 3.4", "DMI", "TSA", "SAM", "OLR", "Interaction"),
-  legend_terms_pch = c(21, 24, 22, 23, 10, 11),
-  legend_terms_pt_cex = c(2.25, 1.8, 2.25, 2.25, 2.25, 1.8),
+  legend_cex_terms = 1.35,
+  legend_cex_model = 1.25,
   legend_models = c("All-Data", "Withheld-Season"),
   legend_model_keys = c("base", "vary"))
 dev.off()

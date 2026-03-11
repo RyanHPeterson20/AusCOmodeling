@@ -191,60 +191,23 @@ build_model_styles <- function(model_cols,
 # Keys use "|" as separator: "model|anchor_term|iterm" or "model|base_term|qterm".
 
 # Interaction y-jitter:
-# For each (model, anchor) pair, assigns directional y-offsets so that the arm
-# connecting toward a higher panel (smaller vars_order index = visually above)
-# receives the largest POSITIVE offset, and the arm connecting toward a lower
-# panel receives the largest NEGATIVE offset.
-#
-# Rationale: the linking line for a high-connecting arm will naturally run
-# upward in the right panel; offsetting it up at the anchor avoids it crossing
-# lines that run downward.
-#
-# Single interactions always receive offset 0 (unchanged behaviour).
-# Resets independently per (model, anchor) — no cascade across panels/models.
-.int_y_offsets <- function(df_int, model_keys, int_y_jitter, vars_order) {
+# For each (model, anchor) pair, all interaction terms that touch that anchor
+# receive a symmetric sequence centred at 0.  Resetting per anchor AND per
+# model prevents cascading: lines from different panels or models are
+# completely independent of each other.
+.int_y_offsets <- function(df_int, model_keys, int_y_jitter) {
   env <- new.env(parent = emptyenv())
-
-  # Extract variable key from a main-term string e.g. "nino_lag45" -> "nino"
-  term_var <- function(t) {
-    p <- parse_term(t)
-    if (identical(p$kind, "main")) p$var else NA_character_
-  }
-
   for (mdl in model_keys) {
     sub <- df_int[df_int$model == mdl, , drop = FALSE]
     if (nrow(sub) == 0) next
-
     for (anch in unique(c(sub$left_term, sub$right_term))) {
       touching <- unique(sub$term[sub$left_term == anch | sub$right_term == anch])
       n        <- length(touching)
-
-      # Single interaction: zero offset (original behaviour preserved)
-      if (n == 1L) {
-        env[[paste(mdl, anch, touching[1L], sep = "|")]] <- 0
-        next
-      }
-
-      # Multiple interactions: determine which panel each "other arm" connects to
-      other_panel_idx <- vapply(touching, function(iterm) {
-        row        <- sub[sub$term == iterm, , drop = FALSE][1L, ]
-        other_term <- if (identical(row$left_term, anch)) row$right_term
-                      else                                row$left_term
-        ov  <- term_var(other_term)
-        if (is.na(ov)) return(Inf)       # unrecognised var -> push to bottom
-        idx <- match(tolower(ov), tolower(vars_order))
-        if (is.na(idx)) Inf else as.numeric(idx)
-      }, numeric(1L))
-
-      # Sort: smallest panel index first (topmost visual position)
-      ord            <- order(other_panel_idx)
-      sorted_touching <- touching[ord]
-
-      # Offsets from most positive (top-connecting) to most negative (bottom)
-      offs <- seq((n - 1) / 2, -(n - 1) / 2, length.out = n) * int_y_jitter
-
-      for (j in seq_len(n))
-        env[[paste(mdl, anch, sorted_touching[j], sep = "|")]] <- offs[j]
+      offs     <- if (n > 1L)
+        seq(-(n - 1) / 2, (n - 1) / 2, length.out = n) * int_y_jitter
+      else 0
+      for (j in seq_along(touching))
+        env[[paste(mdl, anch, touching[j], sep = "|")]] <- offs[j]
     }
   }
   env
@@ -279,66 +242,6 @@ build_model_styles <- function(model_cols,
       offs <- mults * quad_y_jitter
       for (j in seq_len(n))
         env[[paste(mdl, bt, grp$term[j], sep = "|")]] <- offs[j]
-    }
-  }
-  env
-}
-
-
-# Overlap detection and nudge pre-computation:
-# For each left panel, collects every (model, term) point with its effective
-# x position (lag + per-model xoff).  Pairs of points whose effective-x
-# distance is <= tol_x AND whose coefficient distance is <= tol_y are placed
-# in the same overlap group (transitive union-find).  Each group of size > 1
-# receives a symmetric sequence of x and/or y nudges centred at 0.
-#
-# Returns an environment keyed "model|term" -> list(dx, dy).
-# Points with no overlap get no entry (lookup returns NULL -> nudge = 0).
-.overlap_nudges <- function(df_main, model_keys, styles, vars_order,
-                             tol_x, tol_y, nudge_x, nudge_y) {
-  env <- new.env(parent = emptyenv())
-  if (nudge_x == 0 && nudge_y == 0) return(env)
-
-  for (var in vars_order) {
-    sub <- df_main[tolower(df_main$var) == tolower(var), , drop = FALSE]
-    if (nrow(sub) == 0L) next
-
-    # Build a flat table of all points for this panel across all models
-    pts_list <- lapply(model_keys, function(mdl) {
-      s <- sub[sub$model == mdl, , drop = FALSE]
-      if (nrow(s) == 0L) return(NULL)
-      xoff <- styles[[mdl]]$xoff
-      data.frame(model = mdl, term = s$term,
-                 ex = s$lag + xoff, ey = s$value,
-                 stringsAsFactors = FALSE)
-    })
-    pts <- do.call(rbind, pts_list[!vapply(pts_list, is.null, logical(1L))])
-    if (is.null(pts) || nrow(pts) < 2L) next
-
-    n     <- nrow(pts)
-    group <- seq_len(n)
-
-    # Union-find: merge any pair within tolerance
-    for (i in seq_len(n - 1L)) {
-      for (j in (i + 1L):n) {
-        if (abs(pts$ex[i] - pts$ex[j]) <= tol_x &&
-            abs(pts$ey[i] - pts$ey[j]) <= tol_y) {
-          old_g             <- group[j]
-          new_g             <- group[i]
-          group[group == old_g] <- new_g
-        }
-      }
-    }
-
-    # Assign symmetric nudges within each group of size > 1
-    for (g in unique(group)) {
-      idx <- which(group == g)
-      if (length(idx) == 1L) next
-      m       <- length(idx)
-      offsets <- seq(-(m - 1) / 2, (m - 1) / 2, length.out = m)
-      for (k in seq_along(idx))
-        env[[paste(pts$model[idx[k]], pts$term[idx[k]], sep = "|")]] <-
-          list(dx = offsets[k] * nudge_x, dy = offsets[k] * nudge_y)
     }
   }
   env
@@ -505,27 +408,6 @@ plot_lagged_coef_panels <- function(
   int_y_jitter      = 0,
   int_x_jitter      = 0,
 
-  # --- Auto-jitter for overlapping points -------------------------------------
-  # When auto_jitter = TRUE, points from different models whose lag and
-  # coefficient values fall within (auto_jitter_tol_x, auto_jitter_tol_y) of
-  # each other are spread apart by a symmetric sequence of nudges.
-  # auto_jitter_x / auto_jitter_y control the nudge step size (in user units).
-  # The nudges are also applied to the NDC anchors so right-panel connectors
-  # follow the nudged positions exactly.
-  # Set both nudge values to 0 to disable entirely (same as auto_jitter=FALSE).
-  auto_jitter       = FALSE,
-  auto_jitter_x     = 0.4,
-  auto_jitter_y     = 0.0,
-  auto_jitter_tol_x = 1.5,
-  auto_jitter_tol_y = 0.3,
-
-  # --- Y-axis label for left panels -------------------------------------------
-  # Controls the shared outer-margin y-axis label drawn beside the left panels.
-  # NULL (default) -> falls back to xlab_coef (backward-compatible behaviour).
-  # ""             -> label is suppressed entirely.
-  # Any string     -> used verbatim as the label.
-  ylab_left         = NULL,
-
   # --- Legends ----------------------------------------------------------------
   add_legends           = FALSE,
   legend_inset_terms    = c(0.000, 0.00),
@@ -589,20 +471,9 @@ plot_lagged_coef_panels <- function(
   # ===========================================================================
   # 5.  Pre-compute jitter offset tables (before any drawing starts)
   # ===========================================================================
-  int_y_off  <- if (nrow(df_int)  > 0) .int_y_offsets(df_int,  model_keys, int_y_jitter, vars_order) else NULL
-  int_x_off  <- if (nrow(df_int)  > 0) .int_x_offsets(df_int,  int_x_jitter)                        else NULL
-  quad_y_off <- if (nrow(df_quad) > 0) .quad_y_offsets(df_quad, model_keys, quad_y_jitter)           else NULL
-
-  # Overlap nudge table: keyed "model|term" -> list(dx, dy).
-  # Only populated when auto_jitter = TRUE and at least one nudge size is > 0.
-  overlap_off <- if (isTRUE(auto_jitter))
-    .overlap_nudges(df_main, model_keys, styles, vars_order,
-                    tol_x   = auto_jitter_tol_x,
-                    tol_y   = auto_jitter_tol_y,
-                    nudge_x = auto_jitter_x,
-                    nudge_y = auto_jitter_y)
-  else
-    new.env(parent = emptyenv())
+  int_y_off  <- if (nrow(df_int)  > 0) .int_y_offsets(df_int,  model_keys, int_y_jitter)  else NULL
+  int_x_off  <- if (nrow(df_int)  > 0) .int_x_offsets(df_int,  int_x_jitter)              else NULL
+  quad_y_off <- if (nrow(df_quad) > 0) .quad_y_offsets(df_quad, model_keys, quad_y_jitter) else NULL
 
   # ===========================================================================
   # 6.  Layout
@@ -681,40 +552,25 @@ plot_lagged_coef_panels <- function(
       pch_val <- pch_map[[tolower(var)]]
       if (is.null(pch_val)) pch_val <- 21L
 
-      # Per-term overlap nudges (both zero when auto_jitter is off)
-      ovlp_dx <- vapply(s2$term, function(t) {
-        ov <- overlap_off[[paste(model, t, sep = "|")]]
-        if (!is.null(ov)) ov$dx else 0
-      }, numeric(1L))
-      ovlp_dy <- vapply(s2$term, function(t) {
-        ov <- overlap_off[[paste(model, t, sep = "|")]]
-        if (!is.null(ov)) ov$dy else 0
-      }, numeric(1L))
-
-      x_pos <- s2$lag   + sty$xoff + ovlp_dx
-      y_pos <- s2$value            + ovlp_dy
-
       if (is_olr) {
         # OLR two-layer rendering (matches by-hand exactly):
         #   Layer 1 : pch=19 filled disc   in the model's bg colour
         #   Layer 2 : pch=10 crosshair ring in the outline colour
         # Produces a coloured filled circle with a visible black crosshair.
-        points(x_pos, y_pos, pch = 19L, col = sty$bg,      cex = cex_pt)
-        points(x_pos, y_pos, pch = 10L, col = sty$outline, cex = cex_pt)
+        points(s2$lag + sty$xoff, s2$value, pch = 19L, col = sty$bg,      cex = cex_pt)
+        points(s2$lag + sty$xoff, s2$value, pch = 10L, col = sty$outline, cex = cex_pt)
       } else {
-        points(x_pos, y_pos,
+        points(s2$lag + sty$xoff, s2$value,
                pch = pch_val, col = sty$outline, bg = sty$bg, cex = cex_pt)
       }
 
       # Store NDC coordinates for later cross-panel drawing.
       # grconvert must be called while this panel is still active.
-      # The overlap nudge is baked in so right-panel connectors follow the
-      # actual drawn position, not the un-nudged model coordinate.
       for (k in seq_len(nrow(s2))) {
-        key            <- paste(model, s2$term[k], sep = "|")
+        key         <- paste(model, s2$term[k], sep = "|")
         anchors[[key]] <- list(
-          ndc_x = grconvertX(x_pos[k], from = "user", to = "ndc"),
-          ndc_y = grconvertY(y_pos[k], from = "user", to = "ndc")
+          ndc_x = grconvertX(s2$lag[k] + sty$xoff, from = "user", to = "ndc"),
+          ndc_y = grconvertY(s2$value[k],            from = "user", to = "ndc")
         )
       }
     }
@@ -904,14 +760,8 @@ plot_lagged_coef_panels <- function(
 
   # ===========================================================================
   # 11.  Shared y-axis label spanning all left panels (outer margin)
-  #      ylab_left controls the text independently of xlab_coef.
-  #      NULL  -> fall back to xlab_coef (backward-compatible).
-  #      ""    -> suppressed entirely.
-  #      other -> used verbatim.
   # ===========================================================================
-  yl <- if (is.null(ylab_left)) xlab_coef else ylab_left
-  if (nzchar(yl))
-    mtext(yl, side = 2, outer = TRUE, line = -0.5, cex = 1.25)
+  mtext(xlab_coef, side = 2, outer = TRUE, line = -0.5, cex = 1.25)
 
   invisible(NULL)
 }
