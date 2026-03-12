@@ -190,65 +190,134 @@ build_model_styles <- function(model_cols,
 # Both helpers return a plain environment used as a named lookup table.
 # Keys use "|" as separator: "model|anchor_term|iterm" or "model|base_term|qterm".
 
-# Interaction y-jitter:
-# For each (model, anchor) pair, assigns directional y-offsets so that the arm
-# connecting toward a higher panel (smaller vars_order index = visually above)
-# receives the largest POSITIVE offset, and the arm connecting toward a lower
-# panel receives the largest NEGATIVE offset.
+# Combined y-jitter for interaction arms and quadratic lines:
 #
-# Rationale: the linking line for a high-connecting arm will naturally run
-# upward in the right panel; offsetting it up at the anchor avoids it crossing
-# lines that run downward.
+# Replaces the former separate .int_y_offsets and .quad_y_offsets helpers.
+# The key insight is that both types of line depart from the same anchor point
+# in the left panel and terminate somewhere in the right panel.  When a
+# quadratic and an interaction share an anchor, the two systems must be aware
+# of each other to avoid overlap.
 #
-# Single interactions always receive offset 0 (unchanged behaviour).
-# Resets independently per (model, anchor) — no cascade across panels/models.
-.int_y_offsets <- function(df_int, model_keys, int_y_jitter, vars_order) {
-  env <- new.env(parent = emptyenv())
+# Algorithm (per model, per anchor):
+#   1. Collect ALL departing lines: interaction arms + quadratic terms.
+#   2. Assign a "direction index" to each:
+#        Interaction arm  -> panel index of the OTHER side's variable in
+#                            vars_order (lower index = visually higher = more
+#                            positive offset, so the line runs upward without
+#                            crossing lines running downward).
+#        Quadratic line   -> Inf (treated as "below all variable panels",
+#                            always placed at the most negative offset).
+#   3. Sort by direction index ascending, break ties by term name for stability.
+#   4. Assign offsets from +(n-1)/2 down to -(n-1)/2, scaled by the
+#        appropriate jitter magnitude for each type
+#        (int_y_jitter for interaction arms, quad_y_jitter for quad lines).
+#   5. Single total departure: zero offset (preserves prior behaviour).
+#
+# Returns a named list with elements $int and $quad, each a plain environment
+# with the same key formats used by draw_right_panel:
+#   $int  keyed  "model|anchor_term|iterm"
+#   $quad keyed  "model|base_term|qterm"
+#
+# The x-jitter helper (.int_x_offsets) is unchanged and kept separate.
+.combined_y_offsets <- function(df_int, df_quad, model_keys,
+                                 int_y_jitter, quad_y_jitter, vars_order) {
+  int_env  <- new.env(parent = emptyenv())
+  quad_env <- new.env(parent = emptyenv())
 
-  # Extract variable key from a main-term string e.g. "nino_lag45" -> "nino"
-  term_var <- function(t) {
+  # Panel index of the variable in a main-term string, or Inf if unknown.
+  term_panel_idx <- function(t) {
     p <- parse_term(t)
-    if (identical(p$kind, "main")) p$var else NA_character_
+    if (!identical(p$kind, "main")) return(Inf)
+    idx <- match(tolower(p$var), tolower(vars_order))
+    if (is.na(idx)) Inf else as.numeric(idx)
   }
 
   for (mdl in model_keys) {
-    sub <- df_int[df_int$model == mdl, , drop = FALSE]
-    if (nrow(sub) == 0) next
+    sub_int  <- df_int[df_int$model   == mdl, , drop = FALSE]
+    sub_quad <- df_quad[df_quad$model == mdl, , drop = FALSE]
 
-    for (anch in unique(c(sub$left_term, sub$right_term))) {
-      touching <- unique(sub$term[sub$left_term == anch | sub$right_term == anch])
-      n        <- length(touching)
+    # All anchor terms that appear in either data frame for this model.
+    all_anchors <- unique(c(
+      if (nrow(sub_int)  > 0) c(sub_int$left_term,  sub_int$right_term) else character(0),
+      if (nrow(sub_quad) > 0) sub_quad$base_term                        else character(0)
+    ))
 
-      # Single interaction: zero offset (original behaviour preserved)
-      if (n == 1L) {
-        env[[paste(mdl, anch, touching[1L], sep = "|")]] <- 0
+    for (anch in all_anchors) {
+
+      # Interaction terms touching this anchor.
+      int_here <- if (nrow(sub_int) > 0)
+        unique(sub_int$term[sub_int$left_term == anch | sub_int$right_term == anch])
+      else character(0)
+
+      # Quadratic terms anchored here (base_term == anch).
+      quad_here <- if (nrow(sub_quad) > 0)
+        unique(sub_quad$term[sub_quad$base_term == anch])
+      else character(0)
+
+      n_int   <- length(int_here)
+      n_quad  <- length(quad_here)
+      n_total <- n_int + n_quad
+      if (n_total == 0L) next
+
+      # Single departure: zero offset regardless of type.
+      if (n_total == 1L) {
+        if (n_int  == 1L) int_env[[paste(mdl,  anch, int_here[1L],  sep = "|")]] <- 0
+        if (n_quad == 1L) quad_env[[paste(mdl, anch, quad_here[1L], sep = "|")]] <- 0
         next
       }
 
-      # Multiple interactions: determine which panel each "other arm" connects to
-      other_panel_idx <- vapply(touching, function(iterm) {
-        row        <- sub[sub$term == iterm, , drop = FALSE][1L, ]
-        other_term <- if (identical(row$left_term, anch)) row$right_term
-                      else                                row$left_term
-        ov  <- term_var(other_term)
-        if (is.na(ov)) return(Inf)       # unrecognised var -> push to bottom
-        idx <- match(tolower(ov), tolower(vars_order))
-        if (is.na(idx)) Inf else as.numeric(idx)
+      # Build a flat table of all departing lines with their direction indices.
+      items <- data.frame(
+        kind = c(rep("int", n_int), rep("quad", n_quad)),
+        term = c(int_here, quad_here),
+        stringsAsFactors = FALSE
+      )
+
+      items$dir_idx <- vapply(seq_len(nrow(items)), function(i) {
+        if (items$kind[i] == "int") {
+          # Direction = panel index of the variable on the OTHER side of the ":"
+          row <- sub_int[sub_int$term == items$term[i], , drop = FALSE]
+          if (nrow(row) == 0L) return(Inf)
+          other_term <- if (identical(row$left_term[1L], anch)) row$right_term[1L]
+                        else                                     row$left_term[1L]
+          term_panel_idx(other_term)
+        } else {
+          # Quadratic: use the anchor's own panel index as direction key.
+          #
+          # Rationale: the quadratic line is horizontal and has no inherent
+          # direction in the right panel.  By giving it the index of its own
+          # panel we place it between arms heading above the anchor (smaller
+          # index, positive offset) and arms heading below (larger index,
+          # negative offset).  With a single interaction arm this means the
+          # quadratic always ends up on the OPPOSITE side: if the arm goes to a
+          # panel below (dir > anchor) the quad sorts earlier and gets the
+          # positive offset; if the arm goes to a panel above (dir < anchor) the
+          # quad sorts later and gets the negative offset.
+          term_panel_idx(anch)
+        }
       }, numeric(1L))
 
-      # Sort: smallest panel index first (topmost visual position)
-      ord            <- order(other_panel_idx)
-      sorted_touching <- touching[ord]
+      # Stable sort: direction index ascending, then term name for ties.
+      ord   <- order(items$dir_idx, items$term)
+      items <- items[ord, , drop = FALSE]
 
-      # Offsets from most positive (top-connecting) to most negative (bottom)
-      offs <- seq((n - 1) / 2, -(n - 1) / 2, length.out = n) * int_y_jitter
+      # Offset multipliers: +(n-1)/2 down to -(n-1)/2 (top-connecting gets +).
+      mults <- seq((n_total - 1L) / 2, -(n_total - 1L) / 2, length.out = n_total)
 
-      for (j in seq_len(n))
-        env[[paste(mdl, anch, sorted_touching[j], sep = "|")]] <- offs[j]
+      for (i in seq_len(n_total)) {
+        jitter  <- if (items$kind[i] == "int") int_y_jitter else quad_y_jitter
+        if (items$kind[i] == "int") {
+          int_env[[paste(mdl,  anch, items$term[i], sep = "|")]] <- mults[i] * jitter
+        } else {
+          quad_env[[paste(mdl, anch, items$term[i], sep = "|")]] <- mults[i] * jitter
+        }
+      }
     }
   }
-  env
+
+  list(int = int_env, quad = quad_env)
 }
+
 
 # Interaction x-jitter:
 # One symmetric offset per unique interaction term; returned as a named vector.
@@ -259,29 +328,6 @@ build_model_styles <- function(model_cols,
     if (n > 1L) seq(-(n - 1) / 2, (n - 1) / 2, length.out = n) * int_x_jitter else 0,
     terms
   )
-}
-
-# Quadratic y-jitter:
-# Per (model, base_term): first term at offset 0, subsequent terms alternate
-# +j, -j, +2j, -2j, …  Resets independently per model.
-.quad_y_offsets <- function(df_quad, model_keys, quad_y_jitter) {
-  env <- new.env(parent = emptyenv())
-  for (mdl in model_keys) {
-    sub <- df_quad[df_quad$model == mdl, , drop = FALSE]
-    if (nrow(sub) == 0) next
-    for (bt in unique(sub$base_term)) {
-      grp    <- sub[sub$base_term == bt, , drop = FALSE]
-      n      <- nrow(grp)
-      mults  <- numeric(n)
-      # 0, +1, -1, +2, -2, …
-      if (n > 1L) for (j in 2:n)
-        mults[j] <- if (j %% 2 == 0) j / 2 else -((j - 1L) / 2)
-      offs <- mults * quad_y_jitter
-      for (j in seq_len(n))
-        env[[paste(mdl, bt, grp$term[j], sep = "|")]] <- offs[j]
-    }
-  }
-  env
 }
 
 
@@ -589,9 +635,15 @@ plot_lagged_coef_panels <- function(
   # ===========================================================================
   # 5.  Pre-compute jitter offset tables (before any drawing starts)
   # ===========================================================================
-  int_y_off  <- if (nrow(df_int)  > 0) .int_y_offsets(df_int,  model_keys, int_y_jitter, vars_order) else NULL
-  int_x_off  <- if (nrow(df_int)  > 0) .int_x_offsets(df_int,  int_x_jitter)                        else NULL
-  quad_y_off <- if (nrow(df_quad) > 0) .quad_y_offsets(df_quad, model_keys, quad_y_jitter)           else NULL
+  # .combined_y_offsets handles both interaction arms and quadratic lines in a
+  # single unified pass so they are offset directionally relative to each other
+  # when they share the same anchor point.
+  combined_y <- .combined_y_offsets(df_int, df_quad, model_keys,
+                                     int_y_jitter, quad_y_jitter, vars_order)
+  int_y_off  <- combined_y$int
+  quad_y_off <- combined_y$quad
+
+  int_x_off  <- if (nrow(df_int) > 0) .int_x_offsets(df_int, int_x_jitter) else NULL
 
   # Overlap nudge table: keyed "model|term" -> list(dx, dy).
   # Only populated when auto_jitter = TRUE and at least one nudge size is > 0.

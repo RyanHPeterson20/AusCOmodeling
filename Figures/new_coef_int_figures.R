@@ -9,16 +9,15 @@ suppressMessages( library(scales)) #for adjusting opacity
 #data import
 setwd("~/CO_AUS/AusCOmodeling") 
 load("Data/modeldata.rda") #resp/pred data
-load("Data/base_RAMPmodels.rda") #"base" model
+load("Data/base_RAMPmodels.rda") #"base" model (e.g., SEmodels)
 load("Data/loyo_models.rda") #leave one year out models/refits
 load("Data/validation_refits_new.rda") #updated RMSE and Predictions (w/ intervals) provides: SErefit.new
 load("Data/validation_refits_wo2019.rda") #RMSE/Preds/Models w/o 2019/2020 data
 
 #load functions
-#source("Functions/coef_int_functions.R")
-#source("Functions/coef_int_plot.R") #new function(s)
-source("Figures/coef_int_plot.R") #most up to date version is in the Figures folder. 
-
+setwd("~/CO_AUS/AusCOmodeling") 
+#source("Functions/coef_int_plot.R") #newest function(s)
+source("Figures/coef_int_plot.R") 
 
 #season years/weeks
 season.weeks <- c(38:52, 1:14)
@@ -31,7 +30,6 @@ for (i in 1:(length(season.years)-1)) {
   seasons <- c(seasons, temp_season)
 }
 rm(i, temp_season)
-
 
 #SE models
 SE1.lm <- SEmodels[[1]]
@@ -97,7 +95,138 @@ NE1.coef <- coef(NE1.lm)
 NE2.coef <- coef(NE2.lm)
 NE3.coef <- coef(NE3.lm)
 
+#Figure 2 output:
+i <- 19 #2019/2020 Withheld
 
+
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+
+#fig 2b early-season
+coefs1 <- list(
+  base  = SE1.coef,
+  #const = coef(SE.const.early[[i]]), 
+  vary  = coef(SE.vary.early[[i]])  
+)
+
+png(filename = paste0("Fig2_SEcoefint_early_", season.years[i], ".png"),  width = 2050, height = 4050, res = 300)
+plot_lagged_coef_panels(
+  coefs_named_list = coefs1,
+  vars_order = c("nino", "etio", "wtio", "tsa", "aao", "olr"),  # include OLR panel
+  layout_widths = c(2.00, 1.25),
+  y_axis_at = c(-4,-2, 0, 2, 4),
+  int_axis_at = c(-2, 0, 2),
+  coef_range_int = c(-3, 3),
+  cex_axis = 1.40,
+  cex_lab = 1.75,
+  ylab_left = "Main Coefficients",
+  xlab_coef = "Interaction Coefficients",
+  cex_var_label = 1.45,
+  var_label_pos = 1, 
+  lty_ref = 1, 
+  lwd_ref = 0.5, 
+  coef_range = c(-5, 5),
+  main_title = paste0("(b) Early (2019/2020 Withheld)"),   
+  quad_y_jitter = 0.004,
+  int_y_jitter = 0.003,
+  int_x_jitter = 0.003,
+  auto_jitter = TRUE,
+  auto_jitter_y = 0.05,
+  auto_int_x_jitter = TRUE,
+  auto_int_x_nudge = 0.10,
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  model_lty  = c(base=2, const=2, vary=6),
+  add_legends = FALSE)
+dev.off()
+
+
+#fig 2c peak
+coefs2 <- list(
+  base  = SE2.coef,
+  #const = coef(SE.const.peak[[i]]), 
+  vary  = coef(SE.vary.peak[[i]])  
+)
+
+png(filename = paste0("Fig2_SEcoefint_peak_", season.years[i], ".png"),  width = 2050, height = 4050, res = 300)
+plot_lagged_coef_panels(
+  coefs_named_list = coefs2,
+  vars_order = c("nino", "etio", "wtio", "tsa", "aao", "olr"),  # include OLR panel
+  layout_widths = c(2.00, 1.25),
+  y_axis_at = c(-4,-2, 0, 2, 4),
+  int_axis_at = c(-2, 0, 2),
+  coef_range_int = c(-3, 3),
+  cex_axis = 1.40,
+  cex_lab = 1.75,
+  ylab_left = "",
+  xlab_coef = "Interaction Coefficients",
+  cex_var_label = 1.45,
+  var_label_pos = 1, 
+  lty_ref = 1, 
+  lwd_ref = 0.5, 
+  coef_range = c(-5, 5),
+  main_title = paste0("(c) Peak (2019/2020 Withheld)"),   
+  quad_y_jitter = 0.004,
+  int_y_jitter = 0.003,
+  int_x_jitter = 0.003,
+  auto_jitter = TRUE,
+  auto_jitter_y = 0.05,
+  auto_int_x_jitter = TRUE,
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  model_lty  = c(base=2, const=2, vary=6),
+  add_legends = FALSE)
+dev.off()
+
+#fig 2d late-season
+coefs3 <- list(
+  base  = SE3.coef,
+  #const = coef(SE.const.late[[i]]), 
+  vary  = coef(SE.vary.late[[i]])  
+)
+
+png(filename = paste0("Fig2_SEcoefint_late_", season.years[i], ".png"),  width = 2050, height = 4050, res = 300)
+plot_lagged_coef_panels(
+  coefs_named_list = coefs3,
+  vars_order = c("nino", "etio", "wtio", "tsa", "aao", "olr"),  # include OLR panel
+  layout_widths = c(2.00, 1.25),
+  y_axis_at = c(-4,-2, 0, 2, 4),
+  int_axis_at = c(-2, 0, 2),
+  coef_range_int = c(-3, 3),
+  cex_axis = 1.40,
+  cex_lab = 1.75,
+  ylab_left = "",
+  xlab_coef = "Interaction Coefficients",
+  cex_var_label = 1.45,
+  var_label_pos = 1, 
+  lty_ref = 1, 
+  lwd_ref = 0.5, 
+  coef_range = c(-5, 5),
+  main_title = paste0("(d) Late (2019/2020 Withheld)"),   
+  quad_y_jitter = 0.004,
+  int_y_jitter = 0.003,
+  int_x_jitter = 0.003,
+  auto_jitter = TRUE,
+  auto_jitter_y = 0.05,
+  auto_int_x_jitter = TRUE,
+  auto_int_x_nudge = 0.10,
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  model_lty  = c(base=2, const=2, vary=6),
+  add_legends = TRUE, 
+  legend_inset_terms = c(0.000, 0.05),
+  legend_inset_model = c(0.00, 0.00),
+  legend_cex_terms = 1.35,
+  legend_cex_model = 1.25,
+  legend_models = c("All-Data", "Withheld-Season"),
+  legend_model_keys = c("base", "vary"))
+dev.off()
+
+
+
+
+
+
+
+
+
+#TODO: below is testing/older code that will be finalized above. 
 #testing new functions for coef_interaction plot
 #test output with SE aus 2019/2020
 i <- 19
@@ -127,7 +256,7 @@ plot_lagged_coef_panels(
   int_x_jitter = 0.003,
   auto_jitter = TRUE,
   model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
-  model_lty  = c(base=2, const=2, vary=5),
+  model_lty  = c(base=2, const=2, vary=6),
   add_legends = TRUE,
   legend_inset_terms = c(0.000, 0.05),
   legend_inset_model = c(0.00, 0.00),

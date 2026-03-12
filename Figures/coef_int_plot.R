@@ -331,6 +331,59 @@ build_model_styles <- function(model_cols,
 }
 
 
+# Auto interaction-coefficient x-jitter:
+# Groups (model, iterm) pairs whose interaction coefficient values are within
+# `tol` of each other (union-find), then assigns symmetric x nudges to every
+# group of size > 1.  Groups of size 1 get no entry (lookup -> 0).
+#
+# This is deliberately separate from the manual int_x_jitter: that one spreads
+# ALL interaction terms by a fixed amount; this one only moves terms that are
+# actually nearly coincident in coefficient value, leaving well-separated terms
+# untouched.
+#
+# Returns an environment keyed "model|iterm" -> numeric nudge value.
+.auto_int_x_offsets <- function(df_int, model_keys, tol, nudge) {
+  env <- new.env(parent = emptyenv())
+  if (nudge == 0) return(env)
+
+  # Collect one row per (model, iterm): the coefficient value for that pair.
+  rows_list <- lapply(model_keys, function(mdl) {
+    sub <- df_int[df_int$model == mdl, , drop = FALSE]
+    if (nrow(sub) == 0L) return(NULL)
+    terms <- unique(sub$term)
+    vals  <- vapply(terms, function(t) sub$value[sub$term == t][1L], numeric(1L))
+    data.frame(model = mdl, term = terms, value = vals, stringsAsFactors = FALSE)
+  })
+  rows <- do.call(rbind, rows_list[!vapply(rows_list, is.null, logical(1L))])
+  if (is.null(rows) || nrow(rows) < 2L) return(env)
+
+  n     <- nrow(rows)
+  group <- seq_len(n)
+
+  # Union-find: merge any pair whose coefficient values are within tol
+  for (i in seq_len(n - 1L)) {
+    for (j in (i + 1L):n) {
+      if (abs(rows$value[i] - rows$value[j]) <= tol) {
+        old_g             <- group[j]
+        new_g             <- group[i]
+        group[group == old_g] <- new_g
+      }
+    }
+  }
+
+  # Assign symmetric nudges within each overlapping group
+  for (g in unique(group)) {
+    idx <- which(group == g)
+    if (length(idx) == 1L) next
+    m       <- length(idx)
+    offsets <- seq(-(m - 1) / 2, (m - 1) / 2, length.out = m) * nudge
+    for (k in seq_along(idx))
+      env[[paste(rows$model[idx[k]], rows$term[idx[k]], sep = "|")]] <- offsets[k]
+  }
+  env
+}
+
+
 # Overlap detection and nudge pre-computation:
 # For each left panel, collects every (model, term) point with its effective
 # x position (lag + per-model xoff).  Pairs of points whose effective-x
@@ -584,7 +637,21 @@ plot_lagged_coef_panels <- function(
   legend_terms_pch      = c(21, 24, 25, 22, 23, 10, 11),
   legend_terms_pt_cex   = c(2.25, 1.8, 1.8, 2.25, 2.25, 2.25, 1.8),
   legend_models         = c("All-Data", "Fixed-Selection", "Withheld-Season"),
-  legend_model_keys     = c("base", "const", "vary")
+  legend_model_keys     = c("base", "const", "vary"),
+  # Point shape used in the Model legend.  Default 15 (filled square).
+  # The model's line type (from model_lty / styles) is always shown alongside
+  # the point, giving a type-"b" appearance that reflects both colour and lty.
+  legend_model_pch      = 15L,
+
+  # --- Auto x-jitter for overlapping interaction coefficients -----------------
+  # When auto_int_x_jitter = TRUE, (model, iterm) pairs whose interaction
+  # coefficient values fall within auto_int_x_tol of each other are
+  # automatically spread apart along the x-axis of the right panel.
+  # The nudge propagates to the vertical bar and star marker automatically
+  # because they are all drawn from the same xint_j value.
+  auto_int_x_jitter     = FALSE,
+  auto_int_x_nudge      = 0.10,
+  auto_int_x_tol        = 0.15
 
 ) {
 
@@ -644,6 +711,15 @@ plot_lagged_coef_panels <- function(
   quad_y_off <- combined_y$quad
 
   int_x_off  <- if (nrow(df_int) > 0) .int_x_offsets(df_int, int_x_jitter) else NULL
+
+  # Auto interaction x-jitter: keyed "model|iterm" -> nudge value.
+  # Only populated when auto_int_x_jitter = TRUE.
+  auto_int_x_off <- if (isTRUE(auto_int_x_jitter) && nrow(df_int) > 0)
+    .auto_int_x_offsets(df_int, model_keys,
+                        tol   = auto_int_x_tol,
+                        nudge = auto_int_x_nudge)
+  else
+    new.env(parent = emptyenv())
 
   # Overlap nudge table: keyed "model|term" -> list(dx, dy).
   # Only populated when auto_jitter = TRUE and at least one nudge size is > 0.
@@ -840,9 +916,16 @@ plot_lagged_coef_panels <- function(
           x2 <- grconvertX(a2$ndc_x, from = "ndc", to = "user")
           y2 <- grconvertY(a2$ndc_y, from = "ndc", to = "user") + y2_joff
 
-          # xint_j: coefficient value + x-jitter.
-          # Horizontal arms terminate here so the T-junction remains exact.
-          xint_j <- subm$value[1] + xjoff
+          # xint_j: coefficient value + manual x-jitter + auto x-jitter.
+          # All four segments and the star point are drawn from xint_j so the
+          # entire V-connector (horizontal arms, vertical bar, marker) shifts
+          # together with no further changes needed.
+          auto_xoff <- {
+            k_auto <- paste(model, iterm, sep = "|")
+            v <- auto_int_x_off[[k_auto]]
+            if (!is.null(v)) v else 0
+          }
+          xint_j <- subm$value[1] + xjoff + auto_xoff
 
           sty <- styles[[model]]
 
@@ -949,7 +1032,11 @@ plot_lagged_coef_panels <- function(
            title   = "Model",
            cex     = legend_cex_model,
            legend  = legend_models,
-           pch     = 15L,
+           pch     = legend_model_pch,
+           lty     = vapply(legend_model_keys,
+                            function(k) as.integer(if (!is.null(styles[[k]])) styles[[k]]$lty else 2L),
+                            integer(1L)),
+           lwd     = lwd,
            col     = unname(model_cols[legend_model_keys]),
            pt.cex  = 2.25)
   }
