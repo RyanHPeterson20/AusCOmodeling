@@ -155,8 +155,11 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 # ----------------------------------------------------------------------------
 #' Overlay highlighted lag windows and "Lag N" text labels  (internal)
 #'
-#' Each highlighted window spans the 4 time steps centred on the week
-#' corresponding to \code{lag_week = 51 - j} in \code{pred_time}.
+#' Each highlighted window spans the 4 time steps starting at the week
+#' corresponding to lag \code{j} from the sub-season anchor. The anchor week
+#' is derived automatically as \code{week(pred_time[1])}, so this function
+#' works correctly for any sub-season (peak, early, late) without any extra
+#' arguments.
 #'
 #' @param pred_time  Date vector for the full plotting window.
 #' @param y          Numeric anomaly vector (same length as \code{pred_time}).
@@ -167,29 +170,43 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 #' @param text_cex   Character expansion for "Lag N" labels.
 .draw_lag_highlights <- function(pred_time, y, lag_vals,
                                   col_pos, col_neg,
+                                  n_group  = 4L,
+                                  ylim     = c(-2, 2),
                                   lag_alpha = 0.85,
                                   text_cex  = 2.5) {
+  # The anchor week is the ISO week of pred_time[1] — always the sub-season's
+  # first week (one year prior to the fire season). This generalises correctly
+  # to any sub-season (peak, early, late) without any extra arguments.
+  anchor_week <- week(pred_time[1L])
+
+  # label x-offset: ~35% of the group window width to the left of window start,
+  # so the label clears the highlight for any group size
+  label_x_offset <- days(round(n_group * 7L * 0.35))
+
+  # label y-offset: 15% of the total y range above the local peak
+  label_y_offset <- diff(ylim) * 0.15
+
   for (j in lag_vals) {
 
-    lag_week <- 51L - j                             # ISO week number
-    if (lag_week <= 0L) lag_week <- lag_week + 52L  # wrap for large lags
+    lag_week <- anchor_week - j
+    if (lag_week <= 0L) lag_week <- lag_week + 52L
 
     hits <- which(week(pred_time) == lag_week)
     if (length(hits) == 0L) next
 
-    # 4-step window starting at the first matching date
-    idx <- hits[1L]:min(hits[1L] + 3L, length(pred_time))
+    # window spans exactly n_group steps (= length of sub-season group)
+    idx <- hits[1L]:min(hits[1L] + n_group - 1L, length(pred_time))
 
     draw_envelope_zero(pred_time[idx], y[idx],
                        col_pos, col_neg, alpha = lag_alpha)
 
-    # "Lag N" text: positioned just above the peak of the highlighted window
+    # "Lag N" text: positioned above the local peak of the highlighted window
     y_peak  <- max(y[idx], na.rm = TRUE)
-    y_label <- ifelse(y_peak < 0, 0, y_peak)
+    y_label <- ifelse(y_peak < 0, 0, y_peak) + label_y_offset
 
-    legend(x = c(pred_time[idx[1L]] - days(9L),
-                 pred_time[idx[1L]] - days(9L)),
-           y = c(y_label + 1.5, y_label + 1.5),
+    legend(x = c(pred_time[idx[1L]] - label_x_offset,
+                 pred_time[idx[1L]] - label_x_offset),
+           y = c(y_label, y_label),
            legend   = paste0("Lag ", j),
            box.col  = NA, bg = NA, xpd = NA,
            text.col = "grey28", cex = text_cex)
@@ -226,6 +243,7 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
                               xlim, year_lines, month_lines,
                               xticks, xlabs,
                               lag_vals   = NULL,
+                              n_group    = 4L,
                               show_x     = FALSE,
                               colors     = .TS_COLORS,
                               y_tick_lab,
@@ -260,6 +278,8 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
   if (!is.null(lag_vals) && length(lag_vals) > 0L) {
     .draw_lag_highlights(pred_time, y, lag_vals,
                           colors$lag_pos, colors$lag_neg,
+                          n_group  = n_group,
+                          ylim     = ylim,
                           lag_alpha = 0.85, text_cex = label_cex)
   }
 
@@ -283,62 +303,114 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 # ============================================================================
 
 # ----------------------------------------------------------------------------
-#' Assemble per-predictor 55-column lag matrices for the peak sub-season
+#' Assemble per-predictor lag matrices for one sub-season
 #'
-#' The peak window uses lags 1–3 from Week 2 prepended to lags 1–52 from
-#' Week 51, yielding 55 columns per predictor (rows = seasons).
+#' Mirrors the pattern of \code{pred_setup()}: takes the full \code{aus.lag}
+#' list and a sub-season week vector, then derives the anchor week and number
+#' of extra lags automatically from the group definition — no hardcoded week
+#' numbers.
 #'
-#' @param week51  Wide lag matrix/data-frame for Week 51
-#'               (from \code{SEAus.lag$\`Week  51\`}).
-#' @param week2   Wide lag matrix/data-frame for Week 2
-#'               (from \code{SEAus.lag$\`Week   2\`}).
-#' @param col_spec Named list giving the \emph{first} and \emph{last} column
-#'   indices for each predictor in the wide data, e.g.
-#'   \code{list(nino = c(3, 54), wtio = c(107, 158), ...)}.
+#' \strong{How the columns are assembled} (using peak as the worked example):
+#' \itemize{
+#'   \item \code{sub_season = c(51, 52, 1, 2)};
+#'         \code{season.weeks = c(38:52, 1:14)}
+#'   \item Chronological ordering via \code{which(season.weeks \%in\% sub_season)}
+#'         gives the group in order: 51, 52, 1, 2.
+#'   \item \strong{anchor week} = 51 (first); \strong{last week} = 2 (last).
+#'   \item \code{n_extra = length(group) - 1 = 3}
+#'         (weeks 52, 1, 2 sit between anchor and end of season).
+#'   \item Per predictor: \code{cbind(last_week[lags 1:n_extra],
+#'         anchor_week[lags 1:n_main_lags])} = 55 columns.
+#'   \item After \code{rev()} in \code{extract_season_preds()}, columns run
+#'         oldest \eqn{\to} newest.
+#' }
+#'
+#' @param aus.lag      Named list of weekly lag matrices (e.g. \code{SEAus.lag}).
+#'   List names must follow the format \code{"Week  N"} (two spaces).
+#' @param season.weeks Integer vector giving the \emph{ordered} set of season
+#'   weeks (e.g. \code{c(38:52, 1:14)}).
+#' @param sub_season   Integer vector of weeks belonging to this sub-season
+#'   (e.g. \code{c(51, 52, 1, 2)} for peak, \code{38:50} for early,
+#'   \code{3:14} for late).
+#' @param n_main_lags  Number of lags to extract from the anchor week (default 52).
+#' @param col_spec     Named list; each element is the \emph{start column index}
+#'   for that predictor in the raw week matrix (columns 1:2 are metadata;
+#'   lag 1 starts at column 3 for the first predictor).
 #'   Defaults match the current \code{SEAus.lag} layout.
-#' @return Named list of matrices (one per predictor); 55 columns each.
+#' @return Named list of matrices (one per predictor);
+#'   \code{n_main_lags + n_extra} columns each.
 #'
 #' @examples
 #' \dontrun{
-#'   peak_mats <- build_peak_mats(SEAus.lag$`Week  51`, SEAus.lag$`Week   2`)
+#'   season.weeks <- c(38:52, 1:14)
+#'   SE.mid       <- c(51, 52, 1, 2)
+#'
+#'   peak_mats <- build_season_mats(SEAus.lag, season.weeks, SE.mid)
+#'   # early_mats <- build_season_mats(SEAus.lag, season.weeks, 38:50)
+#'   # late_mats  <- build_season_mats(SEAus.lag, season.weeks, 3:14)
 #' }
-build_peak_mats <- function(
-    week51,
-    week2,
-    col_spec = list(
-      nino = c(3L,   54L),
-      wtio = c(107L, 158L),
-      etio = c(159L, 210L),
-      tsa  = c(211L, 262L),
-      sam  = c(263L, 314L),   # AAO / SAM
-      olr  = c(315L, 366L)
+build_season_mats <- function(
+    aus.lag,
+    season.weeks,
+    sub_season,
+    n_main_lags = 52L,
+    col_spec    = list(
+      nino = 3L,
+      wtio = 107L,
+      etio = 159L,
+      tsa  = 211L,
+      sam  = 263L,   # AAO / SAM
+      olr  = 315L
     )
 ) {
-  lapply(col_spec, function(rng) {
-    lag52_cols <- rng[1L]:rng[2L]
-    lag3_cols  <- rng[1L]:(rng[1L] + 2L)         # lags 1:3 from week 2
-    cbind(week2[, lag3_cols, drop = FALSE],
-          week51[, lag52_cols, drop = FALSE])
+  # ---- derive anchor / last week from group definition (mirrors pred_setup) ----
+  grp_pos     <- which(season.weeks %in% sub_season)
+  grp_ordered <- season.weeks[grp_pos]          # chronological order
+  anchor_week <- grp_ordered[1L]                # e.g. 51 for peak
+  last_week   <- grp_ordered[length(grp_ordered)] # e.g. 2 for peak
+  n_extra     <- length(grp_ordered) - 1L       # e.g. 3 for peak
+
+  # ---- look up week matrices from aus.lag ----
+  anchor_key <- paste0("Week  ", anchor_week)
+  last_key   <- paste0("Week  ", last_week)
+
+  mat_anchor <- aus.lag[[anchor_key]]
+  mat_last   <- aus.lag[[last_key]]
+
+  if (is.null(mat_anchor))
+    stop("aus.lag entry not found: '", anchor_key,
+         "'. Check list names with names(aus.lag).")
+  if (is.null(mat_last))
+    stop("aus.lag entry not found: '", last_key,
+         "'. Check list names with names(aus.lag).")
+
+  # ---- extract and combine lag columns per predictor ----
+  lapply(col_spec, function(start_col) {
+    main_cols  <- start_col:(start_col + n_main_lags - 1L)  # lags 1:52 from anchor
+    extra_cols <- start_col:(start_col + n_extra - 1L)      # lags 1:n_extra from last
+    cbind(mat_last[,   extra_cols, drop = FALSE],
+          mat_anchor[, main_cols,  drop = FALSE])
   })
 }
 
 # ----------------------------------------------------------------------------
 #' Extract one season's time-ordered anomaly vectors
 #'
-#' Selects row \code{season_i} from each 55-column matrix, reverses the
-#' column order so that the earliest date (lag 52 from week 51) is first
-#' in time.
+#' Selects row \code{season_i} from each lag matrix produced by
+#' \code{build_season_mats()}, and reverses the column order so that the
+#' result runs oldest \eqn{\to} newest (lag 52 from the anchor week first).
 #'
-#' @param season_i  Integer row index (1 = first season, 19 = 2019/20, …).
-#' @param peak_mats Named list of matrices from \code{build_peak_mats()}.
-#' @return Named list of numeric vectors (length 55), one per predictor.
+#' @param season_i    Integer row index (1 = first season, 19 = 2019/20, …).
+#' @param season_mats Named list of matrices from \code{build_season_mats()}.
+#' @return Named list of numeric vectors (one per predictor).
 #'
 #' @examples
 #' \dontrun{
-#'   preds <- extract_season_preds(19, peak_mats)
+#'   peak_mats <- build_season_mats(SEAus.lag, season.weeks, SE.mid)
+#'   preds     <- extract_season_preds(19, peak_mats)
 #' }
-extract_season_preds <- function(season_i, peak_mats) {
-  lapply(peak_mats, function(mat) {
+extract_season_preds <- function(season_i, season_mats) {
+  lapply(season_mats, function(mat) {
     as.numeric(rev(mat[season_i, ]))
   })
 }
@@ -346,14 +418,22 @@ extract_season_preds <- function(season_i, peak_mats) {
 # ----------------------------------------------------------------------------
 #' Build the x-axis date vector and derived axis elements for one season
 #'
-#' The plotting window runs from Week 51 of the preceding calendar year
-#' (lag 52 anchor) through approximately Week 2 of the following year
-#' (lag 1 anchor), spanning ~55 weekly steps.
+#' The plotting window starts at the \strong{anchor week} of the sub-season
+#' (the chronologically first week, e.g. week 51 for the peak group) in the
+#' year preceding the fire season, and spans \code{n_main_lags + n_extra}
+#' weeks forward.  The anchor week is derived from \code{sub_season} and
+#' \code{season.weeks} — no week numbers are hardcoded.
 #'
-#' @param season_i    Integer row index into \code{season_years}.
-#' @param pred_df     Data frame with columns \code{week}, \code{year},
-#'                    \code{date}.
+#' @param season_i     Integer row index into \code{season_years}.
+#' @param pred_df      Data frame with columns \code{week}, \code{year},
+#'                     \code{date}.
 #' @param season_years Integer vector of season-start years (e.g. 2001:2020).
+#' @param season.weeks Integer vector giving the ordered set of season weeks
+#'   (e.g. \code{c(38:52, 1:14)}).
+#' @param sub_season   Integer vector of weeks for this sub-season group
+#'   (e.g. \code{c(51, 52, 1, 2)}).
+#' @param n_main_lags  Number of main lags (default 52); passed through for
+#'   span calculation.
 #' @return Named list:
 #'   \describe{
 #'     \item{pred_time}{Date vector of weekly time steps in the window.}
@@ -365,25 +445,42 @@ extract_season_preds <- function(season_i, peak_mats) {
 #'
 #' @examples
 #' \dontrun{
-#'   dates <- build_season_dates(19, pred_df, season_years)
+#'   season.weeks <- c(38:52, 1:14)
+#'   dates <- build_season_dates(19, pred_df, season_years, season.weeks, SE.mid)
 #' }
-build_season_dates <- function(season_i, pred_df, season_years) {
+build_season_dates <- function(season_i, pred_df, season_years,
+                                season.weeks, sub_season,
+                                n_main_lags = 52L) {
 
+  # ---- derive anchor week and span (mirrors build_season_mats) ----
+  grp_pos     <- which(season.weeks %in% sub_season)
+  grp_ordered <- season.weeks[grp_pos]
+  anchor_week <- grp_ordered[1L]
+  n_extra     <- length(grp_ordered) - 1L
+  n_span      <- n_main_lags + n_extra        # total weekly time steps
+
+  # ---- find the anchor week date in the year preceding the fire season ----
   yr         <- season_years[season_i]
-  start_row  <- pred_df[pred_df$week == 51L & pred_df$year == yr - 1L, ]
+  start_row  <- pred_df[pred_df$week == anchor_week & pred_df$year == yr - 1L, ]
   date_start <- ymd(start_row$date[1L])
 
-  date_end   <- date_start + weeks(54L)
-  if (epiweek(date_end) != 1L) date_end <- date_end + weeks(1L)
-
-  window     <- pred_df[pred_df$date >= date_start & pred_df$date <= date_end, ]
-  pred_time  <- as.Date(window$date)
+  # Select exactly n_span consecutive rows from pred_df starting at date_start.
+  # This replaces the original year-boundary epiweek adjustment, which only
+  # worked for the peak sub-season and always fires erroneously for sub-seasons
+  # whose window does not end near ISO week 1 (e.g. SE.early).
+  window_all <- pred_df[pred_df$date >= date_start, ]
+  window_all <- window_all[order(window_all$date), ]
+  if (nrow(window_all) < n_span)
+    stop("pred_df does not contain ", n_span, " rows on or after ", date_start,
+         ". Check season_i, pred_df, and n_main_lags.")
+  pred_time  <- as.Date(window_all$date[seq_len(n_span)])
   xrange     <- range(pred_time)
-  xrange[1L] <- xrange[1L] + weeks(1L)     # trim first step for display
+  xrange[1L] <- xrange[1L] + weeks(1L)        # trim first step for display
 
   list(
     pred_time   = pred_time,
     xrange      = xrange,
+    n_group     = length(grp_ordered),   # group size drives highlight window width
     month_ticks = make_month_ticks(xrange),
     month_lines = make_month_lines(xrange),
     year_lines  = make_year_lines(xrange)
@@ -419,14 +516,17 @@ build_season_dates <- function(season_i, pred_df, season_years) {
 #'
 #' @examples
 #' \dontrun{
+#'   season.weeks <- c(38:52, 1:14)
+#'   SE.mid       <- c(51, 52, 1, 2)
+#'
 #'   # --- one-time setup ---
-#'   peak_mats <- build_peak_mats(SEAus.lag$`Week  51`, SEAus.lag$`Week   2`)
+#'   peak_mats <- build_season_mats(SEAus.lag, season.weeks, SE.mid)
 #'   y_max_all <- max(abs(unlist(peak_mats)), na.rm = TRUE)
 #'
 #'   # --- per-season loop ---
 #'   for (i in c(2, 3, 5, 6, 15, 19)) {
 #'     preds <- extract_season_preds(i, peak_mats)
-#'     dates <- build_season_dates(i, pred_df, season_years)
+#'     dates <- build_season_dates(i, pred_df, season_years, season.weeks, SE.mid)
 #'
 #'     plot_pred_ts_panels(
 #'       season_i = i,
@@ -490,6 +590,7 @@ plot_pred_ts_panels <- function(
   # ---- unpack date elements ----
   pred_time   <- dates$pred_time
   xlim        <- dates$xrange
+  n_group     <- dates$n_group        # sub-season group size → highlight window width
   xticks      <- dates$month_ticks$ticks
   xlabs       <- dates$month_ticks$labs
   month_lines <- dates$month_lines
@@ -535,6 +636,7 @@ plot_pred_ts_panels <- function(
       xticks      = xticks,
       xlabs       = xlabs,
       lag_vals    = lag_list[[p]],
+      n_group     = n_group,
       show_x      = is_last,
       colors      = colors,
       y_tick_lab  = y_tick_lab

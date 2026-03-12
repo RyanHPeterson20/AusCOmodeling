@@ -35,6 +35,92 @@ SE.early <- 38:50
 SE.mid <- c(51, 52, 1, 2)
 SE.late <- 3:14
 
+#SE models
+SE1.lm <- SEmodels[[1]]
+SE2.lm <- SEmodels[[2]]
+SE3.lm <- SEmodels[[3]]
+
+#model coefs
+SE1.coef <- coef(SE1.lm)
+SE2.coef <- coef(SE2.lm)
+SE3.coef <- coef(SE3.lm)
+
+#season setup
+i <- 19  #2019 #loop through as many years as needed
+
+#peak setup
+peak_mats <- build_season_mats(SEAus.lag, season.weeks, SE.mid)
+y_max_all <- ceiling(max(abs(unlist(peak_mats)), na.rm = TRUE) * 10) / 10
+preds     <- extract_season_preds(i,peak_mats )
+dates     <- build_season_dates(i, pred.df, season.years, season.weeks, SE.mid)
+
+#output, all built-in the function 
+out_dir <- "~/CO_AUS/AusCOmodeling/Figures"
+
+plot_pred_ts_panels(
+  season_i = i, 
+  preds = preds, 
+  dates = dates, 
+  seasons = seasons,
+  y_max    = y_max_all,
+  preds_ord = c("nino", "etio", "wtio", "tsa", "sam", "olr"),
+  outfile  = file.path(out_dir, paste0("Test_fig3_SE", season.years[i], "pred_peak.png"))
+)
 
 
+
+#early setup
+early_mats <- build_season_mats(SEAus.lag, season.weeks, SE.early)
+y_max_all <- ceiling(max(abs(unlist(early_mats)), na.rm = TRUE) * 10) / 10
+preds     <- extract_season_preds(i,early_mats )
+dates     <- build_season_dates(i, pred.df, season.years, season.weeks, SE.early)
+
+#output, all built-in the function 
+out_dir <- "~/CO_AUS/AusCOmodeling/Figures"
+
+plot_pred_ts_panels(
+  season_i = i, 
+  preds = preds, 
+  dates = dates, 
+  seasons = seasons,
+  y_max    = y_max_all,
+  preds_ord = c("nino", "etio", "wtio", "tsa", "sam", "olr"),
+  lag_list    = list(
+    nino = 33L,
+    wtio = c(5L, 46L),
+    etio = NULL,
+    tsa  = c(12L, 14L), 
+    sam  = c(24L,  28L, 29L, 33L, 41L),
+    olr  = c(2L, 14L)
+  ),
+  outfile  = file.path(out_dir, paste0("Test_fig3_SE", season.years[i], "pred_early.png"))
+)
+
+
+#late setup
+late_mats <- build_season_mats(SEAus.lag, season.weeks, SE.late)
+y_max_all <- ceiling(max(abs(unlist(late_mats)), na.rm = TRUE) * 10) / 10
+preds     <- extract_season_preds(i, late_mats )
+dates     <- build_season_dates(i, pred.df, season.years, season.weeks, SE.late)
+
+#output, all built-in the function 
+out_dir <- "~/CO_AUS/AusCOmodeling/Figures"
+
+plot_pred_ts_panels(
+  season_i = i, 
+  preds = preds, 
+  dates = dates, 
+  seasons = seasons,
+  y_max    = y_max_all,
+  preds_ord = c("nino", "etio", "wtio", "tsa", "sam", "olr"),
+  lag_list    = list(
+    nino = c(25L, 47L),
+    wtio = NULL,
+    etio = c(16L, 33L),
+    tsa  = c(22L), 
+    sam  = c(1L, 50L),
+    olr  = c(6L)
+  ),
+  outfile  = file.path(out_dir, paste0("Test_fig3_SE", season.years[i], "pred_late.png"))
+)
 
