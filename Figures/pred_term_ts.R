@@ -124,3 +124,10 @@ plot_pred_ts_panels(
   outfile  = file.path(out_dir, paste0("Test_fig3_SE", season.years[i], "pred_late.png"))
 )
 
+
+#Current issues to address everything:
+## generalize/automate absolutely everything (specifically the lag_list)
+## get a bunch of parameters to tweak everything. so that I can adjust everything as needed.
+
+
+
