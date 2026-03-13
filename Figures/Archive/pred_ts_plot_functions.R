@@ -170,12 +170,21 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 #' @param text_cex   Character expansion for "Lag N" labels.
 .draw_lag_highlights <- function(pred_time, y, lag_vals,
                                   col_pos, col_neg,
+                                  n_group  = 4L,
+                                  ylim     = c(-2, 2),
                                   lag_alpha = 0.85,
                                   text_cex  = 2.5) {
   # The anchor week is the ISO week of pred_time[1] — always the sub-season's
   # first week (one year prior to the fire season). This generalises correctly
-  # to any sub-season: peak (51), early (38), late (3), etc.
+  # to any sub-season (peak, early, late) without any extra arguments.
   anchor_week <- week(pred_time[1L])
+
+  # label x-offset: ~35% of the group window width to the left of window start,
+  # so the label clears the highlight for any group size
+  label_x_offset <- days(round(n_group * 7L * 0.35))
+
+  # label y-offset: 15% of the total y range above the local peak
+  label_y_offset <- diff(ylim) * 0.15
 
   for (j in lag_vals) {
 
@@ -185,19 +194,19 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
     hits <- which(week(pred_time) == lag_week)
     if (length(hits) == 0L) next
 
-    # 4-step window starting at the first matching date
-    idx <- hits[1L]:min(hits[1L] + 3L, length(pred_time))
+    # window spans exactly n_group steps (= length of sub-season group)
+    idx <- hits[1L]:min(hits[1L] + n_group - 1L, length(pred_time))
 
     draw_envelope_zero(pred_time[idx], y[idx],
                        col_pos, col_neg, alpha = lag_alpha)
 
-    # "Lag N" text: positioned just above the peak of the highlighted window
+    # "Lag N" text: positioned above the local peak of the highlighted window
     y_peak  <- max(y[idx], na.rm = TRUE)
-    y_label <- ifelse(y_peak < 0, 0, y_peak)
+    y_label <- ifelse(y_peak < 0, 0, y_peak) + label_y_offset
 
-    legend(x = c(pred_time[idx[1L]] - days(9L),
-                 pred_time[idx[1L]] - days(9L)),
-           y = c(y_label + 1.5, y_label + 1.5),
+    legend(x = c(pred_time[idx[1L]] - label_x_offset,
+                 pred_time[idx[1L]] - label_x_offset),
+           y = c(y_label, y_label),
            legend   = paste0("Lag ", j),
            box.col  = NA, bg = NA, xpd = NA,
            text.col = "grey28", cex = text_cex)
@@ -234,6 +243,7 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
                               xlim, year_lines, month_lines,
                               xticks, xlabs,
                               lag_vals   = NULL,
+                              n_group    = 4L,
                               show_x     = FALSE,
                               colors     = .TS_COLORS,
                               y_tick_lab,
@@ -268,6 +278,8 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
   if (!is.null(lag_vals) && length(lag_vals) > 0L) {
     .draw_lag_highlights(pred_time, y, lag_vals,
                           colors$lag_pos, colors$lag_neg,
+                          n_group  = n_group,
+                          ylim     = ylim,
                           lag_alpha = 0.85, text_cex = label_cex)
   }
 
@@ -289,6 +301,49 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 # ============================================================================
 #  PUBLIC INTERFACE
 # ============================================================================
+
+# ----------------------------------------------------------------------------
+#' Parse a coefficient vector into a lag_list for highlighting  (internal)
+#'
+#' Extracts main-term coefficient names matching the pattern
+#' \code{<var>_lag<N>} and groups the lag numbers by predictor key.
+#' Interaction (\code{:}) and quadratic (\code{I(...)}) terms are ignored.
+#'
+#' @param coef_vec  Named numeric vector, e.g. \code{coef(SE1.lm)}.
+#' @param key_map   Named character vector mapping model variable names to
+#'   internal predictor keys where they differ.  E.g.
+#'   \code{c(aao = "sam")} maps \code{aao_lag<N>} terms to the \code{"sam"}
+#'   panel.  Identity mappings do not need to be listed.
+#' @return Named list of integer vectors, one per unique predictor key found.
+.coef_to_lag_list <- function(coef_vec, key_map = c(aao = "sam")) {
+
+  nms <- names(coef_vec)
+  if (is.null(nms)) stop("coef_vec must be a named numeric vector.")
+
+  pat      <- "^([a-z]+)_lag([0-9]+)$"
+  is_main  <- grepl(pat, nms) &
+              !grepl(":", nms) &          # exclude interactions
+              !grepl("^I\\(", nms)        # exclude quadratics
+
+  main_nms <- nms[is_main]
+  if (length(main_nms) == 0L)
+    warning(".coef_to_lag_list: no terms matching '<var>_lag<N>' found. ",
+            "Check coefficient names with names(coef_vec)).")
+
+  lag_list <- list()
+
+  for (nm in main_nms) {
+    var_raw <- sub(pat, "\\1", nm)
+    lag     <- as.integer(sub(pat, "\\2", nm))
+
+    # apply key_map alias (e.g. aao -> sam); identity if not in map
+    var_key <- if (var_raw %in% names(key_map)) key_map[[var_raw]] else var_raw
+
+    lag_list[[var_key]] <- c(lag_list[[var_key]], lag)
+  }
+
+  lag_list
+}
 
 # ----------------------------------------------------------------------------
 #' Assemble per-predictor lag matrices for one sub-season
@@ -468,6 +523,7 @@ build_season_dates <- function(season_i, pred_df, season_years,
   list(
     pred_time   = pred_time,
     xrange      = xrange,
+    n_group     = length(grp_ordered),   # group size drives highlight window width
     month_ticks = make_month_ticks(xrange),
     month_lines = make_month_lines(xrange),
     year_lines  = make_year_lines(xrange)
@@ -486,9 +542,17 @@ build_season_dates <- function(season_i, pred_df, season_years,
 #'   \code{tsa}, \code{sam}, \code{olr}.
 #' @param dates        List from \code{build_season_dates()}.
 #' @param seasons      Character vector of "YYYY-YYYY" season labels.
-#' @param lag_list     Named list of integer lag values to highlight per
-#'   predictor.  Pass \code{NULL} for a predictor to suppress highlights.
-#'   Default reproduces the peak-season highlights.
+#' @param model_coef Named numeric vector of model coefficients, e.g.
+#'   \code{coef(SE1.lm)}.  When provided, lag values to highlight are parsed
+#'   automatically from terms matching \code{<var>_lag<N>}.  Takes priority
+#'   over \code{lag_list}.  \code{NULL} falls back to \code{lag_list}.
+#' @param lag_list   Named list of integer lag values to highlight per
+#'   predictor, used only when \code{model_coef = NULL}.  Set a predictor's
+#'   entry to \code{NULL} to suppress highlights for that panel.
+#' @param key_map    Named character vector mapping model variable names to
+#'   internal predictor keys where they differ (e.g. \code{c(aao = "sam")}).
+#'   Only needed when \code{model_coef} is supplied.  Default covers the
+#'   known \code{aao} → \code{sam} alias.
 #' @param y_max        Shared y-axis half-range.  Computed from \code{preds}
 #'   if \code{NULL} (rounded up to one decimal place).
 #' @param outfile      Full path for PNG output.  \code{NULL} plots to the
@@ -510,19 +574,20 @@ build_season_dates <- function(season_i, pred_df, season_years,
 #'   peak_mats <- build_season_mats(SEAus.lag, season.weeks, SE.mid)
 #'   y_max_all <- max(abs(unlist(peak_mats)), na.rm = TRUE)
 #'
-#'   # --- per-season loop ---
+#'   # --- per-season loop: lags parsed from model coefficients ---
 #'   for (i in c(2, 3, 5, 6, 15, 19)) {
 #'     preds <- extract_season_preds(i, peak_mats)
 #'     dates <- build_season_dates(i, pred_df, season_years, season.weeks, SE.mid)
 #'
 #'     plot_pred_ts_panels(
-#'       season_i = i,
-#'       preds    = preds,
-#'       dates    = dates,
-#'       seasons  = seasons,
-#'       y_max    = y_max_all,
-#'       outfile  = file.path(out_dir,
-#'                            paste0("SI_SE", season_years[i], "_pred_ts.png"))
+#'       season_i   = i,
+#'       preds      = preds,
+#'       dates      = dates,
+#'       seasons    = seasons,
+#'       model_coef = coef(SE1.lm),
+#'       y_max      = y_max_all,
+#'       outfile    = file.path(out_dir,
+#'                              paste0("SI_SE", season_years[i], "_pred_ts.png"))
 #'     )
 #'   }
 #' }
@@ -532,14 +597,9 @@ plot_pred_ts_panels <- function(
     dates,
     seasons,
     preds_ord   = c("nino", "wtio", "etio", "tsa", "sam", "olr"),
-    lag_list    = list(
-      nino = 40L,
-      wtio = c(14L, 46L),
-      etio = c(7L,  33L),
-      tsa  = 29L,
-      sam  = c(9L,  21L),
-      olr  = NULL
-    ),
+    model_coef  = NULL,
+    lag_list    = NULL,
+    key_map     = c(aao = "sam"),
     y_max       = NULL,
     outfile     = NULL,
     png_dims    = list(width = 4800L, height = 5600L, res = 275L),
@@ -562,6 +622,16 @@ plot_pred_ts_panels <- function(
     colors      = .TS_COLORS
 ) {
 
+  # ---- resolve lag highlights ----
+  # model_coef takes priority; lag_list is the manual fallback
+  if (!is.null(model_coef)) {
+    lag_list <- .coef_to_lag_list(model_coef, key_map = key_map)
+  } else if (is.null(lag_list)) {
+    warning("plot_pred_ts_panels: both model_coef and lag_list are NULL. ",
+            "No lag highlights will be drawn.")
+    lag_list <- list()
+  }
+
   # ---- predictor draw order ----
   n_panels  <- length(preds_ord)
 
@@ -577,6 +647,7 @@ plot_pred_ts_panels <- function(
   # ---- unpack date elements ----
   pred_time   <- dates$pred_time
   xlim        <- dates$xrange
+  n_group     <- dates$n_group        # sub-season group size → highlight window width
   xticks      <- dates$month_ticks$ticks
   xlabs       <- dates$month_ticks$labs
   month_lines <- dates$month_lines
@@ -622,6 +693,7 @@ plot_pred_ts_panels <- function(
       xticks      = xticks,
       xlabs       = xlabs,
       lag_vals    = lag_list[[p]],
+      n_group     = n_group,
       show_x      = is_last,
       colors      = colors,
       y_tick_lab  = y_tick_lab

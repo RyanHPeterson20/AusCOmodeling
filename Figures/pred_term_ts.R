@@ -64,6 +64,7 @@ plot_pred_ts_panels(
   seasons = seasons,
   y_max    = y_max_all,
   preds_ord = c("nino", "etio", "wtio", "tsa", "sam", "olr"),
+  model_coef = coef(SE2.lm),
   outfile  = file.path(out_dir, paste0("Test_fig3_SE", season.years[i], "pred_peak.png"))
 )
 
@@ -85,14 +86,7 @@ plot_pred_ts_panels(
   seasons = seasons,
   y_max    = y_max_all,
   preds_ord = c("nino", "etio", "wtio", "tsa", "sam", "olr"),
-  lag_list    = list(
-    nino = 33L,
-    wtio = c(5L, 46L),
-    etio = NULL,
-    tsa  = c(12L, 14L), 
-    sam  = c(24L,  28L, 29L, 33L, 41L),
-    olr  = c(2L, 14L)
-  ),
+  model_coef = coef(SE1.lm),
   outfile  = file.path(out_dir, paste0("Test_fig3_SE", season.years[i], "pred_early.png"))
 )
 
@@ -113,14 +107,7 @@ plot_pred_ts_panels(
   seasons = seasons,
   y_max    = y_max_all,
   preds_ord = c("nino", "etio", "wtio", "tsa", "sam", "olr"),
-  lag_list    = list(
-    nino = c(25L, 47L),
-    wtio = NULL,
-    etio = c(16L, 33L),
-    tsa  = c(22L), 
-    sam  = c(1L, 50L),
-    olr  = c(6L)
-  ),
+  model_coef = coef(SE1.lm),
   outfile  = file.path(out_dir, paste0("Test_fig3_SE", season.years[i], "pred_late.png"))
 )
 
