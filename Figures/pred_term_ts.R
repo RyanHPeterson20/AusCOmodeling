@@ -17,6 +17,7 @@ load("Data/base_RAMPmodels.rda") #"base" model (e.g., SEmodels)
 #functions
 source("Functions/modeling_functions.R")
 source("Figures/pred_ts_plot_functions.R") #testing new figure automation,
+source("Figures/subseason_comparison_functions.R")
 
 #setup
 season.weeks <- c(38:52, 1:14)
@@ -107,7 +108,7 @@ plot_pred_ts_panels(
   seasons = seasons,
   y_max    = y_max_all,
   preds_ord = c("nino", "etio", "wtio", "tsa", "sam", "olr"),
-  model_coef = coef(SE1.lm),
+  model_coef = coef(SE3.lm),
   outfile  = file.path(out_dir, paste0("Test_fig3_SE", season.years[i], "pred_late.png"))
 )
 
@@ -115,6 +116,49 @@ plot_pred_ts_panels(
 #Current issues to address everything:
 ## generalize/automate absolutely everything (specifically the lag_list)
 ## get a bunch of parameters to tweak everything. so that I can adjust everything as needed.
+
+
+#testing subseason comparison
+out_dir <- "~/CO_AUS/AusCOmodeling/Figures"
+
+groups <- list(
+   early = build_group_data(19, SEAus.lag, pred.df, season.years,
+                             season.weeks, SE.early,
+                             model_coef = coef(SE1.lm)),
+    peak  = build_group_data(19, SEAus.lag, pred.df, season.years,
+                             season.weeks, SE.mid,
+                             model_coef = coef(SE2.lm)),
+    late  = build_group_data(19, SEAus.lag, pred.df, season.years,
+                             season.weeks, SE.late,
+                             model_coef = coef(SE3.lm))
+  )
+
+plot_mode_comparison_panels(
+  season_i = 19,
+  mode     = "nino",
+  groups   = groups,
+  seasons  = seasons,
+  outfile  = file.path(out_dir, "Test_fig3_SE2019_nino_comparison.png")
+)
+  
+  
+plot_mode_comparison_panels(
+  season_i = 19,
+  mode     = "etio",
+  groups   = groups,
+  seasons  = seasons,
+  outfile  = file.path(out_dir, "Test_fig3_SE2019_etio_comparison.png")
+)
+
+
+plot_mode_comparison_panels(
+  season_i = 19,
+  mode     = "wtio",
+  groups   = groups,
+  seasons  = seasons,
+  outfile  = file.path(out_dir, "Test_fig3_SE2019_wtio_comparison.png")
+)
+
 
 
 

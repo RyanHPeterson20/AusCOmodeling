@@ -318,11 +318,25 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
        col = NA, line = 0, col.ticks = "black", col.axis = "black", las = 1)
 
   # --- reference lines ---
-  abline(h = 0,           lty = 1, col = "grey50", lwd = 1)
-  abline(v = month_lines, lty = 3, col = "grey30", lwd = 2)   # monthly (dotted)
-  abline(v = month_lines[month(month_lines) == 1],
-                          lty = 2, col = "grey30", lwd = 2)   # January (dashed)
-  abline(v = year_lines,  lty = 2, col = "grey30", lwd = 2)   # year boundary
+  abline(h = 0, lty = 1, col = "grey50", lwd = 1)
+
+  # Vertical grid lines: drawn as segments inset from ylim so they stop
+  # short of the panel boundary and do not bleed into adjacent panels
+  # when mar = 0 makes plot regions flush.
+  y_inset <- diff(ylim) * 0.02
+  y_bot   <- ylim[1] + y_inset
+  y_top   <- ylim[2] - y_inset
+
+  segments(x0 = month_lines, x1 = month_lines,
+           y0 = y_bot, y1 = y_top,
+           lty = 3, col = "grey30", lwd = 2)
+  segments(x0 = month_lines[month(month_lines) == 1],
+           x1 = month_lines[month(month_lines) == 1],
+           y0 = y_bot, y1 = y_top,
+           lty = 2, col = "grey30", lwd = 2)
+  segments(x0 = year_lines, x1 = year_lines,
+           y0 = y_bot, y1 = y_top,
+           lty = 2, col = "grey30", lwd = 2)
 
   # --- fill envelope ---
   draw_envelope_zero(pred_time, y, colors$pred_pos, colors$pred_neg, alpha = 0.50)
@@ -366,9 +380,23 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 }
 
 
-# ============================================================================
-#  PUBLIC INTERFACE
-# ============================================================================
+# ----------------------------------------------------------------------------
+#' Compute symmetric y-axis tick positions  (internal)
+#'
+#' Robust replacement for the inline \code{seq(y_step, y_max - y_step, ...)}
+#' idiom.  \code{round()} can push \code{y_step} slightly above
+#' \code{y_max / 2}, making the sequence end < start and causing
+#' \code{seq()} to throw "wrong sign in 'by' argument".
+#'
+#' @param y_max  Positive numeric half-range.
+#' @return Numeric vector of tick positions symmetric around 0, excluding
+#'   \code{±y_max} itself.
+.make_yticks <- function(y_max) {
+  y_step <- round(y_max / 2, 1L)
+  y_seq  <- seq(y_step, y_max, by = y_step)
+  y_seq  <- y_seq[y_seq < y_max]
+  c(-rev(y_seq), 0, y_seq)
+}
 
 # ----------------------------------------------------------------------------
 #' Parse a coefficient vector into a lag_list for highlighting  (internal)
@@ -721,10 +749,8 @@ plot_pred_ts_panels <- function(
   if (is.null(y_max)) {
     y_max <- ceiling(max(abs(unlist(preds)), na.rm = TRUE) * 10L) / 10L
   }
-  y_step    <- round(y_max / 2, 1L)
-  y_seq     <- seq(y_step, y_max - y_step, by = y_step)
-  y_tick_lab <- c(-rev(y_seq), 0, y_seq)
-  ylim      <- c(-y_max, y_max)
+  y_tick_lab <- .make_yticks(y_max)
+  ylim       <- c(-y_max, y_max)
 
   # ---- unpack date elements ----
   pred_time   <- dates$pred_time
@@ -971,9 +997,7 @@ plot_mode_comparison_panels <- function(
     all_vals <- unlist(lapply(groups, function(g) g$preds[[mode]]))
     y_max    <- ceiling(max(abs(all_vals), na.rm = TRUE) * 10L) / 10L
   }
-  y_step     <- round(y_max / 2, 1L)
-  y_seq      <- seq(y_step, y_max - y_step, by = y_step)
-  y_tick_lab <- c(-rev(y_seq), 0, y_seq)
+  y_tick_lab <- .make_yticks(y_max)
   ylim       <- c(-y_max, y_max)
 
   # ---- open output device ----
@@ -985,26 +1009,55 @@ plot_mode_comparison_panels <- function(
     on.exit(dev.off(), add = TRUE)
   }
 
-  # ---- layout ----
-  par(mfrow = c(n_panels, 1))
-  par(oma  = c(7, 4, 5.5, 0))
-  par(mgp  = c(4, 0.25, 0))
+  # ---- shared x-axis: union of all groups' date windows ----
+  # All panels use the same xlim so they are visually aligned in calendar time.
+  # Each panel's pred_time still covers only its own group's lag window; data
+  # simply sits where it falls within the shared coordinate space.
+  full_xrange <- range(as.Date(unlist(
+    lapply(groups, function(g) as.numeric(g$dates$xrange))
+  ), origin = "1970-01-01"))
+  full_xt      <- make_month_ticks(full_xrange)
+  full_ml      <- make_month_lines(full_xrange)
+  full_yl      <- make_year_lines(full_xrange)
 
-  # ---- panels ----
-  for (k in seq_len(n_panels)) {
+  # ---- layout: content rows alternating with spacer rows ----
+  # Spacer rows create the visible white gap between panels seen in the mock-up.
+  # Pattern for n panels: [content, spacer, content, spacer, ..., content]
+  row_heights <- c(rep(c(20L, 3L), n_panels - 1L), 20L)
+  n_rows      <- length(row_heights)
+  layout(matrix(seq_len(n_rows), ncol = 1L), heights = row_heights)
+  par(oma = c(7, 4, 5.5, 0))
+  par(mgp = c(4, 0.25, 0))
 
+  content_k <- 0L
+
+  for (row in seq_len(n_rows)) {
+
+    # ---- spacer row: empty panel, no content, no margins ----
+    if (row_heights[row] == 3L) {
+      par(mar = c(0, 0, 0, 0))
+      plot.new()
+      next
+    }
+
+    # ---- content row ----
+    content_k <- content_k + 1L
+    k        <- content_k
     g        <- groups[[k]]
     is_first <- k == 1L
     is_last  <- k == n_panels
 
-    # each panel has its own x-axis derived from its group's lag window
-    pred_time   <- g$dates$pred_time
-    xlim        <- g$dates$xrange
-    n_group     <- g$dates$n_group
-    month_lines <- g$dates$month_lines
-    year_lines  <- g$dates$year_lines
-    xticks      <- g$dates$month_ticks$ticks
-    xlabs       <- g$dates$month_ticks$labs
+    pred_time  <- g$dates$pred_time
+    n_group    <- g$dates$n_group
+    data_range <- range(pred_time)
+
+    # Clip grid lines to this group's data window.
+    # full_ml/full_yl cover the whole union range; passing them unclipped
+    # would draw lines across the blank calendar space outside this group's
+    # lag window. Only lines that fall within [data_range[1], data_range[2]]
+    # are drawn.
+    ml_clip <- full_ml[full_ml >= data_range[1] & full_ml <= data_range[2]]
+    yl_clip <- full_yl[full_yl >= data_range[1] & full_yl <= data_range[2]]
 
     par(mar = c(if (is_last) 1L else 0L,
                 5L,
@@ -1017,11 +1070,11 @@ plot_mode_comparison_panels <- function(
       ylim                = ylim,
       ylab                = ylab,
       label               = lbl_mode,
-      xlim                = xlim,
-      year_lines          = year_lines,
-      month_lines         = month_lines,
-      xticks              = xticks,
-      xlabs               = xlabs,
+      xlim                = full_xrange,
+      year_lines          = yl_clip,
+      month_lines         = ml_clip,
+      xticks              = full_xt$ticks,
+      xlabs               = full_xt$labs,
       lag_vals            = lag_list_per_group[[k]],
       n_group             = n_group,
       show_x              = is_last,
