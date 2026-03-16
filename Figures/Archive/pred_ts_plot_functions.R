@@ -366,9 +366,23 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 }
 
 
-# ============================================================================
-#  PUBLIC INTERFACE
-# ============================================================================
+# ----------------------------------------------------------------------------
+#' Compute symmetric y-axis tick positions  (internal)
+#'
+#' Robust replacement for the inline \code{seq(y_step, y_max - y_step, ...)}
+#' idiom.  \code{round()} can push \code{y_step} slightly above
+#' \code{y_max / 2}, making the sequence end < start and causing
+#' \code{seq()} to throw "wrong sign in 'by' argument".
+#'
+#' @param y_max  Positive numeric half-range.
+#' @return Numeric vector of tick positions symmetric around 0, excluding
+#'   \code{±y_max} itself.
+.make_yticks <- function(y_max) {
+  y_step <- round(y_max / 2, 1L)
+  y_seq  <- seq(y_step, y_max, by = y_step)
+  y_seq  <- y_seq[y_seq < y_max]          # exclude y_max; safe if empty
+  c(-rev(y_seq), 0, y_seq)
+}
 
 # ----------------------------------------------------------------------------
 #' Parse a coefficient vector into a lag_list for highlighting  (internal)
@@ -701,7 +715,9 @@ plot_pred_ts_panels <- function(
     pred_label_x_offset = 2L,
     pred_label_y_frac   = 0,
     lag_label_cex       = 2.5,
-    colors              = .TS_COLORS
+    colors              = .TS_COLORS,
+    ylim                = NULL,
+    y_axis_at           = NULL
 ) {
 
   # ---- resolve lag highlights ----
@@ -718,13 +734,17 @@ plot_pred_ts_panels <- function(
   n_panels  <- length(preds_ord)
 
   # ---- shared y-axis ----
-  if (is.null(y_max)) {
-    y_max <- ceiling(max(abs(unlist(preds)), na.rm = TRUE) * 10L) / 10L
+  # ylim: use supplied value, or derive symmetrically from y_max / data
+  if (!is.null(ylim)) {
+    ylim_use <- ylim
+  } else {
+    if (is.null(y_max))
+      y_max <- ceiling(max(abs(unlist(preds)), na.rm = TRUE) * 10L) / 10L
+    ylim_use <- c(-y_max, y_max)
   }
-  y_step    <- round(y_max / 2, 1L)
-  y_seq     <- seq(y_step, y_max - y_step, by = y_step)
-  y_tick_lab <- c(-rev(y_seq), 0, y_seq)
-  ylim      <- c(-y_max, y_max)
+  # y_axis_at: use supplied ticks, or auto-derive from the resolved ylim range
+  y_tick_lab <- if (!is.null(y_axis_at)) y_axis_at else
+                  .make_yticks(max(abs(ylim_use)))
 
   # ---- unpack date elements ----
   pred_time   <- dates$pred_time
@@ -766,7 +786,7 @@ plot_pred_ts_panels <- function(
     .draw_pred_panel(
       pred_time           = pred_time,
       y                   = preds[[p]],
-      ylim                = ylim,
+      ylim                = ylim_use,
       ylab                = ylabs[p],
       label               = pred_labels[p],
       xlim                = xlim,

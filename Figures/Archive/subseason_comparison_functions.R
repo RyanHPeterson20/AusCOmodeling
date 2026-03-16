@@ -283,6 +283,10 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 #' @param group_label     Optional string drawn top-right (e.g. "Early Season").
 #'   \code{NULL} suppresses it.
 #' @param group_label_cex cex for the group label.  Defaults to \code{pred_label_cex}.
+#' @param group_label_x_frac Fractional x position: 0 = left (\code{xlim[1]}),
+#'   1 = right (\code{xlim[2]}).  Default 1.
+#' @param group_label_y_frac Fractional y position: 0 = top (\code{ylim[2]}),
+#'   1 = bottom (\code{ylim[1]}).  Default 0.
 #' @param axis_cex        cex for y-axis tick labels.
 #' @param xaxis_cex       cex for x-axis tick labels.
 #' @param lab_cex         cex for the y-axis title.
@@ -290,20 +294,22 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
                               ylim, ylab, label,
                               xlim, year_lines, month_lines,
                               xticks, xlabs,
-                              lag_vals            = NULL,
-                              n_group             = 4L,
-                              show_x              = FALSE,
-                              colors              = .TS_COLORS,
+                              lag_vals              = NULL,
+                              n_group               = 4L,
+                              show_x                = FALSE,
+                              colors                = .TS_COLORS,
                               y_tick_lab,
-                              pred_label_cex      = 2.5,
-                              pred_label_x_offset = 2L,
-                              pred_label_y_frac   = 0,
-                              lag_label_cex       = 2.5,
-                              group_label         = NULL,
-                              group_label_cex     = pred_label_cex,
-                              axis_cex            = 2.25,
-                              xaxis_cex           = 2.75,
-                              lab_cex             = 2.75) {
+                              pred_label_cex        = 2.5,
+                              pred_label_x_offset   = 2L,
+                              pred_label_y_frac     = 0,
+                              lag_label_cex         = 2.5,
+                              group_label           = NULL,
+                              group_label_cex       = pred_label_cex,
+                              group_label_x_frac    = 1,
+                              group_label_y_frac    = 0,
+                              axis_cex              = 2.25,
+                              xaxis_cex             = 2.75,
+                              lab_cex               = 2.75) {
 
   # --- base plot ---
   plot(pred_time, y,
@@ -351,22 +357,27 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
   }
 
   # --- predictor label (top-left, left-aligned) ---
-  x_lbl <- xlim[1] + days(pred_label_x_offset)
-  y_lbl <- ylim[2] - diff(ylim) * pred_label_y_frac
-  text(x      = x_lbl,
-       y      = y_lbl,
-       labels = label,
-       adj    = c(0, 1),
-       col    = "grey30",
-       cex    = pred_label_cex,
-       xpd    = NA)
+  if (!is.null(label) && nzchar(label)) {
+    x_lbl <- xlim[1] + days(pred_label_x_offset)
+    y_lbl <- ylim[2] - diff(ylim) * pred_label_y_frac
+    text(x      = x_lbl,
+         y      = y_lbl,
+         labels = label,
+         adj    = c(0, 1),
+         col    = "grey30",
+         cex    = pred_label_cex,
+         xpd    = NA)
+  }
 
-  # --- group label (top-right, right-aligned) ---
+  # --- group label (position controlled by group_label_x/y_frac) ---
   if (!is.null(group_label)) {
-    text(x      = xlim[2],
-         y      = ylim[2],
+    x_glbl <- xlim[1] + diff(as.numeric(xlim)) * group_label_x_frac
+    y_glbl <- ylim[2] - diff(ylim) * group_label_y_frac
+    x_adj  <- group_label_x_frac   # adj[1]: 0=left-anchor, 1=right-anchor
+    text(x      = as.Date(x_glbl, origin = "1970-01-01"),
+         y      = y_glbl,
          labels = group_label,
-         adj    = c(1, 1),
+         adj    = c(x_adj, 1),
          col    = "grey30",
          cex    = group_label_cex,
          xpd    = NA)
@@ -952,12 +963,14 @@ plot_mode_comparison_panels <- function(
     mode,
     groups,
     seasons,
+    main_title          = NULL,
     group_labels        = names(groups),
     key_map             = c(aao = "sam"),
     y_max               = NULL,
     ylab                = "Anomaly [W/m^2]",
     outfile             = NULL,
     png_dims            = list(width = 4800L, height = 5600L, res = 275L),
+    show_pred_label     = TRUE,
     mode_label          = NULL,
     pred_labels         = c(
       nino = "Ni\u00f1o 3.4",
@@ -971,14 +984,24 @@ plot_mode_comparison_panels <- function(
     pred_label_x_offset = 2L,
     pred_label_y_frac   = 0,
     group_label_cex     = 2.5,
+    group_label_x_frac  = 1,
+    group_label_y_frac  = 0,
     lag_label_cex       = 2.5,
-    colors              = .TS_COLORS
+    spacer_height       = 1L,
+    colors              = .TS_COLORS,
+    ylim                = NULL,
+    y_axis_at           = NULL
 ) {
 
   n_panels <- length(groups)
 
   # ---- resolve mode display label ----
-  lbl_mode <- if (!is.null(mode_label)) mode_label else pred_labels[mode]
+  lbl_mode <- if (!show_pred_label) NULL else
+              if (!is.null(mode_label)) mode_label else pred_labels[mode]
+
+  # ---- resolve main title ----
+  fig_title <- if (!is.null(main_title)) main_title else
+               paste0(seasons[season_i], " Wildfire Season")
 
   # ---- resolve lag highlights per group ----
   lag_list_per_group <- lapply(groups, function(g) {
@@ -992,13 +1015,20 @@ plot_mode_comparison_panels <- function(
     }
   })
 
-  # ---- shared y-axis: max across all groups for this mode ----
-  if (is.null(y_max)) {
-    all_vals <- unlist(lapply(groups, function(g) g$preds[[mode]]))
-    y_max    <- ceiling(max(abs(all_vals), na.rm = TRUE) * 10L) / 10L
+  # ---- shared y-axis ----
+  # ylim: use supplied value, or derive symmetrically from y_max / data
+  if (!is.null(ylim)) {
+    ylim_use <- ylim
+  } else {
+    if (is.null(y_max)) {
+      all_vals <- unlist(lapply(groups, function(g) g$preds[[mode]]))
+      y_max    <- ceiling(max(abs(all_vals), na.rm = TRUE) * 10L) / 10L
+    }
+    ylim_use <- c(-y_max, y_max)
   }
-  y_tick_lab <- .make_yticks(y_max)
-  ylim       <- c(-y_max, y_max)
+  # y_axis_at: use supplied ticks, or auto-derive from the resolved ylim range
+  y_tick_lab <- if (!is.null(y_axis_at)) y_axis_at else
+                  .make_yticks(max(abs(ylim_use)))
 
   # ---- open output device ----
   if (!is.null(outfile)) {
@@ -1021,11 +1051,17 @@ plot_mode_comparison_panels <- function(
   full_yl      <- make_year_lines(full_xrange)
 
   # ---- layout: content rows alternating with spacer rows ----
-  # Spacer rows create the visible white gap between panels seen in the mock-up.
-  # Pattern for n panels: [content, spacer, content, spacer, ..., content]
-  row_heights <- c(rep(c(20L, 3L), n_panels - 1L), 20L)
-  n_rows      <- length(row_heights)
-  layout(matrix(seq_len(n_rows), ncol = 1L), heights = row_heights)
+  # When spacer_height = 0, skip the spacer machinery entirely to avoid
+  # plot.new() being called into a zero-height region.
+  if (spacer_height > 0L) {
+    row_heights <- c(rep(c(20L, spacer_height), n_panels - 1L), 20L)
+    is_spacer   <- c(rep(c(FALSE, TRUE), n_panels - 1L), FALSE)
+    layout(matrix(seq_len(length(row_heights)), ncol = 1L), heights = row_heights)
+  } else {
+    layout(matrix(seq_len(n_panels), ncol = 1L))
+    is_spacer <- rep(FALSE, n_panels)
+  }
+  n_rows <- length(is_spacer)
   par(oma = c(7, 4, 5.5, 0))
   par(mgp = c(4, 0.25, 0))
 
@@ -1034,7 +1070,7 @@ plot_mode_comparison_panels <- function(
   for (row in seq_len(n_rows)) {
 
     # ---- spacer row: empty panel, no content, no margins ----
-    if (row_heights[row] == 3L) {
+    if (is_spacer[row]) {
       par(mar = c(0, 0, 0, 0))
       plot.new()
       next
@@ -1065,31 +1101,33 @@ plot_mode_comparison_panels <- function(
                 0L))
 
     .draw_pred_panel(
-      pred_time           = pred_time,
-      y                   = g$preds[[mode]],
-      ylim                = ylim,
-      ylab                = ylab,
-      label               = lbl_mode,
-      xlim                = full_xrange,
-      year_lines          = yl_clip,
-      month_lines         = ml_clip,
-      xticks              = full_xt$ticks,
-      xlabs               = full_xt$labs,
-      lag_vals            = lag_list_per_group[[k]],
-      n_group             = n_group,
-      show_x              = is_last,
-      colors              = colors,
-      y_tick_lab          = y_tick_lab,
-      pred_label_cex      = pred_label_cex,
-      pred_label_x_offset = pred_label_x_offset,
-      pred_label_y_frac   = pred_label_y_frac,
-      lag_label_cex       = lag_label_cex,
-      group_label         = if (!is.null(group_labels)) group_labels[k] else NULL,
-      group_label_cex     = group_label_cex
+      pred_time             = pred_time,
+      y                     = g$preds[[mode]],
+      ylim                  = ylim_use,
+      ylab                  = ylab,
+      label                 = lbl_mode,
+      xlim                  = full_xrange,
+      year_lines            = yl_clip,
+      month_lines           = ml_clip,
+      xticks                = full_xt$ticks,
+      xlabs                 = full_xt$labs,
+      lag_vals              = lag_list_per_group[[k]],
+      n_group               = n_group,
+      show_x                = is_last,
+      colors                = colors,
+      y_tick_lab            = y_tick_lab,
+      pred_label_cex        = pred_label_cex,
+      pred_label_x_offset   = pred_label_x_offset,
+      pred_label_y_frac     = pred_label_y_frac,
+      lag_label_cex         = lag_label_cex,
+      group_label           = if (!is.null(group_labels)) group_labels[k] else NULL,
+      group_label_cex       = group_label_cex,
+      group_label_x_frac    = group_label_x_frac,
+      group_label_y_frac    = group_label_y_frac
     )
 
     if (is_first) {
-      title(paste0(seasons[season_i], " Wildfire Season"),
+      title(fig_title,
             adj      = 0,
             cex.main = 3.0,
             xpd      = TRUE,

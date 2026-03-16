@@ -715,7 +715,10 @@ plot_pred_ts_panels <- function(
     pred_label_x_offset = 2L,
     pred_label_y_frac   = 0,
     lag_label_cex       = 2.5,
-    colors              = .TS_COLORS
+    colors              = .TS_COLORS,
+    ylim                = NULL,
+    y_axis_at           = NULL,
+    spacer_height       = 1L
 ) {
 
   # ---- resolve lag highlights ----
@@ -732,11 +735,17 @@ plot_pred_ts_panels <- function(
   n_panels  <- length(preds_ord)
 
   # ---- shared y-axis ----
-  if (is.null(y_max)) {
-    y_max <- ceiling(max(abs(unlist(preds)), na.rm = TRUE) * 10L) / 10L
+  # ylim: use supplied value, or derive symmetrically from y_max / data
+  if (!is.null(ylim)) {
+    ylim_use <- ylim
+  } else {
+    if (is.null(y_max))
+      y_max <- ceiling(max(abs(unlist(preds)), na.rm = TRUE) * 10L) / 10L
+    ylim_use <- c(-y_max, y_max)
   }
-  y_tick_lab <- .make_yticks(y_max)
-  ylim       <- c(-y_max, y_max)
+  # y_axis_at: use supplied ticks, or auto-derive from the resolved ylim range
+  y_tick_lab <- if (!is.null(y_axis_at)) y_axis_at else
+                  .make_yticks(max(abs(ylim_use)))
 
   # ---- unpack date elements ----
   pred_time   <- dates$pred_time
@@ -756,20 +765,40 @@ plot_pred_ts_panels <- function(
     on.exit(dev.off(), add = TRUE)
   }
 
-  # ---- layout ----
-  par(mfrow = c(n_panels, 1))
-  par(oma  = c(7, 4, 5.5, 0))   # bottom: x labels; top: figure title
-  par(mgp  = c(4, 0.25, 0))     # axis title, tick labels, tick marks
+  # ---- layout: content rows alternating with spacer rows ----
+  # When spacer_height = 0, skip the spacer machinery entirely to avoid
+  # plot.new() being called into a zero-height region.
+  if (spacer_height > 0L) {
+    row_heights <- c(rep(c(20L, spacer_height), n_panels - 1L), 20L)
+    is_spacer   <- c(rep(c(FALSE, TRUE), n_panels - 1L), FALSE)
+    layout(matrix(seq_len(length(row_heights)), ncol = 1L), heights = row_heights)
+  } else {
+    layout(matrix(seq_len(n_panels), ncol = 1L))
+    is_spacer <- rep(FALSE, n_panels)
+  }
+  n_rows <- length(is_spacer)
+  par(oma  = c(7, 4, 5.5, 0))
+  par(mgp  = c(4, 0.25, 0))
 
   # ---- panels ----
-  for (k in seq_along(preds_ord)) {
+  content_k <- 0L
 
+  for (row in seq_len(n_rows)) {
+
+    # ---- spacer row ----
+    if (is_spacer[row]) {
+      par(mar = c(0, 0, 0, 0))
+      plot.new()
+      next
+    }
+
+    # ---- content row ----
+    content_k <- content_k + 1L
+    k        <- content_k
     p        <- preds_ord[k]
     is_first <- k == 1L
     is_last  <- k == n_panels
 
-    # top panel gets a small top margin for the outer title; bottom gets
-    # space for the x-axis; all others are flush
     par(mar = c(if (is_last) 1L else 0L,
                 5L,
                 if (is_first) 1L else 0L,
@@ -778,7 +807,7 @@ plot_pred_ts_panels <- function(
     .draw_pred_panel(
       pred_time           = pred_time,
       y                   = preds[[p]],
-      ylim                = ylim,
+      ylim                = ylim_use,
       ylab                = ylabs[p],
       label               = pred_labels[p],
       xlim                = xlim,
@@ -797,13 +826,12 @@ plot_pred_ts_panels <- function(
       lag_label_cex       = lag_label_cex
     )
 
-    # season title sits in the outer top margin, above the first panel
     if (is_first) {
       title(paste0(seasons[season_i], " Wildfire Season"),
-            adj     = 0,
+            adj      = 0,
             cex.main = 3.0,
-            xpd     = TRUE,
-            outer   = TRUE)
+            xpd      = TRUE,
+            outer    = TRUE)
     }
   }
 

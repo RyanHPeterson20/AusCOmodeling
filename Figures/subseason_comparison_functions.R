@@ -988,7 +988,11 @@ plot_mode_comparison_panels <- function(
     group_label_y_frac  = 0,
     lag_label_cex       = 2.5,
     spacer_height       = 1L,
-    colors              = .TS_COLORS
+    colors              = .TS_COLORS,
+    ylim                = NULL,
+    y_axis_at           = NULL,
+    ylab_cex            = 2.75,
+    ylab_centered       = FALSE
 ) {
 
   n_panels <- length(groups)
@@ -1013,13 +1017,20 @@ plot_mode_comparison_panels <- function(
     }
   })
 
-  # ---- shared y-axis: max across all groups for this mode ----
-  if (is.null(y_max)) {
-    all_vals <- unlist(lapply(groups, function(g) g$preds[[mode]]))
-    y_max    <- ceiling(max(abs(all_vals), na.rm = TRUE) * 10L) / 10L
+  # ---- shared y-axis ----
+  # ylim: use supplied value, or derive symmetrically from y_max / data
+  if (!is.null(ylim)) {
+    ylim_use <- ylim
+  } else {
+    if (is.null(y_max)) {
+      all_vals <- unlist(lapply(groups, function(g) g$preds[[mode]]))
+      y_max    <- ceiling(max(abs(all_vals), na.rm = TRUE) * 10L) / 10L
+    }
+    ylim_use <- c(-y_max, y_max)
   }
-  y_tick_lab <- .make_yticks(y_max)
-  ylim       <- c(-y_max, y_max)
+  # y_axis_at: use supplied ticks, or auto-derive from the resolved ylim range
+  y_tick_lab <- if (!is.null(y_axis_at)) y_axis_at else
+                  .make_yticks(max(abs(ylim_use)))
 
   # ---- open output device ----
   if (!is.null(outfile)) {
@@ -1042,12 +1053,17 @@ plot_mode_comparison_panels <- function(
   full_yl      <- make_year_lines(full_xrange)
 
   # ---- layout: content rows alternating with spacer rows ----
-  # Spacer rows create the visible white gap between panels seen in the mock-up.
-  # Pattern for n panels: [content, spacer, content, spacer, ..., content]
-  row_heights <- c(rep(c(20L, spacer_height), n_panels - 1L), 20L)
-  is_spacer   <- c(rep(c(FALSE, TRUE), n_panels - 1L), FALSE)
-  n_rows      <- length(row_heights)
-  layout(matrix(seq_len(n_rows), ncol = 1L), heights = row_heights)
+  # When spacer_height = 0, skip the spacer machinery entirely to avoid
+  # plot.new() being called into a zero-height region.
+  if (spacer_height > 0L) {
+    row_heights <- c(rep(c(20L, spacer_height), n_panels - 1L), 20L)
+    is_spacer   <- c(rep(c(FALSE, TRUE), n_panels - 1L), FALSE)
+    layout(matrix(seq_len(length(row_heights)), ncol = 1L), heights = row_heights)
+  } else {
+    layout(matrix(seq_len(n_panels), ncol = 1L))
+    is_spacer <- rep(FALSE, n_panels)
+  }
+  n_rows <- length(is_spacer)
   par(oma = c(7, 4, 5.5, 0))
   par(mgp = c(4, 0.25, 0))
 
@@ -1089,8 +1105,8 @@ plot_mode_comparison_panels <- function(
     .draw_pred_panel(
       pred_time             = pred_time,
       y                     = g$preds[[mode]],
-      ylim                  = ylim,
-      ylab                  = ylab,
+      ylim                  = ylim_use,
+      ylab                  = if (ylab_centered) "" else ylab,
       label                 = lbl_mode,
       xlim                  = full_xrange,
       year_lines            = yl_clip,
@@ -1109,7 +1125,8 @@ plot_mode_comparison_panels <- function(
       group_label           = if (!is.null(group_labels)) group_labels[k] else NULL,
       group_label_cex       = group_label_cex,
       group_label_x_frac    = group_label_x_frac,
-      group_label_y_frac    = group_label_y_frac
+      group_label_y_frac    = group_label_y_frac,
+      lab_cex               = ylab_cex
     )
 
     if (is_first) {
@@ -1119,6 +1136,12 @@ plot_mode_comparison_panels <- function(
             xpd      = TRUE,
             outer    = TRUE)
     }
+  }
+
+  # ---- single centred y-axis label across all panels ----
+  if (ylab_centered && nzchar(ylab)) {
+    mtext(ylab, side = 2, outer = TRUE, line = 1,
+          cex = ylab_cex, las = 0)
   }
 
   invisible(NULL)

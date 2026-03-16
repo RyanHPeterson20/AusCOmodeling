@@ -118,26 +118,36 @@ plot_pred_ts_panels(
 ## get a bunch of parameters to tweak everything. so that I can adjust everything as needed.
 
 
-#testing subseason comparison
-out_dir <- "~/CO_AUS/AusCOmodeling/Figures"
+#predictor sub-season comparison
 
 groups <- list(
-   early = build_group_data(19, SEAus.lag, pred.df, season.years,
+   Early = build_group_data(19, SEAus.lag, pred.df, season.years,
                              season.weeks, SE.early,
                              model_coef = coef(SE1.lm)),
-    peak  = build_group_data(19, SEAus.lag, pred.df, season.years,
+    Peak  = build_group_data(19, SEAus.lag, pred.df, season.years,
                              season.weeks, SE.mid,
                              model_coef = coef(SE2.lm)),
-    late  = build_group_data(19, SEAus.lag, pred.df, season.years,
+    Late  = build_group_data(19, SEAus.lag, pred.df, season.years,
                              season.weeks, SE.late,
                              model_coef = coef(SE3.lm))
-  )
+)
+
+out_dir <- "~/CO_AUS/AusCOmodeling/Figures"
 
 plot_mode_comparison_panels(
   season_i = 19,
   mode     = "nino",
   groups   = groups,
+  main_title = "Ni\u00f1o 3.4 Predictors for 2019-2020 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
   seasons  = seasons,
+  png_dims = list(width = 4800L, height = 2800, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
   outfile  = file.path(out_dir, "Test_fig3_SE2019_nino_comparison.png")
 )
   
@@ -146,7 +156,16 @@ plot_mode_comparison_panels(
   season_i = 19,
   mode     = "etio",
   groups   = groups,
+  main_title = "ETIO Predictors for 2019-2020 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
   seasons  = seasons,
+  png_dims = list(width = 4800L, height = 2800, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
   outfile  = file.path(out_dir, "Test_fig3_SE2019_etio_comparison.png")
 )
 
@@ -155,10 +174,36 @@ plot_mode_comparison_panels(
   season_i = 19,
   mode     = "wtio",
   groups   = groups,
+  main_title = "WTIO Predictors for 2019-2020 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
   seasons  = seasons,
+  png_dims = list(width = 4800L, height = 2800, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
   outfile  = file.path(out_dir, "Test_fig3_SE2019_wtio_comparison.png")
 )
 
 
+
+plot_mode_comparison_panels(
+  season_i = 19,
+  mode     = "tsa",
+  groups   = groups,
+  seasons  = seasons,
+  outfile  = file.path(out_dir, "Test_fig3_SE2019_tsa_comparison.png")
+)
+
+
+plot_mode_comparison_panels(
+  season_i = 19,
+  mode     = "sam",
+  groups   = groups,
+  seasons  = seasons,
+  outfile  = file.path(out_dir, "Test_fig3_SE2019_aao_comparison.png")
+)
 
 
