@@ -138,17 +138,17 @@ plot_mode_comparison_panels(
   season_i = 19,
   mode     = "nino",
   groups   = groups,
-  main_title = "Ni\u00f1o 3.4 Predictors for 2019-2020 Wildfire Season",
+  main_title = "(a) Ni\u00f1o 3.4 Predictors for 2019-2020 Wildfire Season",
   ylab_centered = TRUE,
   ylab_cex = 1.5,
   seasons  = seasons,
-  png_dims = list(width = 4800L, height = 2800, res = 300), #was res = 275
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0,
   group_label_y_frac  = 0.1,
   group_label_cex     = 2.5,
   spacer_height = 0,
-  outfile  = file.path(out_dir, "Test_fig3_SE2019_nino_comparison.png")
+  outfile  = file.path(out_dir, "fig3a_SE2019_nino_comparison.png")
 )
   
   
@@ -156,17 +156,17 @@ plot_mode_comparison_panels(
   season_i = 19,
   mode     = "etio",
   groups   = groups,
-  main_title = "ETIO Predictors for 2019-2020 Wildfire Season",
+  main_title = "(b) ETIO Predictors for 2019-2020 Wildfire Season",
   ylab_centered = TRUE,
   ylab_cex = 1.5,
   seasons  = seasons,
-  png_dims = list(width = 4800L, height = 2800, res = 300), #was res = 275
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0,
   group_label_y_frac  = 0.1,
   group_label_cex     = 2.5,
   spacer_height = 0,
-  outfile  = file.path(out_dir, "Test_fig3_SE2019_etio_comparison.png")
+  outfile  = file.path(out_dir, "fig3b_SE2019_etio_comparison.png")
 )
 
 
@@ -174,27 +174,37 @@ plot_mode_comparison_panels(
   season_i = 19,
   mode     = "wtio",
   groups   = groups,
-  main_title = "WTIO Predictors for 2019-2020 Wildfire Season",
+  main_title = "(c) WTIO Predictors for 2019-2020 Wildfire Season",
   ylab_centered = TRUE,
   ylab_cex = 1.5,
   seasons  = seasons,
-  png_dims = list(width = 4800L, height = 2800, res = 300), #was res = 275
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0,
   group_label_y_frac  = 0.1,
   group_label_cex     = 2.5,
   spacer_height = 0,
-  outfile  = file.path(out_dir, "Test_fig3_SE2019_wtio_comparison.png")
+  outfile  = file.path(out_dir, "fig3c_SE2019_wtio_comparison.png")
 )
 
 
+out_dir <- "~/CO_AUS/AusCOmodeling/Supporting_Information"
 
 plot_mode_comparison_panels(
   season_i = 19,
   mode     = "tsa",
   groups   = groups,
+  main_title = "(a) TSA Predictors for 2019-2020 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
   seasons  = seasons,
-  outfile  = file.path(out_dir, "Test_fig3_SE2019_tsa_comparison.png")
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "SIfig_SE2019_tsa_comparison.png")
 )
 
 
@@ -202,8 +212,183 @@ plot_mode_comparison_panels(
   season_i = 19,
   mode     = "sam",
   groups   = groups,
+  main_title = "(b) SAM Predictors for 2019-2020 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab     = "Anomaly",
+  ylab_cex = 1.5,
   seasons  = seasons,
-  outfile  = file.path(out_dir, "Test_fig3_SE2019_aao_comparison.png")
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "SIfig_SE2019_aao_comparison.png")
+)
+
+plot_mode_comparison_panels(
+  season_i = 19,
+  mode     = "olr",
+  groups   = groups,
+  main_title = "(c) OLR Predictors for 2019-2020 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
+  seasons  = seasons,
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "SIfig_SE2019_olr_comparison.png")
+)
+
+
+
+
+#other years
+j <- 15 #2015-2016
+
+#predictor sub-season comparison
+
+groups <- list(
+  Early = build_group_data(j, SEAus.lag, pred.df, season.years,
+                           season.weeks, SE.early,
+                           model_coef = coef(SE1.lm)),
+  Peak  = build_group_data(j, SEAus.lag, pred.df, season.years,
+                           season.weeks, SE.mid,
+                           model_coef = coef(SE2.lm)),
+  Late  = build_group_data(j, SEAus.lag, pred.df, season.years,
+                           season.weeks, SE.late,
+                           model_coef = coef(SE3.lm))
+)
+
+out_dir <- "~/CO_AUS/AusCOmodeling/Supporting_Information"
+
+plot_mode_comparison_panels(
+  season_i = j,
+  mode     = "nino",
+  groups   = groups,
+  main_title = "(a) Ni\u00f1o 3.4 Predictors for 2015-2016 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
+  seasons  = seasons,
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "fig3a_SE2015_nino_comparison.png")
+)
+
+
+plot_mode_comparison_panels(
+  season_i = j,
+  mode     = "etio",
+  groups   = groups,
+  main_title = "(b) ETIO Predictors for 2015-2016 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
+  seasons  = seasons,
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "fig3b_SE2015_etio_comparison.png")
+)
+
+
+plot_mode_comparison_panels(
+  season_i = j,
+  mode     = "wtio",
+  groups   = groups,
+  main_title = "(c) WTIO Predictors for 2015-2016 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
+  seasons  = seasons,
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "fig3c_SE2015_wtio_comparison.png")
+)
+
+
+
+j <- 2 #2002-2003
+
+#predictor sub-season comparison
+
+groups <- list(
+  Early = build_group_data(j, SEAus.lag, pred.df, season.years,
+                           season.weeks, SE.early,
+                           model_coef = coef(SE1.lm)),
+  Peak  = build_group_data(j, SEAus.lag, pred.df, season.years,
+                           season.weeks, SE.mid,
+                           model_coef = coef(SE2.lm)),
+  Late  = build_group_data(j, SEAus.lag, pred.df, season.years,
+                           season.weeks, SE.late,
+                           model_coef = coef(SE3.lm))
+)
+
+out_dir <- "~/CO_AUS/AusCOmodeling/Supporting_Information"
+
+plot_mode_comparison_panels(
+  season_i = j,
+  mode     = "nino",
+  groups   = groups,
+  main_title = "(a) Ni\u00f1o 3.4 Predictors for 2002-2003 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
+  seasons  = seasons,
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "fig3a_SE2002_nino_comparison.png")
+)
+
+
+plot_mode_comparison_panels(
+  season_i = j,
+  mode     = "etio",
+  groups   = groups,
+  main_title = "(b) ETIO Predictors for 2002-2003 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
+  seasons  = seasons,
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "fig3b_SE2002_etio_comparison.png")
+)
+
+
+plot_mode_comparison_panels(
+  season_i = j,
+  mode     = "wtio",
+  groups   = groups,
+  main_title = "(c) WTIO Predictors for 2002-2003 Wildfire Season",
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
+  seasons  = seasons,
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "fig3c_SE2002_wtio_comparison.png")
 )
 
 

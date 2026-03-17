@@ -83,6 +83,29 @@ for (j in 1:3) {
 }
 
 
+#new correlation figures
+#single cor plots
+#all plot cex vals
+cex.main <- 2.0
+cex.label <- 1.5
+cex.num <- 1.25
+line.wd <- 2.40
+
+#nino??
+par(mar = c(4, 4, 1.5, 1.5))
+plot(1:52, rev(SEcor_list[[1]]$nino_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "firebrick", lwd = line.wd,
+     lty = "4111")
+axis(1, at = 1:52, labels = 52:1 , cex.axis = cex.num)
+axis(2, at = seq(-1, 1, by = 0.25), labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num)
+abline(h = 0, lwd = 0.35, col = "gray24")
+lines(1:52, rev(SEcor_list[[2]]$nino_cor), col = "cyan4", lty = "F4", lwd = line.wd)
+lines(1:52, rev(SEcor_list[[3]]$nino_cor), col = "slateblue4", lty = "8212", lwd = line.wd)
+points(52, SEcor_list[[1]]$nino_cor[1], pch = 21, bg = "firebrick", col = "gray4", cex = 1.25)
+
+
+
 #single cor plots
 #all plot cex vals
 cex.main <- 2.0
