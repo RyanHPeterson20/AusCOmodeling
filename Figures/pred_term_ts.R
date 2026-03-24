@@ -132,6 +132,8 @@ groups <- list(
                              model_coef = coef(SE3.lm))
 )
 
+
+
 out_dir <- "~/CO_AUS/AusCOmodeling/Figures"
 
 plot_mode_comparison_panels(
@@ -144,11 +146,12 @@ plot_mode_comparison_panels(
   ylab_centered = TRUE,
   ylab_cex = 1.5,
   seasons  = seasons,
-  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  png_dims = list(width = 5400, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
   group_label_cex     = 2.5,
+  lag_label_cex       = 2.0,
   spacer_height = 0,
   outfile  = file.path(out_dir, "fig3a_SE2019_nino_comparison.png")
 )
@@ -164,11 +167,12 @@ plot_mode_comparison_panels(
   ylab_centered = TRUE,
   ylab_cex = 1.5,
   seasons  = seasons,
-  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  png_dims = list(width = 5400, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
   group_label_cex     = 2.5,
+  lag_label_cex       = 2.0,
   spacer_height = 0,
   outfile  = file.path(out_dir, "fig3b_SE2019_etio_comparison.png")
 )
@@ -184,11 +188,12 @@ plot_mode_comparison_panels(
   ylab_centered = TRUE,
   ylab_cex = 1.5,
   seasons  = seasons,
-  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  png_dims = list(width = 5400, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
   group_label_cex     = 2.5,
+  lag_label_cex       = 2.0,
   spacer_height = 0,
   outfile  = file.path(out_dir, "fig3c_SE2019_wtio_comparison.png")
 )

@@ -10,7 +10,6 @@ b. relDiffCO_Aus_new2.png from  ~/Figures/co_map_figures.R line 207
 c. SEresp_ts_new2.png from  ~/Figures/ts_figures.R line 402 
 	Note: CO anomalies between 2001-2020 (time series)
 
-
 Fig 2.
 a. SEpreds2019_fig2a_New.png from  ~/Figures/model_figures.R line 167
 	Note: Predictions for 2019/2020
@@ -21,8 +20,8 @@ c. Fig2_SEcoefs_peak_2019.png from  ~/Figures/new_coef_int_figures.R line 149
 d. Fig2_SEcoefs_late_2019.png from  ~/Figures/new_coef_int_figures.R line 185 
 	Note: New function WIP; close to finalized
 
-
 Fig 3.
-a. WIP: Predictor Time Series (looking at the data a selected term is considering)
-	Note: Currently development in ~/Figure/pred_term_ts.R; previously hidden in ~/.../withheld_timeseries.R
-b to ...: (Update when finalized)...
+a. fig3a_SE2019_nino_comparison.png from ~/Figures/pred_term_ts.R line 137
+b. fig3b_SE2019_etio_comparison.png from ~/Figures/pred_term_ts.R line 157
+c. fig3c_SE2019_wtio_comparison.png from ~/Figures/pred_term_ts.R line 197
+
