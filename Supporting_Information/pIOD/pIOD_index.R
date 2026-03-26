@@ -54,6 +54,32 @@ year.loc.son <- (head(son.div.full, -1) + tail(son.div.full, -1))/2
 
 #figures
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+png(filename = "SON_strong_etio.png", width = 3000, height = 1500, res = 250) #TODO update at res 300
+par(mar = c(4.5, 4.5, 3, 7.65))
+plot(1:length(s.index.son), s.index.son, type = "l",  col = "firebrick", 
+     ylim=strong.range, c(11, 263), 
+     ylab = "Index", xlab = "Year", cex.lab = 1.15, lwd = 1.5,
+     axes = FALSE)
+axis(1, at = year.loc.son, labels = years.pIOD, tick = FALSE, cex.axis = 0.85)
+axis(2)                      
+box()
+lines(1:length(etio.son), scale(-etio.son), col = "royalblue4", lwd = 1.5)
+abline(h = 0, lty = 2, lwd = 0.95)
+abline(v=son.div.full, lty = 3, lwd = 0.95, col = "gray30")
+title("SON Weekly : S-Index & ETIO", adj = 0, cex = 1.1)
+legend("topright",
+       legend = c("S-Index", "-ETIO"),
+       lty    = c(1,1),                 # line type
+       lwd    = 1.5,                 # line width
+       col    = c( "firebrick", "royalblue4"),
+       #bty    = "n",               # no box; remove if you want a box
+       inset  = c(-0.152, 0 ),
+       cex = 1.1, 
+       xpd = TRUE)
+dev.off()
+
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
 png(filename = "SON_mod_wtio.png", width = 3000, height = 1500, res = 250)
 par(mar = c(4.5, 4.5, 3, 7.65))
 plot(1:length(m.index.son), m.index.son, type = "l",  col = "forestgreen", 
@@ -78,30 +104,7 @@ legend("topright",
        xpd = TRUE)
 dev.off()
 
-setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
-png(filename = "SON_strong_etio.png", width = 3000, height = 1500, res = 250)
-par(mar = c(4.5, 4.5, 3, 7.65))
-plot(1:length(s.index.son), s.index.son, type = "l",  col = "firebrick", 
-     ylim=strong.range, c(11, 263), 
-     ylab = "Index", xlab = "Year", cex.lab = 1.15, lwd = 1.5,
-     axes = FALSE)
-axis(1, at = year.loc.son, labels = years.pIOD, tick = FALSE, cex.axis = 0.85)
-axis(2)                      
-box()
-lines(1:length(etio.son), scale(-etio.son), col = "royalblue4", lwd = 1.5)
-abline(h = 0, lty = 2, lwd = 0.95)
-abline(v=son.div.full, lty = 3, lwd = 0.95, col = "gray30")
-title("SON Weekly : S-Index & ETIO", adj = 0, cex = 1.1)
-legend("topright",
-       legend = c("S-Index", "-ETIO"),
-       lty    = c(1,1),                 # line type
-       lwd    = 1.5,                 # line width
-       col    = c( "firebrick", "royalblue4"),
-       #bty    = "n",               # no box; remove if you want a box
-       inset  = c(-0.152, 0 ),
-       cex = 1.1, 
-       xpd = TRUE)
-dev.off()
+
 
 
 #get correlation values and plots

@@ -1,8 +1,9 @@
 
 # EOF from interpolated SON SST-anoms
 
-suppressMessages(library(fields))
-suppressMessages(library(cmocean))
+suppressMessages( library(fields))
+suppressMessages( library(cmocean))
+suppressMessages( library(abind))
 
 #TODO: move data over to the correction file locations
 #load data & functions
@@ -143,53 +144,64 @@ world(add=TRUE)
 #TODO: update figures to align with other "world" maps
 index.max <- max(abs(strong.son), abs(moderate.son), na.rm = TRUE)
 
-#TODO: set cex values here:
+
+#set cex values here:
+tio.lab <- 1.35
+tio.box.lwd <- 2.0
 
 #s-index
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
-png(filename = "SI_pIOD_S_Index.png", width = 3600, height = 2000, res = 275)
-par(mar = c(4.5, 4.5, 2, 4))
+png(filename = "SI_pIOD_S_Index.png", width = 3600, height = 2000, res = 300)
+par(mar = c(4.5, 4.5, 4, 3.5))
 image.plot(list(x = lon.wide, y = lat.wide, z = strong.son), 
            col = cmocean("balance")(45), zlim = c(-1, 1),
            xlim = c(35, 120), ylim = c(-20,20),
-           xaxt = "n", yaxt = "n", cex.lab = 1.25, 
+           xaxt = "n", yaxt = "n", cex.lab = 1.35, 
            legend.line = -4, legend.mar = 5,
+           legend.cex = 1.5, 
+           legend.width	= 1.3,
            legend.args = list(text = "", cex = 1.2), 
            xlab = "Longitude", ylab = "Latitude")
 # Major axes
 box()
-axis(1, at = xt, labels = xt.lab, cex.axis = 1.2)
-axis(2, at = yt, labels = yt.lab, cex.axis = 1.2)
+axis(1, at = xt, labels = xt.lab, cex.axis = 1.35)
+axis(2, at = yt, labels = yt.lab, cex.axis = 1.35)
+title("(a) S-Index reconstructed SST Anomalies", adj = 0, cex.main = 1.5)
 world(add=TRUE, lwd = 1.5)
 #IOD rect()
-rect(wtio.bound$x1, wtio.bound$y1, wtio.bound$x2, wtio.bound$y2, border = "black", lwd = 1.65)
+rect(wtio.bound$x1, wtio.bound$y1, wtio.bound$x2, wtio.bound$y2, border = "black", lwd = tio.box.lwd)
 xmid <- 0.5 * (wtio.bound$x1 + wtio.bound$x2)
-text(xmid, wtio.bound$y1 - 1.5, wtio.bound$lab, cex = 1.29, col = "black")
-rect(etio.bound$x1, etio.bound$y1, etio.bound$x2, etio.bound$y2, border = "black", lwd = 1.65)
+text(xmid, wtio.bound$y1 - 1.5, wtio.bound$lab, cex = tio.lab, col = "black", font = 2)
+rect(etio.bound$x1, etio.bound$y1, etio.bound$x2, etio.bound$y2, border = "black", lwd = tio.box.lwd)
 xmid <- 0.5 * (etio.bound$x1 + etio.bound$x2)
-text(xmid, etio.bound$y1 - 1.5, etio.bound$lab, cex = 1.29, col = "black")
+text(xmid, etio.bound$y1 - 1.5, etio.bound$lab, cex = tio.lab, col = "black", font = 2)
 dev.off()
+
 
 #m-index (projected over Indian Ocean)
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
-png(filename = "SI_pIOD_M_Index.png", width = 3600, height = 2000, res = 275)
-par(mar = c(4.5, 4.5, 2, 4))
+png(filename = "SI_pIOD_M_Index.png", width = 3600, height = 2000, res = 300)
+par(mar = c(4.5, 4.5, 4, 3.5))
 image.plot(list(x = lon.wide, y = lat.wide, z = moderate.son), 
            col = cmocean("balance")(45), zlim = c(-1, 1),
            xlim = c(35, 120), ylim = c(-20,20),
-           xaxt = "n", yaxt = "n", cex.lab = 1.25, 
+           xaxt = "n", yaxt = "n", cex.lab = 1.35, 
            legend.line = -4, legend.mar = 5,
+           legend.cex = 1.5,
+           legend.width	= 1.3,
            legend.args = list(text = "", cex = 1.2), 
            xlab = "Longitude", ylab = "Latitude")
 # Major axes
 box()
-axis(1, at = xt, labels = xt.lab, cex.axis = 1.2)
-axis(2, at = yt, labels = yt.lab, cex.axis = 1.2)
+axis(1, at = xt, labels = xt.lab, cex.axis = 1.35)
+axis(2, at = yt, labels = yt.lab, cex.axis = 1.35)
+title("(b) M-Index reconstructed SST Anomalies", adj = 0, cex.main = 1.5)
 world(add=TRUE, lwd = 1.5)
-rect(wtio.bound$x1, wtio.bound$y1, wtio.bound$x2, wtio.bound$y2, border = "black", lwd = 1.65)
+rect(wtio.bound$x1, wtio.bound$y1, wtio.bound$x2, wtio.bound$y2, border = "black", lwd = tio.box.lwd)
 xmid <- 0.5 * (wtio.bound$x1 + wtio.bound$x2)
-text(xmid, wtio.bound$y1 - 1.5, wtio.bound$lab, cex = 1.29, col = "black")
-rect(etio.bound$x1, etio.bound$y1, etio.bound$x2, etio.bound$y2, border = "black", lwd = 1.65)
+text(xmid, wtio.bound$y1 - 1.5, wtio.bound$lab, cex = tio.lab, col = "black", font = 2)
+rect(etio.bound$x1, etio.bound$y1, etio.bound$x2, etio.bound$y2, border = "black", lwd = tio.box.lwd)
 xmid <- 0.5 * (etio.bound$x1 + etio.bound$x2)
-text(xmid, etio.bound$y1 - 1.5, etio.bound$lab, cex = 1.29, col = "black")
+text(xmid, etio.bound$y1 - 1.5, etio.bound$lab, cex = tio.lab, col = "black", font = 2)
 dev.off()
+

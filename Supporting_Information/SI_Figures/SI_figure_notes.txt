@@ -3,4 +3,23 @@ SI figure notes:
 Updated 3/26/2026
 
 
-SI Fig 1:
+SI Fig 1 (predictor time series for all climate modes):
+- SI_pred_ts.png from  ~/Supporting_Information/SI_Figures/SI_ts_figures.R line 128
+	Note: TODO extend to 2000 instead of 2001.
+
+SI Fig 2
+a. SI_pIOD_S_Index.png from ~/Supporting_Information/pIOD/pIOD_EOF.R line 153
+	Note:
+b. SI_pIOD_M_Index.png from ~/Supporting_Information/pIOD/pIOD_EOF.R line 183
+	Note:
+
+
+SI Fig 3
+a. SON_strong_etio.png from ~/Supporting_Information/pIOD/pIOD_index.R line 57
+	Note:
+b. (correlation plot) from ~/
+	Note:
+c. SON_mod_wtio.png from ~/Supporting_Information/pIOD/pIOD_index.R
+	Note:
+d. (correlation plot) from ~/
+	Note:
