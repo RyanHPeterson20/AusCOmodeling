@@ -15,11 +15,11 @@ b. SI_pIOD_M_Index.png from ~/Supporting_Information/pIOD/pIOD_EOF.R line 183
 
 
 SI Fig 3
-a. SON_strong_etio.png from ~/Supporting_Information/pIOD/pIOD_index.R line 57
+a. SI_fig3a_strongetio_ts.png from ~/Supporting_Information/pIOD/pIOD_index.R line ...
+	Note: 
+b. SI_fig3b_strongetio_cor.png from ~/Supporting_Information/pIOD/pIOD_index.R line ...
 	Note:
-b. (correlation plot) from ~/
+c. SON_mod_wtio.png from ~/Supporting_Information/pIOD/pIOD_index.R ...
 	Note:
-c. SON_mod_wtio.png from ~/Supporting_Information/pIOD/pIOD_index.R
-	Note:
-d. (correlation plot) from ~/
+d. (correlation plot) from ~/Supporting_Information/pIOD/pIOD_index.R ...
 	Note:
