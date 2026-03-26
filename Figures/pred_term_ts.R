@@ -151,7 +151,13 @@ plot_mode_comparison_panels(
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
   group_label_cex     = 2.5,
-  lag_label_cex       = 2.0,
+  lag_label_cex       = 2.2,
+  lag_offsets = list(
+    early = list("33" = c(0, 0)),
+    peak  = list("40" = c(-3, 0.15)),
+    late  = list("47" = c(0, 0),
+                 "25" = c(0, 0.25))
+  ),
   spacer_height = 0,
   outfile  = file.path(out_dir, "fig3a_SE2019_nino_comparison.png")
 )
@@ -172,7 +178,13 @@ plot_mode_comparison_panels(
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
   group_label_cex     = 2.5,
-  lag_label_cex       = 2.0,
+  lag_label_cex       = 2.2,
+  lag_offsets = list(
+    peak  = list("33" = c(-2, 0.25),
+                 "7" =  c(-2, 0.25)),
+    late  = list("33" = c(0, 0.25),
+                 "16" = c(0, 0.25))
+  ),
   spacer_height = 0,
   outfile  = file.path(out_dir, "fig3b_SE2019_etio_comparison.png")
 )
@@ -193,7 +205,12 @@ plot_mode_comparison_panels(
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
   group_label_cex     = 2.5,
-  lag_label_cex       = 2.0,
+  lag_label_cex       = 2.2,
+  lag_offsets = list(
+    early = list("5" = c(0, -0.175)),
+    peak  = list("46" = c(-2, 0.15),
+                 "14" =  c(-3 , 0.275))
+    ),
   spacer_height = 0,
   outfile  = file.path(out_dir, "fig3c_SE2019_wtio_comparison.png")
 )

@@ -1,6 +1,6 @@
 figure_notes:
 
-Updated 3/10/2026
+Updated 3/24/2026
 
 Fig 1.
 a. MeanCO_climatemodes_new2.png from ~/Figures/co_map_figures.R line 142
@@ -20,8 +20,10 @@ c. Fig2_SEcoefs_peak_2019.png from  ~/Figures/new_coef_int_figures.R line 149
 d. Fig2_SEcoefs_late_2019.png from  ~/Figures/new_coef_int_figures.R line 185 
 	Note: New function WIP; close to finalized
 
-Fig 3.
-a. fig3a_SE2019_nino_comparison.png from ~/Figures/pred_term_ts.R line 137
-b. fig3b_SE2019_etio_comparison.png from ~/Figures/pred_term_ts.R line 157
-c. fig3c_SE2019_wtio_comparison.png from ~/Figures/pred_term_ts.R line 197
-
+Fig 3. (some clarity needs to be added the caption.)
+a. fig3a_SE2019_nino_comparison.png from ~/Figures/pred_term_ts.R line 139
+	Note: nino 3.4 predictor time series shown for each group, with chosen lags. 
+b. fig3b_SE2019_etio_comparison.png from ~/Figures/pred_term_ts.R line 166
+	Note: etio predictor time series ...
+c. fig3c_SE2019_wtio_comparison.png from ~/Figures/pred_term_ts.R line 193
+	Note: wtio predictor time series ...

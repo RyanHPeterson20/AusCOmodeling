@@ -172,12 +172,19 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 #' @param ylim       Length-2 numeric y-axis limits.
 #' @param lag_alpha  Opacity for highlighted fill.
 #' @param text_cex   Character expansion for "Lag N" labels.
+#' @param lag_offsets Named list of per-lag manual nudges, keyed by lag number
+#'   as a character string.  Each entry is a length-2 numeric vector
+#'   \code{c(x_days, y_units)} applied as an offset on top of the
+#'   auto-computed (and collision-resolved) position.  E.g.
+#'   \code{list("33" = c(14, 0.1), "40" = c(-7, 0))}.  \code{NULL} = no
+#'   manual adjustments.
 .draw_lag_highlights <- function(pred_time, y, lag_vals,
                                   col_pos, col_neg,
-                                  n_group   = 4L,
-                                  ylim      = c(-2, 2),
-                                  lag_alpha = 0.85,
-                                  text_cex  = 2.5) {
+                                  n_group     = 4L,
+                                  ylim        = c(-2, 2),
+                                  lag_alpha   = 0.85,
+                                  text_cex    = 2.5,
+                                  lag_offsets = NULL) {
 
   # The anchor week is the ISO week of pred_time[1] — always the sub-season's
   # first week (one year prior to the fire season).
@@ -185,9 +192,10 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
   label_y_offset <- diff(ylim) * 0.05
 
   n_vals  <- length(lag_vals)
-  lbl_x   <- rep(as.Date(NA), n_vals)  # Date: x centre of label
-  lbl_y   <- rep(NA_real_,    n_vals)  # y base of label
+  lbl_x   <- rep(as.Date(NA), n_vals)
+  lbl_y   <- rep(NA_real_,    n_vals)
   lbl_txt <- rep(NA_character_, n_vals)
+  lbl_lag <- rep(NA_integer_,   n_vals)   # lag value kept for offset lookup
   active  <- rep(FALSE, n_vals)
 
   # --- pass 1: draw envelopes; collect raw label positions ---
@@ -209,24 +217,20 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
     y_peak      <- max(y[idx], na.rm = TRUE)
     lbl_y[k]   <- max(y_peak, 0) + label_y_offset
     lbl_txt[k] <- paste0("Lag ", j)
+    lbl_lag[k] <- j
   }
 
   keep <- which(active)
   if (length(keep) == 0L) return(invisible(NULL))
 
   # --- pass 2: resolve collisions ---
-  # strwidth/strheight return values in x/y user coordinates (days / anomaly units),
-  # so they automatically scale with font size and axis range.
   lbl_w <- strwidth( "Lag 00", cex = text_cex, units = "user")
   lbl_h <- strheight("Lag 00", cex = text_cex, units = "user") * 1.3
 
-  # sort active labels left to right for a greedy sweep
   ord   <- keep[order(as.numeric(lbl_x[keep]))]
-  x_res <- as.numeric(lbl_x[ord])   # numeric for distance arithmetic
+  x_res <- as.numeric(lbl_x[ord])
   y_res <- lbl_y[ord]
 
-  # greedy sweep: for each label, check all labels to its left; if any overlap,
-  # bump this one up to clear the highest overlapping neighbour
   if (length(ord) > 1L) {
     for (m in seq(2L, length(ord))) {
       for (prev in seq(1L, m - 1L)) {
@@ -239,10 +243,17 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
     }
   }
 
-  # --- pass 3: draw labels at resolved positions ---
+  # --- pass 3: apply manual offsets and draw ---
   for (m in seq_along(ord)) {
-    text(x      = lbl_x[ord[m]],
-         y      = y_res[m],
+    lag_key <- as.character(lbl_lag[ord[m]])
+    off     <- if (!is.null(lag_offsets) && !is.null(lag_offsets[[lag_key]]))
+                 lag_offsets[[lag_key]] else c(0, 0)
+
+    x_draw <- lbl_x[ord[m]] + days(round(off[1L]))
+    y_draw <- y_res[m]       + off[2L]
+
+    text(x      = x_draw,
+         y      = y_draw,
          labels = lbl_txt[ord[m]],
          adj    = c(0.5, 0),
          col    = "grey28",
@@ -280,16 +291,8 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
 #' @param pred_label_y_frac Fractional position of the predictor label on the
 #'   y-axis: 0 = top (\code{ylim[2]}), 1 = bottom (\code{ylim[1]}).  Default 0.
 #' @param lag_label_cex   cex for "Lag N" highlight labels.
-#' @param group_label     Optional string drawn top-right (e.g. "Early Season").
-#'   \code{NULL} suppresses it.
-#' @param group_label_cex cex for the group label.  Defaults to \code{pred_label_cex}.
-#' @param group_label_x_frac Fractional x position: 0 = left (\code{xlim[1]}),
-#'   1 = right (\code{xlim[2]}).  Default 1.
-#' @param group_label_y_frac Fractional y position: 0 = top (\code{ylim[2]}),
-#'   1 = bottom (\code{ylim[1]}).  Default 0.
-#' @param axis_cex        cex for y-axis tick labels.
-#' @param xaxis_cex       cex for x-axis tick labels.
-#' @param lab_cex         cex for the y-axis title.
+#' @param lag_offsets Named list of per-lag manual position nudges passed
+#'   through to \code{.draw_lag_highlights()}.  See that function for format.
 .draw_pred_panel <- function(pred_time, y,
                               ylim, ylab, label,
                               xlim, year_lines, month_lines,
@@ -303,6 +306,7 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
                               pred_label_x_offset   = 2L,
                               pred_label_y_frac     = 0,
                               lag_label_cex         = 2.5,
+                              lag_offsets           = NULL,
                               group_label           = NULL,
                               group_label_cex       = pred_label_cex,
                               group_label_x_frac    = 1,
@@ -351,9 +355,11 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
   if (!is.null(lag_vals) && length(lag_vals) > 0L) {
     .draw_lag_highlights(pred_time, y, lag_vals,
                           colors$lag_pos, colors$lag_neg,
-                          n_group   = n_group,
-                          ylim      = ylim,
-                          lag_alpha = 0.85, text_cex = lag_label_cex)
+                          n_group     = n_group,
+                          ylim        = ylim,
+                          lag_alpha   = 0.85,
+                          text_cex    = lag_label_cex,
+                          lag_offsets = lag_offsets)
   }
 
   # --- predictor label (top-left, left-aligned) ---
@@ -987,6 +993,7 @@ plot_mode_comparison_panels <- function(
     group_label_x_frac  = 1,
     group_label_y_frac  = 0,
     lag_label_cex       = 2.5,
+    lag_offsets         = NULL,
     spacer_height       = 1L,
     colors              = .TS_COLORS,
     ylim                = NULL,
@@ -1041,7 +1048,38 @@ plot_mode_comparison_panels <- function(
     on.exit(dev.off(), add = TRUE)
   }
 
-  # ---- shared x-axis: union of all groups' date windows ----
+  # ---- resolve lag_offsets: per-group or global ----
+  # lag_offsets can be supplied in two forms:
+  #   (a) Per-group: named list keyed by group name (case-insensitive match),
+  #       each entry a flat lag-offset list, e.g.
+  #       list(Early = list("40" = c(14, 0)),
+  #            Peak  = list("40" = c(-7, 0.1)),
+  #            Late  = NULL)
+  #   (b) Global (flat): a single flat lag-offset list applied to every
+  #       panel, e.g. list("40" = c(14, 0)) — backward-compatible.
+  #
+  # Detection: names of lag_offsets are matched against group names
+  # case-insensitively. If all names match, treat as per-group; otherwise global.
+  grp_names     <- names(groups)
+  grp_names_low <- tolower(grp_names)
+  if (is.null(lag_offsets)) {
+    lag_offsets_per_group <- vector("list", n_panels)
+  } else {
+    lo_names_low <- tolower(names(lag_offsets))
+    is_per_group <- !is.null(names(lag_offsets)) &&
+                    length(names(lag_offsets)) > 0L &&
+                    all(lo_names_low %in% grp_names_low)
+    if (is_per_group) {
+      # match by case-insensitive name; unmatched groups get NULL
+      lag_offsets_per_group <- lapply(grp_names_low, function(nm) {
+        hit <- which(lo_names_low == nm)
+        if (length(hit) > 0L) lag_offsets[[hit[1L]]] else NULL
+      })
+    } else {
+      # global: same flat list for every panel
+      lag_offsets_per_group <- rep(list(lag_offsets), n_panels)
+    }
+  }
   # All panels use the same xlim so they are visually aligned in calendar time.
   # Each panel's pred_time still covers only its own group's lag window; data
   # simply sits where it falls within the shared coordinate space.
@@ -1122,6 +1160,7 @@ plot_mode_comparison_panels <- function(
       pred_label_x_offset   = pred_label_x_offset,
       pred_label_y_frac     = pred_label_y_frac,
       lag_label_cex         = lag_label_cex,
+      lag_offsets           = lag_offsets_per_group[[k]],
       group_label           = if (!is.null(group_labels)) group_labels[k] else NULL,
       group_label_cex       = group_label_cex,
       group_label_x_frac    = group_label_x_frac,
