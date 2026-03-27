@@ -1,14 +1,15 @@
 figure_notes:
 
-Updated 3/24/2026
+Updated 3/27/2026
 
 Fig 1.
-a. MeanCO_climatemodes_new2.png from ~/Figures/co_map_figures.R line 142
+a. Fig1a_MeanCO_climatemodes.png from ~/Figures/co_map_figures.R line 142
 	Note: Mean CO 2001-2019 Peak-Season
-b. relDiffCO_Aus_new2.png from  ~/Figures/co_map_figures.R line 207
+b. Fig1b_relDiffCO_Aus.png from  ~/Figures/co_map_figures.R line 207
 	Note: Relative difference between 2019/2020 and Mean CO 2001-2019 for Peak-Season
 c. SEresp_ts_new2.png from  ~/Figures/ts_figures.R line 402 
 	Note: CO anomalies between 2001-2020 (time series)
+	TODO: change name and location to new, less messy, file
 
 Fig 2.
 a. SEpreds2019_fig2a_New.png from  ~/Figures/model_figures.R line 167

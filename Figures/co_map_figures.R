@@ -119,7 +119,7 @@ ncol <- 256
 
 #setup climate modes
 climate_modes <- list(
-  nino34 <- list(x1 = -170, x2 = -120, y1 = -5, y2 = 5, lab = "Nino 3.4"),
+  nino34 <- list(x1 = -170, x2 = -120, y1 = -5, y2 = 5, lab = "Ni\u00f1o 3.4"),
   tsa <- list(x1 = -30, x2 = 10, y1 = -20, y2 = 0, lab = "TSA"),
   wtio <- list(x1 = 50, x2 = 70, y1 = -10, y2 = 10, lab = "WTIO"),
   etio <- list(x1 = 90, x2 = 110, y1 = -10, y2 = 0, lab = "ETIO")
@@ -138,9 +138,9 @@ breaks <- seq(zmin, zmax, length.out = ncol + 1)  # evenly spaced
 #mean co vmr
 
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-
-png(filename = "MeanCO_climatemodes_new2.png",  width = 4145, height = 1220, res = 300)
-par(mar = c(3.5, 3.5, 2.0, 0.5))
+#TODO: test pointsize arg in png()
+png(filename = "Fig1a_MeanCO_climatemodes.png",  width = 4145, height = 1220, res = 300)
+par(mar = c(3.5, 3.5, 2.0, 1.15))
 image.plot(
   lon.new, lat.sub, z_clip,
   #col = cmocean("matter")(55),
@@ -150,9 +150,9 @@ image.plot(
   xaxt = "n", yaxt = "n",
   xlab = "", ylab = "",
   legend.lab = "CO (ppb)",
-  legend.line = 2,
+  legend.line = 2.5,
   legend.mar = 5,
-  axis.args = list(tcl = -0.2, mgp = c(2, 0.6, 0))
+  axis.args = list(tcl = -0.2, mgp = c(2.25, 0.95, 0))
 )
 
 # Major axes
@@ -183,7 +183,6 @@ dev.off()
 
 
 
-
 #response regions
 ne.aus <- list(x1 = 134, x2 = 155, y1 = -25, y2 = -10, lab = "NE Aus")
 se.aus <- list(x1 = 134, x2 = 155, y1 = -48, y2 = -25, lab = "SE Aus")
@@ -204,8 +203,8 @@ breaks <- seq(zlim[1], zlim[2], length.out = ncol + 1)
 #difference for 2019/2020
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 
-png(filename = "relDiffCO_Aus_new2.png", width = 4145, height = 1220, res = 300)
-par(mar = c(3.5, 3.5, 2.0, 0.5))
+png(filename = "Fig1b_relDiffCO_Aus.png", width = 4145, height = 1220, res = 300)
+par(mar = c(3.5, 3.5, 2.0, 1.15))
 image.plot(
   lon.new, lat.sub, z_clip.rel.diff,
   #col = cmocean("balance")(101),
@@ -215,9 +214,9 @@ image.plot(
   xaxt = "n", yaxt = "n",
   xlab = "", ylab = "",
   legend.lab = "CO (relative difference)",
-  legend.line = 2,
+  legend.line = 2.5,
   legend.mar = 5,
-  axis.args = list(tcl = -0.2, mgp = c(2, 0.6, 0))
+  axis.args = list(tcl = -0.2, mgp = c(2.25, 0.95, 0))
 )
 
 # Major axes
