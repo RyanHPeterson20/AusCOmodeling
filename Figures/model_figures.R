@@ -164,8 +164,18 @@ vary.lwr.late <- c(mean(pred.vary.lwr[17:18]),  pred.vary.lwr[18:29])
 
 
 #fig 2a
+
+#fig 2a notes (eg. todo)
+#TODO: 
+## change separation lines (h = zero, v = groups) to solid gray lines
+## move legend to bottom right of 2nd panel (combine both legends)
+## update subtitle (in panel text) to match the color of the model variant
+## align width and text size with figures 2b-d (tricky, lots of trial and error)
+## (potentially/maybe reduce height to make more room for figures 2b-d)
+
+
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "SEpreds2019_fig2a_New.png", width = 6000, height = 2550, res = 300)
+png(filename = "Fig2a_SEpreds_2019.png", width = 6000, height = 2550, res = 300)
 
 par(mfrow = c(2, 1), oma = c(3, 3.5, 0.5, 1), mar = c(2, 2, 2, 1))
 #update prediction figure (full model)
