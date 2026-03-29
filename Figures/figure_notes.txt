@@ -5,6 +5,7 @@ Updated 3/27/2026
 Fig 1.
 a. Fig1a_MeanCO_climatemodes.png from ~/Figures/co_map_figures.R line 142
 	Note: Mean CO 2001-2019 Peak-Season
+	TODO:	= change (ppb) to [ppb]
 b. Fig1b_relDiffCO_Aus.png from  ~/Figures/co_map_figures.R line 207
 	Note: Relative difference between 2019/2020 and Mean CO 2001-2019 for Peak-Season
 c. SEresp_ts_new2.png from  ~/Figures/ts_figures.R line 402 

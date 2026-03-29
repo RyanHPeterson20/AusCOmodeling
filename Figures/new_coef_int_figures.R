@@ -99,6 +99,9 @@ NE3.coef <- coef(NE3.lm)
 ## increase the size of all text and numbers
 
 
+#cex setup (font/num size)
+cex.main <- 2.5
+cex.axis <- 2.22
 
 #Figure 2 output:
 i <- 19 #2019/2020 Withheld
@@ -112,7 +115,7 @@ coefs1 <- list(
   vary  = coef(SE.vary.early[[i]])  
 )
 
-png(filename = paste0("Fig2b_SEcoefint_early_", season.years[i], ".png"),  width = 2050, height = 3900, res = 300)
+png(filename = paste0("Fig2b_SEcoefint_early_", season.years[i], ".png"),  width = 2050, height = 4100, res = 300)
 plot_lagged_coef_panels(
   coefs_named_list = coefs1,
   vars_order = c("nino", "etio", "wtio", "tsa", "aao", "olr"),  # include OLR panel
@@ -123,7 +126,7 @@ plot_lagged_coef_panels(
   int_axis_at = c(-2, 0, 2),
   coef_range_int = c(-3, 3),
   half_ticks_int = TRUE, 
-  cex_axis = 2.15,
+  cex_axis = cex.axis,
   cex_lab_lag = 1.6,
   cex_lab_y = 1.6, 
   cex_lab_int = 1.6, 
@@ -138,7 +141,8 @@ plot_lagged_coef_panels(
   lwd_ref = 0.5, 
   coef_range = c(-5, 5),
   main_title = paste0("(b) Early (2019/2020 Withheld)"),
-  cex_main = 2.25,
+  title_line = -1,
+  cex_main = cex.main,
   quad_y_jitter = 0.004,
   int_y_jitter = 0.003,
   int_x_jitter = 0.003,
@@ -146,7 +150,7 @@ plot_lagged_coef_panels(
   auto_jitter_y = 0.05,
   auto_int_x_jitter = TRUE,
   auto_int_x_nudge = 0.10,
-  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange3"),
   model_lty  = c(base=1, const=2, vary=3),
   add_legends = FALSE)
 dev.off()
@@ -159,7 +163,7 @@ coefs2 <- list(
   vary  = coef(SE.vary.peak[[i]])  
 )
 
-png(filename = paste0("Fig2c_SEcoefint_peak_", season.years[i], ".png"),  width = 2050, height = 4050, res = 300)
+png(filename = paste0("Fig2c_SEcoefint_peak_", season.years[i], ".png"),  width = 2050, height = 4100, res = 300)
 plot_lagged_coef_panels(
   coefs_named_list = coefs2,
   vars_order = c("nino", "etio", "wtio", "tsa", "aao", "olr"),  # include OLR panel
@@ -170,7 +174,7 @@ plot_lagged_coef_panels(
   int_axis_at = c(-2, 0, 2),
   coef_range_int = c(-3, 3),
   half_ticks_int = TRUE, 
-  cex_axis = 2.15,
+  cex_axis = cex.axis,
   cex_lab_lag = 1.6,
   cex_lab_y = 1.6, 
   cex_lab_int = 1.6, 
@@ -184,15 +188,16 @@ plot_lagged_coef_panels(
   lty_ref = 1, 
   lwd_ref = 0.5, 
   coef_range = c(-5, 5),
-  main_title = paste0("(c) Peak (2019/2020 Withheld)"),  
-  cex_main = 2.25,
+  main_title = paste0("(c) Peak (2019/2020 Withheld)"), 
+  title_line = -1,
+  cex_main = cex.main,
   quad_y_jitter = 0.004,
   int_y_jitter = 0.003,
   int_x_jitter = 0.003,
   auto_jitter = TRUE,
   auto_jitter_y = 0.05,
   auto_int_x_jitter = TRUE,
-  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange3"),
   model_lty  = c(base=1, const=2, vary=3),
   add_legends = FALSE)
 dev.off()
@@ -204,7 +209,7 @@ coefs3 <- list(
   vary  = coef(SE.vary.late[[i]])  
 )
 
-png(filename = paste0("Fig2d_SEcoefint_late_", season.years[i], ".png"),  width = 2050, height = 4050, res = 300)
+png(filename = paste0("Fig2d_SEcoefint_late_", season.years[i], ".png"),  width = 2050, height = 4100, res = 300)
 plot_lagged_coef_panels(
   coefs_named_list = coefs3,
   vars_order = c("nino", "etio", "wtio", "tsa", "aao", "olr"),  # include OLR panel
@@ -215,7 +220,7 @@ plot_lagged_coef_panels(
   int_axis_at = c(-2, 0, 2),
   coef_range_int = c(-3, 3),
   half_ticks_int = TRUE, 
-  cex_axis = 2.15,
+  cex_axis = cex.axis,
   cex_lab_lag = 1.6,
   cex_lab_y = 1.6, 
   cex_lab_int = 1.6, 
@@ -230,7 +235,8 @@ plot_lagged_coef_panels(
   lwd_ref = 0.5, 
   coef_range = c(-5, 5),
   main_title = paste0("(d) Late (2019/2020 Withheld)"),   
-  cex_main = 2.25,
+  title_line = -1,
+  cex_main = cex.main,
   quad_y_jitter = 0.004,
   int_y_jitter = 0.003,
   int_x_jitter = 0.003,
@@ -238,7 +244,7 @@ plot_lagged_coef_panels(
   auto_jitter_y = 0.05,
   auto_int_x_jitter = TRUE,
   auto_int_x_nudge = 0.10,
-  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange2"),
+  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange3"),
   model_lty  = c(base=1, const=2, vary=3),
   add_legends = FALSE, 
   legend_inset_terms = c(0.000, 0.05),

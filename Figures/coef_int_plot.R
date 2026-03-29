@@ -835,7 +835,7 @@ plot_lagged_coef_panels <- function(
 
     # Main title inside panel 1's own top margin (adj=0, matches by-hand).
     if (is_first && !is.null(main_title))
-      title(main_title, adj = 0, cex.main = cex_main, line = title_line)
+      title(main_title, adj = 0, cex.main = cex_main, line = title_line, xpd = TRUE, outer = TRUE)
 
     if (nrow(sub) == 0L) return(invisible(NULL))
 
