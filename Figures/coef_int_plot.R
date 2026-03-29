@@ -774,7 +774,7 @@ plot_lagged_coef_panels <- function(
   )
 
   if (is.null(oma))
-    oma <- c(1.05, 1.05, if (!is.null(main_title)) 0.75 else 0.5, 0.25)
+    oma <- c(1.05, 1.25, if (!is.null(main_title)) 0.75 else 0.5, 0.25)
   par(oma = oma)
 
   # ===========================================================================
@@ -793,7 +793,7 @@ plot_lagged_coef_panels <- function(
     # Top margin: accommodate title above panel 1.
     top_mar <- if (is_first && !is.null(main_title)) max(2.5, title_line + 1.2) else 1.0
 
-    par(mar = c(if (is_last) 4.5 else 3.0, 4.75, top_mar, 1.0))
+    par(mar = c(if (is_last) 4.5 else 3.0, 3.75, top_mar, 1.0))
 
     # --- Blank canvas with manual axes (matches by-hand axes=FALSE pattern) --
     plot(NA, NA,
@@ -827,7 +827,7 @@ plot_lagged_coef_panels <- function(
     # length grow rightward rather than shifting the anchor.
     x_label <- xlim_lag[1] + (xlim_lag[2] - xlim_lag[1]) * (var_label_pos / 100)
     text(x      = x_label,
-         y      = coef_range[2] - diff(coef_range) * 0.12,
+         y      = coef_range[2] - diff(coef_range) * 0.14,
          labels = pretty_var_label(var),
          adj    = 0,
          col    = "gray12",
