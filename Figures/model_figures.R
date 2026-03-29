@@ -167,26 +167,32 @@ vary.lwr.late <- c(mean(pred.vary.lwr[17:18]),  pred.vary.lwr[18:29])
 
 #fig 2a notes (eg. todo)
 #TODO: 
-## change separation lines (h = zero, v = groups) to solid gray lines
-## move legend to bottom right of 2nd panel (combine both legends)
-## update subtitle (in panel text) to match the color of the model variant
+## [complete] change separation lines (h = zero, v = groups) to solid gray lines 
+## [complete] move legend to bottom right of 2nd panel (combine both legends)
+## [complete] update subtitle (in panel text) to match the color of the model variant
 ## align width and text size with figures 2b-d (tricky, lots of trial and error)
 ## (potentially/maybe reduce height to make more room for figures 2b-d)
 
 
-setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "Fig2a_SEpreds_2019.png", width = 6000, height = 2550, res = 300)
+#setup cex values:
+cex.xaxis <- 1.65
+cex.yaxis <- 1.65
+cex.model.lab <- 1.65
+cex.season.lab <- 1.65
 
-par(mfrow = c(2, 1), oma = c(3, 3.5, 0.5, 1), mar = c(2, 2, 2, 1))
+setwd("~/CO_AUS/AusCOmodeling/Figures")
+png(filename = "Fig2a_SEpreds_2019.png", width = 6000, height = 2600, res = 300)
+
+par(mfrow = c(2, 1), oma = c(3, 3.5, 1.5, 1), mar = c(2, 2, 2, 1))
 #update prediction figure (full model)
 
-plot(1:29, pred.base.fit, type = "l", ylim = c(-50,50), axes = FALSE, 
+plot(1:29, pred.base.fit, type = "l", ylim = c(-51,51), axes = FALSE, 
      lwd = 3, lty = 4, col = "forestgreen",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.25)
-axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.65)
-title("(a) 2019/2020 Wildfire Season", adj = 0, cex.main = 1.35, line = 1)
+axis(1, labels = season.weeks, at = 1:29, cex.axis = cex.xaxis)
+axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = cex.yaxis, las = 1)
+title("(a) 2019/2020 Wildfire Season", adj = 0, cex.main = 1.75, line = 1)
 #upper bound
 envelopePlot(x1 = c(1:13, 13.5),
              y1 = base.upr.early,
@@ -229,34 +235,24 @@ envelopePlot(x1 = c(17.5, 18:29),
              lineCol = NA)
 #lines(1:29, pred.base.lwr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
 lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
-abline(h=0, lty =3, col = "gray15", lwd = 2)
-abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
-legend("topright", 
-       legend = c("Observed",
-                  "Model Predictions",
-                  "95% Pred. Interval"),
-       lty = c(1, 4, 1), 
-       lwd = c(2, 2, 10 ),
-       cex = 1.1,
-       col = c("grey5", 
-               "forestgreen",
-               alpha("springgreen3", 0.3)),
-       xpd = TRUE)
+abline(h=0, lty =1, col = "gray45", lwd = 0.9)
+abline(v = c(13.5, 17.5), lty = 1, col = "gray44", lwd = 1.0)
+
 #title("Full model", adj = 0, cex.main = 1.65)
-text(x = 1.5, y = 48, labels = "All-Data Model", col = "gray15", cex = 1.55, adj = 0)
+text(x = 1.5, y = 48, labels = "All-Data Model", col = "forestgreen", cex = cex.model.lab, adj = 0)
 #text(x= 3, y = -46, labels = "RMSE: 5.95", col = "gray35", cex = 1.5)
 #text(x=15.5, y = -46, labels = "RMSE: 3.85", col = "gray35", cex = 1.5)
 #text(x=20, y = -46, labels = "RMSE: 2.74", col = "gray35", cex = 1.5)
-text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.55)
+text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray26", cex = cex.season.lab)
 
 
 #update prediction figure (non-fixed model)
-plot(1:29, pred.vary.fit, type = "l", ylim = c(-50,50), axes = FALSE, 
+plot(1:29, pred.vary.fit, type = "l", ylim = c(-51, 51), axes = FALSE, 
      lwd = 3, lty = 4, col = "darkorange2",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
-axis(1, labels = season.weeks, at = 1:29, cex.axis = 1.25) #x-axis
-axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = 1.65) #y-axis
+axis(1, labels = season.weeks, at = 1:29, cex.axis = cex.xaxis) #x-axis
+axis(2, at = c(-50, -25, 0, 25, 50),  cex.axis = cex.yaxis, las = 1) #y-axis
 #upper bound
 envelopePlot(x1 = c(1:13, 13.5),
              y1 = vary.upr.early,
@@ -299,29 +295,33 @@ envelopePlot(x1 = c(17.5, 18:29),
              lineCol = NA)
 #lines(1:29, pred.vary.lwr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
 lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
-abline(h=0, lty =3, col = "gray15", lwd = 2)
-abline(v = c(13.5, 17.5), lty = 3, col = "gray24", lwd = 1.5)
+abline(h=0, lty =1, col = "gray45", lwd = 0.9)
+abline(v = c(13.5, 17.5), lty = 1, col = "gray44", lwd = 1.0)
 
-legend("topright", 
+legend("bottomright", 
        legend = c("Observed",
-                  "Model Predictions",
+                  "All-Data Predictions",
+                  "95% Pred. Interval",
+                  "Withheld-Season Predictions",
                   "95% Pred. Interval"),
-       lty = c(1, 4, 1), 
-       lwd = c(2, 2, 10 ),
-       cex = 1.1,
-       col = c("grey5",  
+       lty = c(1, 4, 1, 4, 1), 
+       lwd = c(3, 3, 12, 3, 12 ),
+       cex = 1.25,
+       col = c("grey5", 
+               "forestgreen",
+               alpha("springgreen3", 0.3),
                "darkorange2",
                alpha("orange2", 0.3)),
        xpd = TRUE)
 #title("Non-fixed Model", adj = 0, cex.main = 1.65)
-text(x = 1.5, y = 48, labels = "Withheld-Season Model", col = "gray15", cex = 1.55, adj = 0)
+text(x = 1.5, y = 48, labels = "Withheld-Season Model", col = "darkorange2", cex = cex.model.lab, adj = 0)
 #text(x= 3, y = -46, labels = "RMSE: 9.61", col = "gray35", cex = 1.5)
 #text(x=15.5, y = -46, labels = "RMSE: 8.15", col = "gray35", cex = 1.5)
 #text(x=20, y = -46, labels = "RMSE: 4.68", col = "gray35", cex = 1.5)
-text(x= c(7, 15.5, 23), y = -17, labels = c("Early", "Peak", "Late"), col = "gray35", cex = 1.55)
+text(x= c(7, 15.5, 22), y = -17, labels = c("Early", "Peak", "Late"), col = "gray26", cex = cex.season.lab)
 
-mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.55, line = 2)
-mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.55, line = 1)
+mtext("CO Anomaly [ppb]", side = 2, outer = TRUE, padj = 0.5, cex = 1.75, line = 2.5)
+mtext("Week", side = 1, outer = TRUE, adj = 0.5, cex = 1.75, line = 1.15)
 
 dev.off()
 
