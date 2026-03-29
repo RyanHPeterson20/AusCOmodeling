@@ -331,6 +331,59 @@ build_model_styles <- function(model_cols,
 }
 
 
+# Auto interaction-coefficient x-jitter:
+# Groups (model, iterm) pairs whose interaction coefficient values are within
+# `tol` of each other (union-find), then assigns symmetric x nudges to every
+# group of size > 1.  Groups of size 1 get no entry (lookup -> 0).
+#
+# This is deliberately separate from the manual int_x_jitter: that one spreads
+# ALL interaction terms by a fixed amount; this one only moves terms that are
+# actually nearly coincident in coefficient value, leaving well-separated terms
+# untouched.
+#
+# Returns an environment keyed "model|iterm" -> numeric nudge value.
+.auto_int_x_offsets <- function(df_int, model_keys, tol, nudge) {
+  env <- new.env(parent = emptyenv())
+  if (nudge == 0) return(env)
+
+  # Collect one row per (model, iterm): the coefficient value for that pair.
+  rows_list <- lapply(model_keys, function(mdl) {
+    sub <- df_int[df_int$model == mdl, , drop = FALSE]
+    if (nrow(sub) == 0L) return(NULL)
+    terms <- unique(sub$term)
+    vals  <- vapply(terms, function(t) sub$value[sub$term == t][1L], numeric(1L))
+    data.frame(model = mdl, term = terms, value = vals, stringsAsFactors = FALSE)
+  })
+  rows <- do.call(rbind, rows_list[!vapply(rows_list, is.null, logical(1L))])
+  if (is.null(rows) || nrow(rows) < 2L) return(env)
+
+  n     <- nrow(rows)
+  group <- seq_len(n)
+
+  # Union-find: merge any pair whose coefficient values are within tol
+  for (i in seq_len(n - 1L)) {
+    for (j in (i + 1L):n) {
+      if (abs(rows$value[i] - rows$value[j]) <= tol) {
+        old_g             <- group[j]
+        new_g             <- group[i]
+        group[group == old_g] <- new_g
+      }
+    }
+  }
+
+  # Assign symmetric nudges within each overlapping group
+  for (g in unique(group)) {
+    idx <- which(group == g)
+    if (length(idx) == 1L) next
+    m       <- length(idx)
+    offsets <- seq(-(m - 1) / 2, (m - 1) / 2, length.out = m) * nudge
+    for (k in seq_along(idx))
+      env[[paste(rows$model[idx[k]], rows$term[idx[k]], sep = "|")]] <- offsets[k]
+  }
+  env
+}
+
+
 # Overlap detection and nudge pre-computation:
 # For each left panel, collects every (model, term) point with its effective
 # x position (lag + per-model xoff).  Pairs of points whose effective-x
@@ -503,14 +556,29 @@ plot_lagged_coef_panels <- function(
   # Ticks run right-to-left to match the reversed lag axis.
   x_axis_at         = c(52, 40, 30, 20, 10, 1),
   y_axis_at         = NULL,
+  # las style for the left-panel y-axis tick labels only.
+  # 0 = parallel to axis (default), 1 = always horizontal, 2 = perpendicular,
+  # 3 = always vertical.  Most useful values are 0 and 1.
+  y_axis_las        = 0,
   int_axis_at       = NULL,
+  # Draw unlabelled half-ticks at midpoints between labelled ticks.
+  # Each axis is controlled independently.  Half-ticks are drawn at half the
+  # standard tick length (tcl = -0.25).
+  half_ticks_x      = FALSE,   # lag axis on all left panels
+  half_ticks_y      = FALSE,   # coefficient axis on all left panels
+  half_ticks_int    = FALSE,   # x-axis on the right interaction panel
 
   # --- Title & text -----------------------------------------------------------
   main_title        = NULL,
   cex_main          = 1.75,
   title_line        = 1,
   cex_axis          = 1.2,
+  # cex_lab sets the default for all axis labels.  Override any individual
+  # label by supplying the corresponding specific parameter.
   cex_lab           = 1.4,
+  cex_lab_lag       = NULL,   # x-axis label "Lag" on the bottom left panel
+  cex_lab_y         = NULL,   # outer-margin y-axis label (ylab_left)
+  cex_lab_int       = NULL,   # x-axis label(s) on the right interaction panel
   cex_var_label     = 1.4,
   # Horizontal position of the in-panel variable label, as a percentage of the
   # lag-axis range inset from the LEFT visual edge (xlim_lag[1]).
@@ -525,6 +593,11 @@ plot_lagged_coef_panels <- function(
   # y-axis label on the left panels (outer margin mtext).
   # e.g. set to "Main Coefficient" to distinguish from interaction panel.
   xlab_coef         = "Coefficients",
+  # Optional second line for the right-panel x-axis label.
+  # NULL (default) = single-line label using xlab_coef.
+  # Any string     = drawn on a second line below xlab_coef via mtext().
+  # Useful when xlab_coef is long and clips at larger cex_lab values.
+  xlab_coef2        = NULL,
 
   # --- Points -----------------------------------------------------------------
   cex_pt            = 2.1,
@@ -584,7 +657,21 @@ plot_lagged_coef_panels <- function(
   legend_terms_pch      = c(21, 24, 25, 22, 23, 10, 11),
   legend_terms_pt_cex   = c(2.25, 1.8, 1.8, 2.25, 2.25, 2.25, 1.8),
   legend_models         = c("All-Data", "Fixed-Selection", "Withheld-Season"),
-  legend_model_keys     = c("base", "const", "vary")
+  legend_model_keys     = c("base", "const", "vary"),
+  # Point shape used in the Model legend.  Default 15 (filled square).
+  # The model's line type (from model_lty / styles) is always shown alongside
+  # the point, giving a type-"b" appearance that reflects both colour and lty.
+  legend_model_pch      = 15L,
+
+  # --- Auto x-jitter for overlapping interaction coefficients -----------------
+  # When auto_int_x_jitter = TRUE, (model, iterm) pairs whose interaction
+  # coefficient values fall within auto_int_x_tol of each other are
+  # automatically spread apart along the x-axis of the right panel.
+  # The nudge propagates to the vertical bar and star marker automatically
+  # because they are all drawn from the same xint_j value.
+  auto_int_x_jitter     = FALSE,
+  auto_int_x_nudge      = 0.10,
+  auto_int_x_tol        = 0.15
 
 ) {
 
@@ -598,6 +685,12 @@ plot_lagged_coef_panels <- function(
   )
 
   model_keys <- names(coefs_named_list)
+
+  # Resolve per-axis cex_lab values: specific parameter wins; falls back to
+  # the shared cex_lab default so existing calls need no changes.
+  .cex_lag <- if (!is.null(cex_lab_lag)) cex_lab_lag else cex_lab
+  .cex_y   <- if (!is.null(cex_lab_y))   cex_lab_y   else cex_lab
+  .cex_int <- if (!is.null(cex_lab_int)) cex_lab_int else cex_lab
 
   # ===========================================================================
   # 2.  Pre-resolve all per-model styles (single lookup, used everywhere)
@@ -644,6 +737,15 @@ plot_lagged_coef_panels <- function(
   quad_y_off <- combined_y$quad
 
   int_x_off  <- if (nrow(df_int) > 0) .int_x_offsets(df_int, int_x_jitter) else NULL
+
+  # Auto interaction x-jitter: keyed "model|iterm" -> nudge value.
+  # Only populated when auto_int_x_jitter = TRUE.
+  auto_int_x_off <- if (isTRUE(auto_int_x_jitter) && nrow(df_int) > 0)
+    .auto_int_x_offsets(df_int, model_keys,
+                        tol   = auto_int_x_tol,
+                        nudge = auto_int_x_nudge)
+  else
+    new.env(parent = emptyenv())
 
   # Overlap nudge table: keyed "model|term" -> list(dx, dy).
   # Only populated when auto_jitter = TRUE and at least one nudge size is > 0.
@@ -694,14 +796,25 @@ plot_lagged_coef_panels <- function(
     plot(NA, NA,
          xlim    = xlim_lag,
          ylim    = coef_range,
-         xlab    = if (is_last) xlab_lag else "",
+         xlab    = "",
          ylab    = "",
          axes    = FALSE,
-         cex.lab = cex_lab)
+         cex.lab = .cex_lag)
 
     box()
     axis(1, at = x_axis_at, cex.axis = cex_axis)
-    axis(2, at = y_axis_at, cex.axis = cex_axis)
+    axis(2, at = y_axis_at, cex.axis = cex_axis, las = y_axis_las)
+    # Lag axis label drawn via mtext() on the bottom panel so cex and position
+    # are fully independent of the plot() machinery.  line = par("mgp")[1]
+    # matches the default xlab placement position.
+    if (is_last && nzchar(xlab_lag))
+      mtext(xlab_lag, side = 1, line = par("mgp")[1], cex = .cex_lag)
+    if (isTRUE(half_ticks_x) && length(x_axis_at) >= 2L)
+      axis(1, at = (x_axis_at[-length(x_axis_at)] + x_axis_at[-1L]) / 2,
+           labels = FALSE, tcl = -0.25)
+    if (isTRUE(half_ticks_y) && length(y_axis_at) >= 2L)
+      axis(2, at = (y_axis_at[-length(y_axis_at)] + y_axis_at[-1L]) / 2,
+           labels = FALSE, tcl = -0.25)
     abline(h = 0, lty = lty_ref, lwd = lwd_ref)
 
     # In-panel variable label, just below the top of the y-range.
@@ -784,18 +897,42 @@ plot_lagged_coef_panels <- function(
 
     par(mar = c(4.5, 1.0, 2.5, 1.0))
 
-    # yaxt="n" suppresses the y-axis entirely (this panel has no y meaning).
+    # axes = FALSE + explicit axis() matches the draw_left_panel pattern and
+    # ensures int_axis_at fully controls the tick positions with no automatic
+    # ticks drawn underneath.
+    # xlab is set to "" when a two-line label is requested so we can draw both
+    # lines precisely with mtext() below.
+    use_two_line_lab <- !is.null(xlab_coef2) && nzchar(xlab_coef2)
     plot(0, 0, type = "n",
          xlim     = coef_range_int,
          ylim     = c(0, 1),
-         xlab     = xlab_coef,
+         xlab     = if (use_two_line_lab) "" else xlab_coef,
          ylab     = "",
-         yaxt     = "n",
+         axes     = FALSE,
          cex.axis = cex_axis,
-         cex.lab  = cex_lab)
+         cex.lab  = .cex_int)
 
+    # Two-line x-axis label: line 1 at the normal position, line 2 one step
+    # further out.  mtext() line= is in units of text line heights.
+    if (use_two_line_lab) {
+      mtext(xlab_coef,  side = 1, line = 2.8, cex = .cex_int)
+      mtext(xlab_coef2, side = 1, line = 4.0, cex = .cex_int)
+    }
+
+    box()
+    # Draw x-axis: use int_axis_at when supplied, otherwise R default ticks.
     if (!is.null(int_axis_at))
       axis(1, at = int_axis_at, cex.axis = cex_axis)
+    else
+      axis(1, cex.axis = cex_axis)
+    # Half-ticks on the interaction coefficient axis.
+    if (isTRUE(half_ticks_int)) {
+      int_tks <- if (!is.null(int_axis_at)) int_axis_at else axTicks(1)
+      if (length(int_tks) >= 2L)
+        axis(1, at = (int_tks[-length(int_tks)] + int_tks[-1L]) / 2,
+             labels = FALSE, tcl = -0.25)
+    }
+    # y-axis is suppressed entirely (this panel has no y meaning).
 
     abline(v = 0, lty = lty_ref, lwd = lwd_ref)
 
@@ -840,9 +977,16 @@ plot_lagged_coef_panels <- function(
           x2 <- grconvertX(a2$ndc_x, from = "ndc", to = "user")
           y2 <- grconvertY(a2$ndc_y, from = "ndc", to = "user") + y2_joff
 
-          # xint_j: coefficient value + x-jitter.
-          # Horizontal arms terminate here so the T-junction remains exact.
-          xint_j <- subm$value[1] + xjoff
+          # xint_j: coefficient value + manual x-jitter + auto x-jitter.
+          # All four segments and the star point are drawn from xint_j so the
+          # entire V-connector (horizontal arms, vertical bar, marker) shifts
+          # together with no further changes needed.
+          auto_xoff <- {
+            k_auto <- paste(model, iterm, sep = "|")
+            v <- auto_int_x_off[[k_auto]]
+            if (!is.null(v)) v else 0
+          }
+          xint_j <- subm$value[1] + xjoff + auto_xoff
 
           sty <- styles[[model]]
 
@@ -949,7 +1093,11 @@ plot_lagged_coef_panels <- function(
            title   = "Model",
            cex     = legend_cex_model,
            legend  = legend_models,
-           pch     = 15L,
+           pch     = legend_model_pch,
+           lty     = vapply(legend_model_keys,
+                            function(k) as.integer(if (!is.null(styles[[k]])) styles[[k]]$lty else 2L),
+                            integer(1L)),
+           lwd     = lwd,
            col     = unname(model_cols[legend_model_keys]),
            pt.cex  = 2.25)
   }
@@ -963,7 +1111,7 @@ plot_lagged_coef_panels <- function(
   # ===========================================================================
   yl <- if (is.null(ylab_left)) xlab_coef else ylab_left
   if (nzchar(yl))
-    mtext(yl, side = 2, outer = TRUE, line = -0.5, cex = 1.25)
+    mtext(yl, side = 2, outer = TRUE, line = -0.5, cex = .cex_y)
 
   invisible(NULL)
 }

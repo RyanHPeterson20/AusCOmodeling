@@ -556,14 +556,29 @@ plot_lagged_coef_panels <- function(
   # Ticks run right-to-left to match the reversed lag axis.
   x_axis_at         = c(52, 40, 30, 20, 10, 1),
   y_axis_at         = NULL,
+  # las style for the left-panel y-axis tick labels only.
+  # 0 = parallel to axis (default), 1 = always horizontal, 2 = perpendicular,
+  # 3 = always vertical.  Most useful values are 0 and 1.
+  y_axis_las        = 0,
   int_axis_at       = NULL,
+  # Draw unlabelled half-ticks at midpoints between labelled ticks.
+  # Each axis is controlled independently.  Half-ticks are drawn at half the
+  # standard tick length (tcl = -0.25).
+  half_ticks_x      = FALSE,   # lag axis on all left panels
+  half_ticks_y      = FALSE,   # coefficient axis on all left panels
+  half_ticks_int    = FALSE,   # x-axis on the right interaction panel
 
   # --- Title & text -----------------------------------------------------------
   main_title        = NULL,
   cex_main          = 1.75,
   title_line        = 1,
   cex_axis          = 1.2,
+  # cex_lab sets the default for all axis labels.  Override any individual
+  # label by supplying the corresponding specific parameter.
   cex_lab           = 1.4,
+  cex_lab_lag       = NULL,   # x-axis label "Lag" on the bottom left panel
+  cex_lab_y         = NULL,   # outer-margin y-axis label (ylab_left)
+  cex_lab_int       = NULL,   # x-axis label(s) on the right interaction panel
   cex_var_label     = 1.4,
   # Horizontal position of the in-panel variable label, as a percentage of the
   # lag-axis range inset from the LEFT visual edge (xlim_lag[1]).
@@ -578,6 +593,14 @@ plot_lagged_coef_panels <- function(
   # y-axis label on the left panels (outer margin mtext).
   # e.g. set to "Main Coefficient" to distinguish from interaction panel.
   xlab_coef         = "Coefficients",
+  # Optional second line for the right-panel x-axis label.
+  # NULL (default) = single-line label using xlab_coef.
+  # Any string     = drawn on a second line below xlab_coef via mtext().
+  # Useful when xlab_coef is long and clips at larger cex_lab values.
+  xlab_coef2        = NULL,
+  # Gap in mtext line units between xlab_coef (line 1) and xlab_coef2 (line 2).
+  # Increase to add more space between the two label lines; decrease to tighten.
+  xlab_coef2_line_gap = 1.2,
 
   # --- Points -----------------------------------------------------------------
   cex_pt            = 2.1,
@@ -665,6 +688,12 @@ plot_lagged_coef_panels <- function(
   )
 
   model_keys <- names(coefs_named_list)
+
+  # Resolve per-axis cex_lab values: specific parameter wins; falls back to
+  # the shared cex_lab default so existing calls need no changes.
+  .cex_lag <- if (!is.null(cex_lab_lag)) cex_lab_lag else cex_lab
+  .cex_y   <- if (!is.null(cex_lab_y))   cex_lab_y   else cex_lab
+  .cex_int <- if (!is.null(cex_lab_int)) cex_lab_int else cex_lab
 
   # ===========================================================================
   # 2.  Pre-resolve all per-model styles (single lookup, used everywhere)
@@ -770,14 +799,25 @@ plot_lagged_coef_panels <- function(
     plot(NA, NA,
          xlim    = xlim_lag,
          ylim    = coef_range,
-         xlab    = if (is_last) xlab_lag else "",
+         xlab    = "",
          ylab    = "",
          axes    = FALSE,
-         cex.lab = cex_lab)
+         cex.lab = .cex_lag)
 
     box()
     axis(1, at = x_axis_at, cex.axis = cex_axis)
-    axis(2, at = y_axis_at, cex.axis = cex_axis)
+    axis(2, at = y_axis_at, cex.axis = cex_axis, las = y_axis_las)
+    # Lag axis label drawn via mtext() on the bottom panel so cex and position
+    # are fully independent of the plot() machinery.  line = par("mgp")[1]
+    # matches the default xlab placement position.
+    if (is_last && nzchar(xlab_lag))
+      mtext(xlab_lag, side = 1, line = par("mgp")[1], cex = .cex_lag)
+    if (isTRUE(half_ticks_x) && length(x_axis_at) >= 2L)
+      axis(1, at = (x_axis_at[-length(x_axis_at)] + x_axis_at[-1L]) / 2,
+           labels = FALSE, tcl = -0.25)
+    if (isTRUE(half_ticks_y) && length(y_axis_at) >= 2L)
+      axis(2, at = (y_axis_at[-length(y_axis_at)] + y_axis_at[-1L]) / 2,
+           labels = FALSE, tcl = -0.25)
     abline(h = 0, lty = lty_ref, lwd = lwd_ref)
 
     # In-panel variable label, just below the top of the y-range.
@@ -860,18 +900,42 @@ plot_lagged_coef_panels <- function(
 
     par(mar = c(4.5, 1.0, 2.5, 1.0))
 
-    # yaxt="n" suppresses the y-axis entirely (this panel has no y meaning).
+    # axes = FALSE + explicit axis() matches the draw_left_panel pattern and
+    # ensures int_axis_at fully controls the tick positions with no automatic
+    # ticks drawn underneath.
+    # xlab is set to "" when a two-line label is requested so we can draw both
+    # lines precisely with mtext() below.
+    use_two_line_lab <- !is.null(xlab_coef2) && nzchar(xlab_coef2)
     plot(0, 0, type = "n",
          xlim     = coef_range_int,
          ylim     = c(0, 1),
-         xlab     = xlab_coef,
+         xlab     = if (use_two_line_lab) "" else xlab_coef,
          ylab     = "",
-         yaxt     = "n",
+         axes     = FALSE,
          cex.axis = cex_axis,
-         cex.lab  = cex_lab)
+         cex.lab  = .cex_int)
 
+    # Two-line x-axis label: line 1 at the normal position, line 2 one step
+    # further out.  mtext() line= is in units of text line heights.
+    if (use_two_line_lab) {
+      mtext(xlab_coef,  side = 1, line = 2.8,                        cex = .cex_int)
+      mtext(xlab_coef2, side = 1, line = 2.8 + xlab_coef2_line_gap,  cex = .cex_int)
+    }
+
+    box()
+    # Draw x-axis: use int_axis_at when supplied, otherwise R default ticks.
     if (!is.null(int_axis_at))
       axis(1, at = int_axis_at, cex.axis = cex_axis)
+    else
+      axis(1, cex.axis = cex_axis)
+    # Half-ticks on the interaction coefficient axis.
+    if (isTRUE(half_ticks_int)) {
+      int_tks <- if (!is.null(int_axis_at)) int_axis_at else axTicks(1)
+      if (length(int_tks) >= 2L)
+        axis(1, at = (int_tks[-length(int_tks)] + int_tks[-1L]) / 2,
+             labels = FALSE, tcl = -0.25)
+    }
+    # y-axis is suppressed entirely (this panel has no y meaning).
 
     abline(v = 0, lty = lty_ref, lwd = lwd_ref)
 
@@ -1050,7 +1114,7 @@ plot_lagged_coef_panels <- function(
   # ===========================================================================
   yl <- if (is.null(ylab_left)) xlab_coef else ylab_left
   if (nzchar(yl))
-    mtext(yl, side = 2, outer = TRUE, line = -0.5, cex = 1.25)
+    mtext(yl, side = 2, outer = TRUE, line = -0.5, cex = .cex_y)
 
   invisible(NULL)
 }
