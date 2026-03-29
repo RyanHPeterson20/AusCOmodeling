@@ -445,6 +445,148 @@ build_model_styles <- function(model_cols,
 
 
 # =============================================================================
+# Model-legend drawing helper  (internal)
+# =============================================================================
+
+# Draws the Model legend, supporting multi-line labels.
+#
+# Usage: embed "\n" in any element of legend_models to split that entry across
+# two (or more) lines.  The symbol (point + line segment) is centred at the
+# midpoint y of all lines belonging to that entry.  Single-line entries fall
+# through to a standard legend() call with no extra overhead.
+#
+# Geometry is recovered from two legend(plot=FALSE) calls:
+#   - one WITH the title, to obtain the full bounding box and text positions
+#   - one WITHOUT the title, to isolate how much vertical space the title
+#     occupies so it can be placed accurately
+#
+# Symbol x-position derivation:
+#   With R's defaults x.intersp=1 and seg.len=2, one character-width (cw):
+#     symbol_left  = rect_left + 1*cw
+#     symbol_right = rect_left + 3*cw    (1 + seg.len)
+#     symbol_ctr   = rect_left + 2*cw
+#     text_left    = rect_left + 4*cw    (1 + seg.len + 1)
+#   Therefore: symbol_ctr = (rect_left + text_left) / 2
+#
+.draw_model_legend <- function(pos, inset, title_str, cex,
+                                labels, pch_val, lty_vec, lwd_val,
+                                cols, pt_cex) {
+
+  # ---- split labels on \n and check for multi-line entries -------------------
+  split_labels <- strsplit(labels, "\n", fixed = TRUE)
+  n_lines      <- vapply(split_labels, length, integer(1L))
+
+  if (!any(n_lines > 1L)) {
+    # No multi-line entries: standard legend(), nothing extra needed.
+    legend(pos,
+           inset  = inset,
+           title  = title_str,
+           cex    = cex,
+           legend = labels,
+           pch    = pch_val,
+           lty    = lty_vec,
+           lwd    = lwd_val,
+           col    = cols,
+           pt.cex = pt_cex)
+    return(invisible(NULL))
+  }
+
+  # ---- build flat label list -------------------------------------------------
+  flat_labels <- unlist(split_labels)
+  entry_idx   <- rep(seq_along(labels), times = n_lines)
+  n_flat      <- length(flat_labels)
+
+  # Repeat style vectors to match flat label count (first line of each entry
+  # carries the real style; subsequent lines share the same entry colour).
+  flat_cols <- cols[entry_idx]
+
+  # ---- recover geometry with legend(plot=FALSE) ------------------------------
+  # Pass real pch / lty so that R allocates the full symbol column width.
+  lg_with <- legend(pos, inset = inset, title = title_str, cex = cex,
+                    legend = flat_labels,
+                    pch    = rep(pch_val, n_flat),
+                    lty    = rep(lty_vec[1L], n_flat),
+                    lwd    = lwd_val,
+                    col    = flat_cols,
+                    pt.cex = pt_cex,
+                    plot   = FALSE)
+
+  # Without title: used only to derive vertical space the title occupies.
+  lg_no_title <- legend(pos, inset = inset, title = NULL, cex = cex,
+                        legend = flat_labels,
+                        pch    = rep(pch_val, n_flat),
+                        lty    = rep(lty_vec[1L], n_flat),
+                        lwd    = lwd_val,
+                        col    = flat_cols,
+                        pt.cex = pt_cex,
+                        plot   = FALSE)
+
+  # Bounding box corners
+  box_left   <- lg_with$rect$left
+  box_top    <- lg_with$rect$top
+  box_right  <- box_left + lg_with$rect$w
+  box_bottom <- box_top  - lg_with$rect$h
+
+  # Symbol centre x: midpoint of box left edge and text left edge
+  sym_x <- (box_left + lg_with$text$x[1L]) / 2
+
+  # Segment half-width: derived from text_x and box_left
+  # seg_half = cw (one character width) where text_x = box_left + 4*cw
+  seg_half <- (lg_with$text$x[1L] - box_left) / 4
+
+  # Title y: centre of the vertical space the title occupies at the top
+  title_space <- lg_with$rect$h - lg_no_title$rect$h
+  title_y     <- box_top - title_space / 2
+
+  # Line height between consecutive flat entries
+  line_h <- if (n_flat > 1L) abs(lg_with$text$y[1L] - lg_with$text$y[2L])
+            else              abs(par("cxy")[2L]) * cex
+
+  # ---- draw ------------------------------------------------------------------
+  # Box
+  rect(box_left, box_bottom, box_right, box_top,
+       col = "white", border = "black")
+
+  # Title
+  if (!is.null(title_str) && nzchar(title_str))
+    text(x      = (box_left + box_right) / 2,
+         y      = title_y,
+         labels = title_str,
+         cex    = cex,
+         font   = 1L,
+         adj    = 0.5)
+
+  # Text lines
+  for (j in seq_len(n_flat))
+    text(x      = lg_with$text$x[j],
+         y      = lg_with$text$y[j],
+         labels = flat_labels[j],
+         cex    = cex,
+         adj    = 0)
+
+  # Symbols: one per original entry, centred at mean y of its lines
+  for (i in seq_along(labels)) {
+    rows  <- which(entry_idx == i)
+    y_sym <- mean(lg_with$text$y[rows])
+
+    # Line segment
+    segments(sym_x - seg_half, y_sym,
+             sym_x + seg_half, y_sym,
+             col = cols[i], lty = lty_vec[i], lwd = lwd_val)
+
+    # Point (bg set to col to cover both filled and open pch conventions)
+    points(sym_x, y_sym,
+           pch    = pch_val,
+           col    = cols[i],
+           bg     = cols[i],
+           cex    = pt_cex)
+  }
+
+  invisible(NULL)
+}
+
+
+# =============================================================================
 # Main function
 # =============================================================================
 
@@ -665,6 +807,11 @@ plot_lagged_coef_panels <- function(
   # The model's line type (from model_lty / styles) is always shown alongside
   # the point, giving a type-"b" appearance that reflects both colour and lty.
   legend_model_pch      = 15L,
+  # Position keywords for each legend box.  Accepts any value that R's
+  # legend() recognises: "topright", "topleft", "bottomright", "bottomleft",
+  # "top", "bottom", "left", "right", "center".
+  legend_pos_terms      = "topright",
+  legend_pos_model      = "topright",
 
   # --- Auto x-jitter for overlapping interaction coefficients -----------------
   # When auto_int_x_jitter = TRUE, (model, iterm) pairs whose interaction
@@ -827,7 +974,7 @@ plot_lagged_coef_panels <- function(
     # length grow rightward rather than shifting the anchor.
     x_label <- xlim_lag[1] + (xlim_lag[2] - xlim_lag[1]) * (var_label_pos / 100)
     text(x      = x_label,
-         y      = coef_range[2] - diff(coef_range) * 0.14,
+         y      = coef_range[2] - diff(coef_range) * 0.20,
          labels = pretty_var_label(var),
          adj    = 0,
          col    = "gray12",
@@ -1081,7 +1228,7 @@ plot_lagged_coef_panels <- function(
   if (isTRUE(add_legends)) {
     par(xpd = NA)
 
-    legend("topright",
+    legend(legend_pos_terms,
            inset   = legend_inset_terms,
            title   = "Terms",
            cex     = legend_cex_terms,
@@ -1091,18 +1238,20 @@ plot_lagged_coef_panels <- function(
            pt.bg   = legend_pt_bg,
            pt.cex  = legend_terms_pt_cex)
 
-    legend("topright",
-           inset   = legend_inset_model,
-           title   = "Model",
-           cex     = legend_cex_model,
-           legend  = legend_models,
-           pch     = legend_model_pch,
-           lty     = vapply(legend_model_keys,
-                            function(k) as.integer(if (!is.null(styles[[k]])) styles[[k]]$lty else 2L),
-                            integer(1L)),
-           lwd     = lwd,
-           col     = unname(model_cols[legend_model_keys]),
-           pt.cex  = 2.25)
+    .draw_model_legend(
+      pos       = legend_pos_model,
+      inset     = legend_inset_model,
+      title_str = "Model",
+      cex       = legend_cex_model,
+      labels    = legend_models,
+      pch_val   = legend_model_pch,
+      lty_vec   = vapply(legend_model_keys,
+                         function(k) as.integer(
+                           if (!is.null(styles[[k]])) styles[[k]]$lty else 2L),
+                         integer(1L)),
+      lwd_val   = lwd,
+      cols      = unname(model_cols[legend_model_keys]),
+      pt_cex    = 2.25)
   }
 
   # ===========================================================================

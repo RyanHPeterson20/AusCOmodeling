@@ -16,7 +16,7 @@ load("Data/validation_refits_wo2019.rda") #RMSE/Preds/Models w/o 2019/2020 data
 
 #load functions
 setwd("~/CO_AUS/AusCOmodeling") 
-source("Figures/coef_int_plot.R") 
+source("Figures/coef_int_plot_new.R") 
 
 #season years/weeks
 season.weeks <- c(38:52, 1:14)
@@ -97,11 +97,19 @@ NE3.coef <- coef(NE3.lm)
 #Figure 2 corrections 
 #TODO:
 ## increase the size of all text and numbers
-
+## temp notation:   if (is.null(oma)) oma <- c(1.05, 1.25, if (!is.null(main_title)) 0.75 else 0.5, 0.25)
 
 #cex setup (font/num size)
-cex.main <- 2.5
-cex.axis <- 2.22
+cex.main <- 2.6 #figure title
+cex.axis <- 2.25 #axis number
+cex.var.label <- 2.13 #climate mode predictor labels
+cex.lag.label <- 1.85
+cex.y.label <- 1.97
+cex.int.label <- 1.85
+
+cex.main.pt <- 2.5
+cex.int.pt <- 2.5
+
 
 #Figure 2 output:
 i <- 19 #2019/2020 Withheld
@@ -115,10 +123,11 @@ coefs1 <- list(
   vary  = coef(SE.vary.early[[i]])  
 )
 
-png(filename = paste0("Fig2b_SEcoefint_early_", season.years[i], ".png"),  width = 2050, height = 4100, res = 300)
+png(filename = paste0("Fig2b_SEcoefint_early_", season.years[i], ".png"),  width = 2050, height = 4150, res = 300)
 plot_lagged_coef_panels(
   coefs_named_list = coefs1,
   vars_order = c("nino", "etio", "wtio", "tsa", "aao", "olr"),  # include OLR panel
+  oma = c(1.25, 1.80, 0.75, 0.25),
   layout_widths = c(1.95, 1.30),
   y_axis_at = c(-4, 0, 4),
   y_axis_las = 1,
@@ -127,16 +136,18 @@ plot_lagged_coef_panels(
   coef_range_int = c(-3, 3),
   half_ticks_int = TRUE, 
   cex_axis = cex.axis,
-  cex_lab_lag = 1.6,
-  cex_lab_y = 1.6, 
-  cex_lab_int = 1.6, 
+  cex_lab_lag = cex.lag.label,
+  cex_lab_y = cex.y.label, 
+  cex_lab_int = cex.int.label, 
   ylab_left = "Main Coefficients",
   xlab_coef = "Interaction",
   xlab_coef2 = "Coefficients",
-  xlab_coef2_line_gap = 1.6, 
-  cex_var_label = 1.70,
-  var_label_pos = 0.25, 
-  lwd = 2.1,
+  xlab_coef2_line_gap = 2.0, 
+  cex_var_label = cex.var.label,
+  var_label_pos = 0.05, 
+  cex_pt = cex.main.pt,
+  cex_pt_int = cex.int.pt,
+  lwd = 2.5,
   lty_ref = 1, 
   lwd_ref = 0.5, 
   coef_range = c(-5, 5),
@@ -156,6 +167,7 @@ plot_lagged_coef_panels(
 dev.off()
 
 
+
 #fig 2c peak
 coefs2 <- list(
   base  = SE2.coef,
@@ -163,10 +175,11 @@ coefs2 <- list(
   vary  = coef(SE.vary.peak[[i]])  
 )
 
-png(filename = paste0("Fig2c_SEcoefint_peak_", season.years[i], ".png"),  width = 2050, height = 4100, res = 300)
+png(filename = paste0("Fig2c_SEcoefint_peak_", season.years[i], ".png"),  width = 2000, height = 4150, res = 300)
 plot_lagged_coef_panels(
   coefs_named_list = coefs2,
   vars_order = c("nino", "etio", "wtio", "tsa", "aao", "olr"),  # include OLR panel
+  oma = c(1.25, 1.25, 0.75, 0.25),
   layout_widths = c(1.95, 1.30),
   y_axis_at = c(-4, 0, 4),
   y_axis_las = 1,
@@ -175,16 +188,18 @@ plot_lagged_coef_panels(
   coef_range_int = c(-3, 3),
   half_ticks_int = TRUE, 
   cex_axis = cex.axis,
-  cex_lab_lag = 1.6,
-  cex_lab_y = 1.6, 
-  cex_lab_int = 1.6, 
+  cex_lab_lag = cex.lag.label,
+  cex_lab_y = cex.y.label, 
+  cex_lab_int = cex.int.label, 
   ylab_left = "",
   xlab_coef = "Interaction",
   xlab_coef2 = "Coefficients",
-  xlab_coef2_line_gap = 1.6, 
-  cex_var_label = 1.70,
-  var_label_pos = 0.25, 
-  lwd = 2.1,
+  xlab_coef2_line_gap = 2.0, 
+  cex_var_label = cex.var.label,
+  var_label_pos = 0.05, 
+  cex_pt = cex.main.pt,
+  cex_pt_int = cex.int.pt,
+  lwd = 2.5,
   lty_ref = 1, 
   lwd_ref = 0.5, 
   coef_range = c(-5, 5),
@@ -199,8 +214,21 @@ plot_lagged_coef_panels(
   auto_int_x_jitter = TRUE,
   model_cols = c(base="forestgreen", const="magenta4", vary="darkorange3"),
   model_lty  = c(base=1, const=2, vary=3),
-  add_legends = FALSE)
+  add_legends = TRUE, 
+  legend_terms_pt_cex   = c(2.75, 2.5, 2.5, 2.75, 2.75, 2.75, 2.5),
+  legend_pos_terms = "bottomright",
+  legend_pos_model = "bottomright",
+  legend_inset_terms = c(0.000, 0.0),
+  legend_inset_model = c(0.00, 0.215),
+  legend_x_intersp_terms  = 2.65,
+  legend_x_intersp_model = 1.55,
+  legend_cex_terms = 2.33,
+  legend_cex_model = 2.40,
+  legend_models = c("All-Data", "Withheld-\nSeason"),
+  legend_model_keys = c("base", "vary"))
 dev.off()
+
+
 
 #fig 2d late-season
 coefs3 <- list(
@@ -209,10 +237,11 @@ coefs3 <- list(
   vary  = coef(SE.vary.late[[i]])  
 )
 
-png(filename = paste0("Fig2d_SEcoefint_late_", season.years[i], ".png"),  width = 2050, height = 4100, res = 300)
+png(filename = paste0("Fig2d_SEcoefint_late_", season.years[i], ".png"),  width = 2000, height = 4150, res = 300)
 plot_lagged_coef_panels(
   coefs_named_list = coefs3,
   vars_order = c("nino", "etio", "wtio", "tsa", "aao", "olr"),  # include OLR panel
+  oma = c(1.25, 1.25, 0.75, 0.25),
   layout_widths = c(1.95, 1.30),
   y_axis_at = c(-4, 0, 4),
   y_axis_las = 1,
@@ -221,16 +250,18 @@ plot_lagged_coef_panels(
   coef_range_int = c(-3, 3),
   half_ticks_int = TRUE, 
   cex_axis = cex.axis,
-  cex_lab_lag = 1.6,
-  cex_lab_y = 1.6, 
-  cex_lab_int = 1.6, 
+  cex_lab_lag = cex.lag.label,
+  cex_lab_y = cex.y.label, 
+  cex_lab_int = cex.int.label, 
   ylab_left = "",
   xlab_coef = "Interaction",
   xlab_coef2 = "Coefficients",
-  xlab_coef2_line_gap = 1.6, 
-  cex_var_label = 1.70,
-  var_label_pos = 0.25, 
-  lwd = 2.1,
+  xlab_coef2_line_gap = 2.0, 
+  cex_var_label = cex.var.label,
+  cex_pt = cex.main.pt,
+  cex_pt_int = cex.int.pt,
+  var_label_pos = 0.05, 
+  lwd = 2.5,
   lty_ref = 1, 
   lwd_ref = 0.5, 
   coef_range = c(-5, 5),
