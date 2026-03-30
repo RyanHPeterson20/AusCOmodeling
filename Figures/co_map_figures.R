@@ -149,7 +149,7 @@ image.plot(
   zlim = c(zmin, zmax),         # locks scale
   xaxt = "n", yaxt = "n",
   xlab = "", ylab = "",
-  legend.lab = "CO (ppb)",
+  legend.lab = "CO [ppb]",
   legend.line = 2.5,
   legend.mar = 5,
   axis.args = list(tcl = -0.2, mgp = c(2.25, 0.95, 0))
