@@ -7,14 +7,15 @@ SI Fig 1 (predictor time series for all climate modes):
 - SI_pred_ts.png from  ~/Supporting_Information/SI_Figures/SI_ts_figures.R line 128
 	Note: TODO extend to 2000 instead of 2001.
 
-SI Fig 2
+
+SI Fig 2 (pIOD index SST anomaly reconstructions)
 a. SI_pIOD_S_Index.png from ~/Supporting_Information/pIOD/pIOD_EOF.R line 153
-	Note:
+	Note: add in "legend title" see cai et al for details.
 b. SI_pIOD_M_Index.png from ~/Supporting_Information/pIOD/pIOD_EOF.R line 183
-	Note:
+	Note: same as above
 
 
-SI Fig 3
+SI Fig 3 (SON relationships between pIOD indices and ETIO/WTIO)
 a. SI_fig3a_strongetio_ts.png from ~/Supporting_Information/pIOD/pIOD_index.R line ...
 	Note: 
 b. SI_fig3b_strongetio_cor.png from ~/Supporting_Information/pIOD/pIOD_index.R line ...
@@ -23,3 +24,6 @@ c. SON_mod_wtio.png from ~/Supporting_Information/pIOD/pIOD_index.R ...
 	Note:
 d. (correlation plot) from ~/Supporting_Information/pIOD/pIOD_index.R ...
 	Note:
+
+
+SI Fig 4
