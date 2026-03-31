@@ -9,6 +9,7 @@ SI Fig 1 (predictor time series for all climate modes):
 
 
 SI Fig 2 (pIOD index SST anomaly reconstructions)
+- TODO: redo final figure in inkscape
 a. SI_pIOD_S_Index.png from ~/Supporting_Information/pIOD/pIOD_EOF.R line 153
 	Note: add in "legend title" see cai et al for details.
 b. SI_pIOD_M_Index.png from ~/Supporting_Information/pIOD/pIOD_EOF.R line 183
@@ -16,14 +17,27 @@ b. SI_pIOD_M_Index.png from ~/Supporting_Information/pIOD/pIOD_EOF.R line 183
 
 
 SI Fig 3 (SON relationships between pIOD indices and ETIO/WTIO)
-a. SI_fig3a_strongetio_ts.png from ~/Supporting_Information/pIOD/pIOD_index.R line ...
+- TODO: finalize figure in inkscape
+a. SI_fig3a_strongetio_ts.png from ~/Supporting_Information/pIOD/pIOD_index.R line 81
 	Note: 
-b. SI_fig3b_strongetio_cor.png from ~/Supporting_Information/pIOD/pIOD_index.R line ...
+b. SI_fig3b_strongetio_cor.png from ~/Supporting_Information/pIOD/pIOD_index.R line 110
 	Note:
-c. SON_mod_wtio.png from ~/Supporting_Information/pIOD/pIOD_index.R ...
+c. SI_fig3c_modwtio_ts.png from ~/Supporting_Information/pIOD/pIOD_index.R line 138
 	Note:
-d. (correlation plot) from ~/Supporting_Information/pIOD/pIOD_index.R ...
+d. SI_fig3d_modwtio_cor.png from ~/Supporting_Information/pIOD/pIOD_index.R line 167
 	Note:
 
 
-SI Fig 4
+SI Fig 4 (Coef-Int plot with all three model variants)
+- TODO: finalize figure in inkscape
+a. SI_Fig4a_SEcoefint_early_2019.png from ~/Supporting_Information/SI_Figures/SI_coef_int_figures.R line 97
+
+b. SI_Fig4b_SEcoefint_peak_2019.png from ~/Supporting_Information/SI_Figures/SI_coef_int_figures.R line 152
+
+c. SI_Fig4c_SEcoefint_late_2019.png from ~/Supporting_Information/SI_Figures/SI_coef_int_figures.R line 215
+
+
+
+SI Fig 5 (currently the rmse plot, change to DMI coef-int so that we follow a logical order??)
+
+

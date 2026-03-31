@@ -75,7 +75,7 @@ xlab.cex <- 1.75
 #etio figures
 
 
-#SI figure a 
+#SI figure loc
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
 
 png(filename = "SI_fig3a_strongetio_ts.png", width = 3600, height = 2000, res = 275) 
