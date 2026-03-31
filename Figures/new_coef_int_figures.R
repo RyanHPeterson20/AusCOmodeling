@@ -161,7 +161,7 @@ plot_lagged_coef_panels(
   auto_jitter_y = 0.05,
   auto_int_x_jitter = TRUE,
   auto_int_x_nudge = 0.10,
-  model_cols = c(base="forestgreen", const="magenta4", vary="darkorange3"),
+  model_cols = c(base= "forestgreen", const="magenta4", vary= "darkorange3"),
   model_lty  = c(base=1, const=2, vary=3),
   add_legends = FALSE)
 dev.off()

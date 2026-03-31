@@ -187,7 +187,7 @@ par(mfrow = c(2, 1), oma = c(3, 4.0, 1.5, 1), mar = c(2, 2, 1.5, 1))
 #update prediction figure (full model)
 
 plot(1:29, pred.base.fit, type = "l", ylim = c(-51,51), axes = FALSE, 
-     lwd = 3, lty = 4, col = "forestgreen",
+     lwd = 3, lty = 1, col = "forestgreen",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = cex.xaxis)
@@ -234,7 +234,7 @@ envelopePlot(x1 = c(17.5, 18:29),
              col = alpha("springgreen3", 0.2),
              lineCol = NA)
 #lines(1:29, pred.base.lwr, lty = 4, lwd = 2, col = alpha("forestgreen", 0.9))
-lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
+lines(1:29, SE.2019.true, lty = 4, lwd = 2, col = "grey5")
 abline(h=0, lty =1, col = "gray45", lwd = 0.9)
 abline(v = c(13.5, 17.5), lty = 1, col = "gray44", lwd = 1.0)
 
@@ -248,7 +248,7 @@ text(x= c(7, 15.5, 23), y = -18, labels = c("Early", "Peak", "Late"), col = "gra
 
 #update prediction figure (non-fixed model)
 plot(1:29, pred.vary.fit, type = "l", ylim = c(-51, 51), axes = FALSE, 
-     lwd = 3, lty = 4, col = "darkorange2",
+     lwd = 3, lty = 3, col = "darkorange2",
      ylab = "", xlab = "", xlim = c(1.95, 28.05))
 box()
 axis(1, labels = season.weeks, at = 1:29, cex.axis = cex.xaxis) #x-axis
@@ -294,15 +294,15 @@ envelopePlot(x1 = c(17.5, 18:29),
              col = alpha("orange2", 0.2),
              lineCol = NA)
 #lines(1:29, pred.vary.lwr, lty = 4, lwd = 2, col = alpha("darkorange2", 0.9))
-lines(1:29, SE.2019.true, lty = 1, lwd = 2, col = "grey5")
+lines(1:29, SE.2019.true, lty = 4, lwd = 2, col = "grey5")
 abline(h=0, lty =1, col = "gray45", lwd = 0.9)
 abline(v = c(13.5, 17.5), lty = 1, col = "gray44", lwd = 1.0)
 
 legend("bottomright", 
        legend = c("Observed"),
        inset =  c(0.15, 0.289),
-       lty = c(1), 
-       lwd = c(4),
+       lty = c(4), 
+       lwd = c(3),
        cex = 1.67,
        col = c( "gray3"),
        #yjust = 0,
@@ -314,8 +314,8 @@ legend("bottomright",
        legend = c("All-Data Pred.",
                   "95% Pred. Interval"),
        inset =  c(0.216, 0),
-       lty = c(4, 1), 
-       lwd = c(4, 12),
+       lty = c(1, 1), 
+       lwd = c(3, 12),
        cex = 1.7,
        col = c( "forestgreen",
                alpha("springgreen3", 0.3)),
@@ -324,8 +324,8 @@ legend("bottomright",
 legend("bottomright",
        legend = c("Withheld-Season Pred.",
                   "95% Pred. Interval"),
-       lty = c(4, 1),
-       lwd = c(4, 12 ),
+       lty = c(3, 1),
+       lwd = c(3, 12 ),
        cex = 1.7,
        col = c("darkorange3",
                alpha("orange2", 0.3)),

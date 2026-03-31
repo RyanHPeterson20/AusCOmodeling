@@ -153,7 +153,7 @@ build_model_styles <- function(model_cols,
 
   # Auto-derive backgrounds
   if (is.null(model_bgs)) {
-    alphas    <- c(0.50, rep(0.65, max(n - 1L, 0L)))
+    alphas    <- c(0.65, rep(0.75, max(n - 1L, 0L)))
     model_bgs <- setNames(
       mapply(alpha_col, unname(model_cols), alphas, SIMPLIFY = TRUE),
       keys
@@ -578,7 +578,7 @@ build_model_styles <- function(model_cols,
     # Line segment
     segments(sym_x - seg_half, y_sym,
              sym_x + seg_half, y_sym,
-             col = cols[i], lty = lty_vec[i], lwd = lwd_val)
+             col = alpha(cols[i], 0.75), lty = lty_vec[i], lwd = lwd_val)
 
     # Point (bg set to col to cover both filled and open pch conventions)
     points(sym_x, y_sym,
@@ -1152,19 +1152,19 @@ plot_lagged_coef_panels <- function(
           sty <- styles[[model]]
 
           # Horizontal arms: from each left-panel anchor out to the vertical bar.
-          segments(x1, y1, xint_j, y1, col = sty$col, lty = sty$lty, lwd = lwd)
-          segments(x2, y2, xint_j, y2, col = sty$col, lty = sty$lty, lwd = lwd)
+          segments(x1, y1, xint_j, y1, col = alpha(sty$col, 0.55), lty = sty$lty, lwd = lwd)
+          segments(x2, y2, xint_j, y2, col = alpha(sty$col, 0.55), lty = sty$lty, lwd = lwd)
 
           # Vertical bar spanning y1 to y2, meeting at their midpoint.
           ymid <- (y1 + y2) / 2
-          segments(xint_j, y1,   xint_j, ymid, col = sty$col, lty = sty$lty, lwd = lwd)
-          segments(xint_j, y2,   xint_j, ymid, col = sty$col, lty = sty$lty, lwd = lwd)
+          segments(xint_j, y1,   xint_j, ymid, col = alpha(sty$col, 0.55), lty = sty$lty, lwd = lwd)
+          segments(xint_j, y2,   xint_j, ymid, col = alpha(sty$col, 0.55), lty = sty$lty, lwd = lwd)
 
           # Six-pointed star at the midpoint (interaction marker, pch=11).
           points(xint_j, ymid,
                  pch = 11L,
                  col = alpha_col(sty$col, 0.99),
-                 bg  = alpha_col(sty$col, 0.95),
+                 bg  = alpha_col(sty$col, 0.99),
                  cex = cex_pt_int)
         }
       }
@@ -1200,7 +1200,7 @@ plot_lagged_coef_panels <- function(
           sty <- styles[[model]]
 
           # Horizontal line from base anchor to quad coefficient.
-          segments(x_base, yq, xq, yq, col = sty$col, lty = sty$lty, lwd = lwd)
+          segments(x_base, yq, xq, yq, col = alpha(sty$col, 0.55), lty = sty$lty, lwd = lwd)
 
           # Quadratic point: use the same pch as its parent variable so the
           # symbol matches the left panel (nino quad -> pch=21, aao -> pch=23).
