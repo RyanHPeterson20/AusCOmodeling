@@ -7,7 +7,8 @@ a. Fig1a_MeanCO_climatemodes.png from ~/Figures/co_map_figures.R line 142
 	Note: Mean CO 2001-2019 Peak-Season
 b. Fig1b_relDiffCO_Aus.png from  ~/Figures/co_map_figures.R line 207
 	Note: Relative difference between 2019/2020 and Mean CO 2001-2019 for Peak-Season
-c. SEresp_ts_new2.png from  ~/Figures/ts_figures.R line 402 
+c. ... from ~/Figures/ts_figures_new.R line ...
+	Previous: SEresp_ts_new2.png from  ~/Figures/ts_figures.R line 402 
 	Note: CO anomalies between 2001-2020 (time series)
 	TODO: 	- change name and location to new, less messy, file
 			- move the y-axis label further right and change [ppb] to (ppb)
