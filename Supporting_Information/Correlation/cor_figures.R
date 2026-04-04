@@ -86,10 +86,368 @@ for (j in 1:3) {
 #new correlation figures
 #single cor plots
 #all plot cex vals
-cex.main <- 2.0
+cex.main <- 2.5
 cex.label <- 1.5
-cex.num <- 1.25
-line.wd <- 2.40
+cex.num <- 2.25
+line.wd <- 3
+
+#nino 3.4 correlation
+#setup (test) nino, output as par(mfrow = c(1, 3)) (one for each season)
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+
+png(filename = "SI_nino_cor.png", width = 5400, height = 1200, res = 300)
+par(oma = c(3.5, 4.75, 3.5, 1))
+par(mfrow = c(1, 3)) 
+#early
+par(mar = c(2, 2.5, 1, 0.5))
+plot(1:52, rev(SEcor_list[[1]]$nino_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "firebrick", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[1]]$nino_cor), col = "firebrick", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+axis(2, at = seq(-1, 1, by = 0.25), 
+     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Early", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Correlation", side = 2, cex = 2, line = 4.5)
+legend("bottomleft",
+       legend = c("All-Data",
+                  "2019 Withheld"),
+       lty = c(1,3),
+       lwd = 3, 
+       cex = 2.5,
+       col = "gray12")
+
+#peak
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[2]]$nino_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "cyan4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[2]]$nino_cor), col = "cyan4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Peak", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Lag", side = 1, cex = 2, line = 4, adj = 0.5)
+
+#late
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[3]]$nino_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "slateblue4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[3]]$nino_cor), col = "slateblue4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1), cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Late", cex  = cex.main, adj = 0, col = "gray15")
+title("Ni\u00f1o 3.4 Correlation", cex.main = 3, adj = 0, outer = TRUE)
+
+dev.off()
+
+
+#etio correlation
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+
+png(filename = "SI_etio_cor.png", width = 5400, height = 1200, res = 300)
+par(oma = c(3.5, 4.75, 3.5, 1))
+par(mfrow = c(1, 3)) 
+#early
+par(mar = c(2, 2.5, 1, 0.5))
+plot(1:52, rev(SEcor_list[[1]]$etio_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "firebrick", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[1]]$etio_cor), col = "firebrick", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+axis(2, at = seq(-1, 1, by = 0.25), 
+     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Early", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Correlation", side = 2, cex = 2, line = 4.5)
+legend("bottomleft",
+       legend = c("All-Data",
+                  "2019 Withheld"),
+       lty = c(1,3),
+       lwd = 3, 
+       cex = 2.5,
+       col = "gray12")
+
+#peak
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[2]]$etio_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "cyan4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[2]]$etio_cor), col = "cyan4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Peak", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Lag", side = 1, cex = 2, line = 4, adj = 0.5)
+
+#late
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[3]]$etio_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "slateblue4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[3]]$etio_cor), col = "slateblue4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1), cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Late", cex  = cex.main, adj = 0, col = "gray15")
+title("ETIO Correlation", cex.main = 3, adj = 0, outer = TRUE)
+
+dev.off()
+
+
+
+#wtio correlation
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+
+png(filename = "SI_wtio_cor.png", width = 5400, height = 1200, res = 300)
+par(oma = c(3.5, 4.75, 3.5, 1))
+par(mfrow = c(1, 3)) 
+#early
+par(mar = c(2, 2.5, 1, 0.5))
+plot(1:52, rev(SEcor_list[[1]]$wtio_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "firebrick", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[1]]$wtio_cor), col = "firebrick", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+axis(2, at = seq(-1, 1, by = 0.25), 
+     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Early", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Correlation", side = 2, cex = 2, line = 4.5)
+legend("bottomleft",
+       legend = c("All-Data",
+                  "2019 Withheld"),
+       lty = c(1,3),
+       lwd = 3, 
+       cex = 2.5,
+       col = "gray12")
+
+#peak
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[2]]$wtio_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "cyan4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[2]]$wtio_cor), col = "cyan4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Peak", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Lag", side = 1, cex = 2, line = 4, adj = 0.5)
+
+#late
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[3]]$wtio_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "slateblue4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[3]]$wtio_cor), col = "slateblue4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1), cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Late", cex  = cex.main, adj = 0, col = "gray15")
+title("WTIO Correlation", cex.main = 3, adj = 0, outer = TRUE)
+
+dev.off()
+
+
+
+#tsa correlation
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+
+png(filename = "SI_tsa_cor.png", width = 5400, height = 1200, res = 300)
+par(oma = c(3.5, 4.75, 3.5, 1))
+par(mfrow = c(1, 3)) 
+#early
+par(mar = c(2, 2.5, 1, 0.5))
+plot(1:52, rev(SEcor_list[[1]]$tsa_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "firebrick", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[1]]$tsa_cor), col = "firebrick", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+axis(2, at = seq(-1, 1, by = 0.25), 
+     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Early", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Correlation", side = 2, cex = 2, line = 4.5)
+legend("bottomleft",
+       legend = c("All-Data",
+                  "2019 Withheld"),
+       lty = c(1,3),
+       lwd = 3, 
+       cex = 2.5,
+       col = "gray12")
+
+#peak
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[2]]$tsa_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "cyan4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[2]]$tsa_cor), col = "cyan4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Peak", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Lag", side = 1, cex = 2, line = 4, adj = 0.5)
+
+#late
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[3]]$tsa_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "slateblue4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[3]]$tsa_cor), col = "slateblue4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1), cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Late", cex  = cex.main, adj = 0, col = "gray15")
+title("TSA Correlation", cex.main = 3, adj = 0, outer = TRUE)
+
+dev.off()
+
+
+
+#sam correlation
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+
+png(filename = "SI_sam_cor.png", width = 5400, height = 1200, res = 300)
+par(oma = c(3.5, 4.75, 3.5, 1))
+par(mfrow = c(1, 3)) 
+#early
+par(mar = c(2, 2.5, 1, 0.5))
+plot(1:52, rev(SEcor_list[[1]]$aao_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "firebrick", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[1]]$aao_cor), col = "firebrick", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+axis(2, at = seq(-1, 1, by = 0.25), 
+     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Early", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Correlation", side = 2, cex = 2, line = 4.5)
+legend("bottomleft",
+       legend = c("All-Data",
+                  "2019 Withheld"),
+       lty = c(1,3),
+       lwd = 3, 
+       cex = 2.5,
+       col = "gray12")
+
+#peak
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[2]]$aao_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "cyan4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[2]]$aao_cor), col = "cyan4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Peak", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Lag", side = 1, cex = 2, line = 4, adj = 0.5)
+
+#late
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[3]]$aao_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "slateblue4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[3]]$aao_cor), col = "slateblue4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1), cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Late", cex  = cex.main, adj = 0, col = "gray15")
+title("SAM Correlation", cex.main = 3, adj = 0, outer = TRUE)
+
+dev.off()
+
+
+
+
+#olr correlation
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+
+png(filename = "SI_olr_cor.png", width = 5400, height = 1200, res = 300)
+par(oma = c(3.5, 4.75, 3.5, 1))
+par(mfrow = c(1, 3)) 
+#early
+par(mar = c(2, 2.5, 1, 0.5))
+plot(1:52, rev(SEcor_list[[1]]$olr_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "firebrick", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[1]]$olr_cor), col = "firebrick", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+axis(2, at = seq(-1, 1, by = 0.25), 
+     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Early", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Correlation", side = 2, cex = 2, line = 4.5)
+legend("bottomleft",
+       legend = c("All-Data",
+                  "2019 Withheld"),
+       lty = c(1,3),
+       lwd = 3, 
+       cex = 2.5,
+       col = "gray12")
+
+#peak
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[2]]$olr_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "cyan4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[2]]$olr_cor), col = "cyan4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1) , cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Peak", cex  = cex.main, adj = 0, col = "gray15")
+mtext("Lag", side = 1, cex = 2, line = 4, adj = 0.5)
+
+#late
+par(mar = c(2, 2, 1, 0.5))
+plot(1:52, rev(SEcor_list[[3]]$olr_cor), type = "l", ylim = c(-1,1),
+     xaxt= "n", yaxt= "n", xlim = c(1.75, 50.5),
+     ylab = "", xlab = "", col = "slateblue4", lwd = line.wd,
+     lty = 1)
+lines(1:52, rev(SEcor_list.wo2019[[3]]$olr_cor), col = "slateblue4", lty = 3, lwd = line.wd)
+axis(1, at = c(1, 13, 23, 33, 43, 52), labels = c(52, 40, 30, 20, 10, 1), cex.axis = cex.num)
+#axis(2, at = seq(-1, 1, by = 0.25), 
+#     labels = c(-1, NA, -0.5, NA, 0, NA, 0.5, NA, 1), cex.axis = cex.num, las = 1)
+abline(h = 0, lwd = 0.5, col = "gray24")
+text( 2, 0.85, "Late", cex  = cex.main, adj = 0, col = "gray15")
+title("OLR Correlation", cex.main = 3, adj = 0, outer = TRUE)
+
+dev.off()
+
+
+
+
+
 
 #nino??
 par(mar = c(4, 4, 1.5, 1.5))

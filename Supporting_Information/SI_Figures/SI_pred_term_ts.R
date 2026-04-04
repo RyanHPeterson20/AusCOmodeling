@@ -50,6 +50,262 @@ SE3.coef <- coef(SE3.lm)
 
 #begin with group 1: 2006/2007, 2015/2016, 2019/2020
 
+#combined peak season plot
+#plot_pred_ts_panels
+out_dir <- "~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures"
+
+#2006/2007
+plot_pred_ts_panels(
+  season_i = 6,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 5,
+  pred_label_cex = 3,
+  model_coef = SE2.coef,
+  outfile = file.path(out_dir, "SI_SE2006_pred_ts.png"),
+  lag_offsets = list(
+    nino = list("40" = c(0, 0.1)),
+    sam = list("33" = c(0, 0))
+  ),
+  y_axis_at = c(-2, -1, 0, 1, 2),
+  spacer_height = 1L
+)
+
+
+#2015/2016
+plot_pred_ts_panels(
+  season_i = 15,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 9,
+  pred_label_cex = 3,
+  model_coef = SE2.coef,
+  outfile = file.path(out_dir, "SI_SE2015_pred_ts.png"),
+  lag_offsets = list(
+    nino = list("40" = c(0, 0.1)),
+    sam = list("33" = c(0, 0))
+  ),
+  y_axis_at = c(-2, -1, 0, 1, 2),
+  spacer_height = 1L
+)
+
+
+#2019/2020
+plot_pred_ts_panels(
+  season_i = 19,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 9,
+  pred_label_cex = 3,
+  model_coef = SE2.coef,
+  outfile = file.path(out_dir, "SI_SE2019_pred_ts.png"),
+  lag_offsets = list( #TODO: shift a lot of these around a bit
+    nino = list("40" = c(0, 0.1)),
+    sam = list("33" = c(0, 0))
+  ),
+  y_axis_at = c(-2, -1, 0, 1, 2),
+  spacer_height = 1L
+)
+
+
+#2002/2003
+plot_pred_ts_panels(
+  season_i = 2,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 9,
+  pred_label_cex = 3,
+  model_coef = SE2.coef,
+  outfile = file.path(out_dir, "SI_SE2002_pred_ts.png"),
+  lag_offsets = list( #TODO: shift a lot of these around a bit
+    nino = list("40" = c(0, 0.1)),
+    sam = list("33" = c(0, 0))
+  ),
+  y_axis_at = c(-2, -1, 0, 1, 2),
+  spacer_height = 1L
+)
+
+
+#2003/2004
+plot_pred_ts_panels(
+  season_i = 3,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 9,
+  pred_label_cex = 3,
+  model_coef = SE2.coef,
+  outfile = file.path(out_dir, "SI_SE2003_pred_ts.png"),
+  lag_offsets = list( #TODO: shift a lot of these around a bit
+    nino = list("40" = c(0, 0.1)),
+    sam = list("33" = c(0, 0))
+  ),
+  y_axis_at = c(-2, -1, 0, 1, 2),
+  spacer_height = 1L
+)
+
+
+#2005/2006
+plot_pred_ts_panels(
+  season_i = 5,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 9,
+  pred_label_cex = 3,
+  model_coef = SE2.coef,
+  outfile = file.path(out_dir, "SI_SE2005_pred_ts.png"),
+  lag_offsets = list( #TODO: shift a lot of these around a bit
+    nino = list("40" = c(0, 0.1)),
+    sam = list("33" = c(0, 0))
+  ),
+  y_axis_at = c(-2, -1, 0, 1, 2),
+  spacer_height = 1L
+)
+
+#comparison plots
+out_dir <- "~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures"
+
+i <- 19
+
+groups <- list(
+  Early = build_group_data(i, SEAus.lag, pred.df, season.years,
+                           season.weeks, SE.early,
+                           model_coef = coef(SE1.lm)),
+  Peak  = build_group_data(i, SEAus.lag, pred.df, season.years,
+                           season.weeks, SE.mid,
+                           model_coef = coef(SE2.lm)),
+  Late  = build_group_data(i, SEAus.lag, pred.df, season.years,
+                           season.weeks, SE.late,
+                           model_coef = coef(SE3.lm))
+)
+
+#tsa
+plot_mode_comparison_panels(
+  season_i = i,
+  mode     = "tsa",
+  groups   = groups,
+  main_title = "(a) TSA Predictors for 2019/2020 Wildfire Season",
+  ylim  = c(-3.2, 3.2),
+  y_axis_at = c(-1.5, 0, 1.5),
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
+  seasons  = seasons,
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0.020,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  lag_label_cex       = 2.2,
+  lag_offsets = list(
+    early = list("12" = c(7.45, -0.475),
+                 "14" = c(-7.45, 0.475)),
+    peak  = list("29" = c(-2.0, 0.125)),
+    late = list("22" =  c(0.0 , 0.1))
+  ),
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "SI_SE2019_tsa_comparison.png")
+)
+
+
+#aao (sam)
+plot_mode_comparison_panels(
+  season_i = i,
+  mode     = "sam",
+  groups   = groups,
+  main_title = "(b) SAM Predictors for 2019/2020 Wildfire Season",
+  ylim  = c(-3.2, 3.2),
+  y_axis_at = c(-1.5, 0, 1.5),
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
+  seasons  = seasons,
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0.020,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  lag_label_cex       = 2.2,
+  lag_offsets = list(
+    early = list("24" = c(1.75, 0.85),
+                 "28" = c(2.15, -0.15),
+                 "29" = c(-1.55, -0.25),
+                 "33" = c(-2.5, 0.1),
+                 "41" = c(-3.0, 0.20)),
+    peak  = list("9" = c(-3.0, 0.15),
+                 "21" = c(-1.0, 0.25)),
+    late = list("1" =  c(-3.0 , 0.1),
+                "50" = c(-0.0, 0.0))
+  ),
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "SI_SE2019_sam_comparison.png")
+)
+
+
+#olr
+plot_mode_comparison_panels(
+  season_i = i,
+  mode     = "olr",
+  groups   = groups,
+  main_title = "(c) OLR Predictors for 2019/2020 Wildfire Season",
+  ylim  = c(-3.2, 3.2),
+  y_axis_at = c(-1.5, 0, 1.5),
+  ylab_centered = TRUE,
+  ylab_cex = 1.5,
+  seasons  = seasons,
+  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  show_pred_label = FALSE,
+  group_label_x_frac  = 0.020,
+  group_label_y_frac  = 0.1,
+  group_label_cex     = 2.5,
+  lag_label_cex       = 2.2,
+  lag_offsets = list(
+    early = list("2" = c(-2.0,-0.1),
+                 "14" = c(0.0, -0.0)),
+    late = list("6" =  c(-0.0 , 0.0))
+  ),
+  spacer_height = 0,
+  outfile  = file.path(out_dir, "SI_SE2019_olr_comparison.png")
+)
+
+
+
+
+
+#comparison plots
 i <- 6  #2006 #loop through as many years as needed
 
 groups <- list(

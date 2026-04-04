@@ -1050,28 +1050,33 @@ plot_mode_comparison_panels <- function(
 
   # ---- resolve lag_offsets: per-group or global ----
   # lag_offsets can be supplied in two forms:
-  #   (a) Per-group: named list keyed by group name, each entry a flat
-  #       lag-offset list, e.g.
-  #       list(early = list("40" = c(14, 0)),
-  #            peak  = list("40" = c(-7, 0.1)),
-  #            late  = NULL)
+  #   (a) Per-group: named list keyed by group name (case-insensitive match),
+  #       each entry a flat lag-offset list, e.g.
+  #       list(Early = list("40" = c(14, 0)),
+  #            Peak  = list("40" = c(-7, 0.1)),
+  #            Late  = NULL)
   #   (b) Global (flat): a single flat lag-offset list applied to every
-  #       panel, e.g. list("40" = c(14, 0))  — backward-compatible.
+  #       panel, e.g. list("40" = c(14, 0)) — backward-compatible.
   #
-  # Detection: if all non-NULL entries of lag_offsets are themselves lists,
-  # treat it as per-group; otherwise treat as global.
-  grp_names <- names(groups)
+  # Detection: names of lag_offsets are matched against group names
+  # case-insensitively. If all names match, treat as per-group; otherwise global.
+  grp_names     <- names(groups)
+  grp_names_low <- tolower(grp_names)
   if (is.null(lag_offsets)) {
     lag_offsets_per_group <- vector("list", n_panels)
   } else {
-    non_null <- lag_offsets[!sapply(lag_offsets, is.null)]
-    is_per_group <- length(non_null) > 0L &&
-                    all(sapply(non_null, is.list)) &&
-                    all(names(lag_offsets) %in% grp_names)
+    lo_names_low <- tolower(names(lag_offsets))
+    is_per_group <- !is.null(names(lag_offsets)) &&
+                    length(names(lag_offsets)) > 0L &&
+                    all(lo_names_low %in% grp_names_low)
     if (is_per_group) {
-      lag_offsets_per_group <- lapply(grp_names, function(nm) lag_offsets[[nm]])
+      # match by case-insensitive name; unmatched groups get NULL
+      lag_offsets_per_group <- lapply(grp_names_low, function(nm) {
+        hit <- which(lo_names_low == nm)
+        if (length(hit) > 0L) lag_offsets[[hit[1L]]] else NULL
+      })
     } else {
-      # global: replicate the same flat list for every panel
+      # global: same flat list for every panel
       lag_offsets_per_group <- rep(list(lag_offsets), n_panels)
     }
   }

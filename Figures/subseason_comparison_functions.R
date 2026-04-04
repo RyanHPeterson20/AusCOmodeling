@@ -7,12 +7,18 @@
 #
 #  Public interface
 #  ----------------
+#  plot_pred_ts_panels()             multi-predictor figure for one sub-season
+#                                    (raw-data mode: pass aus.lag + date args
+#                                     and build_season_* helpers run internally;
+#                                     pre-built mode: pass preds + dates directly)
+#  plot_mode_comparison_panels()     single-mode figure across multiple sub-seasons
+#  build_group_data()                convenience wrapper for one sub-season group
+#
+#  Also exported (still available standalone, now also called by plot_pred_ts_panels)
+#  ----------------------------------------------------------------------------------
 #  build_season_mats()               assemble per-predictor lag matrices
 #  extract_season_preds()            extract one season's anomaly vectors
 #  build_season_dates()              build x-axis date vector + axis elements
-#  build_group_data()                convenience wrapper for one sub-season group
-#  plot_pred_ts_panels()             multi-predictor figure for one sub-season
-#  plot_mode_comparison_panels()     single-mode figure across multiple sub-seasons
 #
 #  Internal helpers (prefix ".")
 #  --------------------------------
@@ -653,32 +659,98 @@ build_season_dates <- function(season_i, pred_df, season_years,
 #' Produces the composite figure of Niño 3.4, WTIO, ETIO, TSA, SAM, and OLR
 #' anomaly time series for one wildfire season.  Optionally saves to a PNG.
 #'
-#' @param season_i     Integer row index into \code{seasons}.
+#' The function can be called in two ways:
+#' \enumerate{
+#'   \item \strong{Raw-data mode} — pass \code{aus.lag}, \code{pred_df},
+#'     \code{season_years}, \code{season.weeks}, and \code{sub_season}.
+#'     \code{build_season_mats()}, \code{extract_season_preds()}, and
+#'     \code{build_season_dates()} are called internally.
+#'   \item \strong{Pre-built mode} — pass \code{preds} and \code{dates}
+#'     directly (backward-compatible with the previous interface).
+#' }
+#' Both forms can be mixed: e.g. supply \code{preds} but omit \code{dates}
+#' (only the missing piece is rebuilt from the raw-data arguments).
+#'
+#' @param season_i     Integer row index into \code{seasons} / \code{season_years}.
+#'
+#' @section Raw-data inputs (used when \code{preds} or \code{dates} is \code{NULL}):
+#' @param aus.lag      Named list of weekly lag matrices (e.g. \code{SEAus.lag}).
+#' @param pred_df      Data frame with columns \code{week}, \code{year},
+#'   \code{date}.
+#' @param season_years Integer vector of season-start years.
+#' @param season.weeks Ordered integer vector of all season weeks
+#'   (e.g. \code{c(38:52, 1:14)}).
+#' @param sub_season   Integer vector of weeks for this sub-season group
+#'   (e.g. \code{c(51, 52, 1, 2)}).
+#' @param n_main_lags  Number of main lags passed to \code{build_season_mats()}
+#'   and \code{build_season_dates()}.  Default 52.
+#' @param col_spec     Named list of start-column indices per predictor passed
+#'   to \code{build_season_mats()}.  Defaults match the current
+#'   \code{SEAus.lag} layout.
+#'
+#' @section Pre-built inputs (optional):
 #' @param preds        Named list from \code{extract_season_preds()}.
 #'   Names must include: \code{nino}, \code{wtio}, \code{etio},
 #'   \code{tsa}, \code{sam}, \code{olr}.
 #' @param dates        List from \code{build_season_dates()}.
-#' @param seasons      Character vector of "YYYY-YYYY" season labels.
-#' @param model_coef Named numeric vector of model coefficients, e.g.
-#'   \code{coef(SE1.lm)}.  When provided, lag values to highlight are parsed
-#'   automatically from terms matching \code{<var>_lag<N>}.  Takes priority
-#'   over \code{lag_list}.  \code{NULL} falls back to \code{lag_list}.
-#' @param lag_list   Named list of integer lag values to highlight per
-#'   predictor, used only when \code{model_coef = NULL}.  Set a predictor's
-#'   entry to \code{NULL} to suppress highlights for that panel.
-#' @param key_map    Named character vector mapping model variable names to
-#'   internal predictor keys where they differ (e.g. \code{c(aao = "sam")}).
-#'   Only needed when \code{model_coef} is supplied.  Default covers the
-#'   known \code{aao} → \code{sam} alias.
-#' @param y_max        Shared y-axis half-range.  Computed from \code{preds}
-#'   if \code{NULL} (rounded up to one decimal place).
-#' @param outfile      Full path for PNG output.  \code{NULL} plots to the
-#'   current graphics device.
-#' @param png_dims     Named list with \code{width}, \code{height}, \code{res}.
+#'
+#' @section Figure / layout:
+#' @param seasons      Character vector of \code{"YYYY-YYYY"} season labels.
+#' @param main_title   Override the figure title.  \code{NULL} uses
+#'   \code{paste0(seasons[season_i], " Wildfire Season")}.
+#' @param preds_ord    Character vector giving panel draw order (top to bottom).
+#' @param model_coef   Named numeric coefficient vector (e.g. \code{coef(lm)}).
+#'   Lag highlights are parsed from terms matching \code{<var>_lag<N>}.
+#'   Takes priority over \code{lag_list}.
+#' @param lag_list     Named list of integer lag vectors per predictor, used
+#'   only when \code{model_coef = NULL}.  Set a predictor's entry to
+#'   \code{NULL} to suppress highlights for that panel.
+#' @param key_map      Named character vector mapping model variable names to
+#'   internal predictor keys (e.g. \code{c(aao = "sam")}).
+#' @param y_max        Shared y-axis half-range.  Auto-computed from
+#'   \code{preds} if both \code{y_max} and \code{ylim} are \code{NULL}.
+#' @param ylim         Explicit length-2 y-axis limits.  Takes priority over
+#'   \code{y_max} when supplied.
+#' @param y_axis_at    Numeric vector of y-axis tick positions / labels.
+#'   Auto-derived from \code{ylim} via \code{.make_yticks()} when \code{NULL}.
+#' @param outfile      Full path for PNG output.  \code{NULL} = current device.
+#' @param png_dims     Named list: \code{width}, \code{height}, \code{res}.
+#' @param show_pred_label Logical; draw the predictor name in the top-left of
+#'   each panel.  Default \code{TRUE}.
 #' @param pred_labels  Named character vector of panel predictor labels.
-#' @param ylabs        Named character vector of y-axis titles per predictor.
-#' @param colors       Named list of fill colours; defaults to
-#'   \code{.TS_COLORS}.
+#' @param ylabs        Named character vector of y-axis titles per predictor,
+#'   used when \code{ylab_centered = FALSE}.
+#' @param ylab         Single y-axis label drawn as a centred outer-margin
+#'   title when \code{ylab_centered = TRUE}.  Ignored otherwise.
+#' @param pred_label_cex       cex for the in-panel predictor labels.
+#' @param pred_label_x_offset  Integer days right of \code{xlim[1]} for the
+#'   predictor label.  Default 2.
+#' @param pred_label_y_frac    Fractional y position: 0 = top, 1 = bottom.
+#' @param lag_label_cex        cex for "Lag N" highlight labels.
+#' @param lag_offsets  Per-predictor or global lag label nudges.  Two forms:
+#'   \describe{
+#'     \item{Per-predictor}{Named list keyed by predictor key (case-insensitive
+#'       match against \code{preds_ord}), e.g.
+#'       \code{list(nino = list("40" = c(14, 0)), sam = list("33" = c(-7, 0.1)))}.
+#'       Unmatched predictors receive \code{NULL} (no adjustment).}
+#'     \item{Global (flat)}{A single flat lag-offset list applied to every
+#'       panel, e.g. \code{list("40" = c(14, 0))}.}
+#'   }
+#'   Each leaf entry is a length-2 vector \code{c(x_days, y_units)}.
+#'   \code{NULL} = no adjustments.
+#' @param group_labels Character vector of top-right panel labels, one per
+#'   predictor panel.  \code{NULL} suppresses all group labels.
+#' @param group_label_cex    cex for group labels.
+#' @param group_label_x_frac Fractional x position: 0 = left, 1 = right.
+#' @param group_label_y_frac Fractional y offset from top: 0 = top of ylim.
+#' @param spacer_height      Height units of blank spacer rows inserted between
+#'   panels (same layout mechanism as \code{plot_mode_comparison_panels}).
+#'   Set to 0 to disable spacers entirely.  Default 1.
+#' @param colors       Named list of fill colours; defaults to \code{.TS_COLORS}.
+#' @param ylab_cex     cex for the y-axis title(s).
+#' @param ylab_centered Logical; when \code{TRUE} per-panel y-axis titles are
+#'   suppressed and \code{ylab} is drawn as a single centred outer-margin
+#'   label instead.  Default \code{FALSE}.
 #'
 #' @return Invisibly returns \code{NULL}.  Side effect: one figure.
 #'
@@ -687,45 +759,70 @@ build_season_dates <- function(season_i, pred_df, season_years,
 #'   season.weeks <- c(38:52, 1:14)
 #'   SE.mid       <- c(51, 52, 1, 2)
 #'
-#'   # --- one-time setup ---
+#'   # --- raw-data mode (no pre-computation needed) ---
+#'   plot_pred_ts_panels(
+#'     season_i     = 19,
+#'     aus.lag      = SEAus.lag,
+#'     pred_df      = pred.df,
+#'     season_years = season.years,
+#'     season.weeks = season.weeks,
+#'     sub_season   = SE.mid,
+#'     seasons      = seasons,
+#'     model_coef   = coef(SE1.lm),
+#'     outfile      = file.path(out_dir, "SI_SE2019_pred_ts.png"),
+#'     # per-predictor lag offsets
+#'     lag_offsets  = list(
+#'       nino = list("40" = c(14, 0.1)),
+#'       sam  = list("33" = c(-7, 0))
+#'     ),
+#'     y_axis_at    = c(-2, -1, 0, 1, 2),
+#'     spacer_height = 1L
+#'   )
+#'
+#'   # --- pre-built mode (backward-compatible) ---
 #'   peak_mats <- build_season_mats(SEAus.lag, season.weeks, SE.mid)
-#'   y_max_all <- max(abs(unlist(peak_mats)), na.rm = TRUE)
+#'   preds     <- extract_season_preds(19, peak_mats)
+#'   dates     <- build_season_dates(19, pred.df, season.years, season.weeks, SE.mid)
 #'
-#'   # --- per-season loop: lags parsed from model coefficients ---
-#'   for (i in c(2, 3, 5, 6, 15, 19)) {
-#'     preds <- extract_season_preds(i, peak_mats)
-#'     dates <- build_season_dates(i, pred_df, season_years, season.weeks, SE.mid)
-#'
-#'     plot_pred_ts_panels(
-#'       season_i   = i,
-#'       preds      = preds,
-#'       dates      = dates,
-#'       seasons    = seasons,
-#'       model_coef = coef(SE1.lm),
-#'       y_max      = y_max_all,
-#'       outfile    = file.path(out_dir,
-#'                              paste0("SI_SE", season_years[i], "_pred_ts.png"))
-#'     )
-#'   }
+#'   plot_pred_ts_panels(
+#'     season_i = 19, preds = preds, dates = dates,
+#'     seasons  = seasons, model_coef = coef(SE1.lm)
+#'   )
 #' }
-#' @param pred_label_cex       cex for the in-panel predictor labels.  Default 2.5.
-#' @param pred_label_x_offset  Integer days right of \code{xlim[1]} for the
-#'   predictor label.  Default 2.
-#' @param pred_label_y_frac    Fractional position on the y-axis: 0 = top
-#'   (\code{ylim[2]}), 1 = bottom (\code{ylim[1]}).  Default 0 (top-left).
-#' @param lag_label_cex        cex for "Lag N" highlight labels.  Default 2.5.
 plot_pred_ts_panels <- function(
     season_i,
-    preds,
-    dates,
+    # ---- pre-built inputs (optional when raw-data args are supplied) ----
+    preds               = NULL,
+    dates               = NULL,
+    # ---- raw-data inputs (used to build preds / dates when either is NULL) ----
+    aus.lag             = NULL,
+    pred_df             = NULL,
+    season_years        = NULL,
+    season.weeks        = NULL,
+    sub_season          = NULL,
+    n_main_lags         = 52L,
+    col_spec            = list(
+      nino = 3L,
+      wtio = 107L,
+      etio = 159L,
+      tsa  = 211L,
+      sam  = 263L,
+      olr  = 315L
+    ),
+    # ---- figure / data ----
     seasons,
+    main_title          = NULL,
     preds_ord           = c("nino", "wtio", "etio", "tsa", "sam", "olr"),
     model_coef          = NULL,
     lag_list            = NULL,
     key_map             = c(aao = "sam"),
     y_max               = NULL,
+    ylim                = NULL,
+    y_axis_at           = NULL,
     outfile             = NULL,
     png_dims            = list(width = 4800L, height = 5600L, res = 275L),
+    # ---- labels ----
+    show_pred_label     = TRUE,
     pred_labels         = c(
       nino = "Ni\u00f1o 3.4",
       wtio = "WTIO",
@@ -742,12 +839,50 @@ plot_pred_ts_panels <- function(
       sam  = "Anomaly",
       olr  = "Anomaly [W/m^2]"
     ),
+    ylab                = "Anomaly",
     pred_label_cex      = 2.5,
     pred_label_x_offset = 2L,
     pred_label_y_frac   = 0,
     lag_label_cex       = 2.5,
-    colors              = .TS_COLORS
+    # ---- lag offsets (per-predictor or global) ----
+    lag_offsets         = NULL,
+    # ---- group / panel labels ----
+    group_labels        = NULL,
+    group_label_cex     = 2.5,
+    group_label_x_frac  = 1,
+    group_label_y_frac  = 0,
+    # ---- layout / style ----
+    spacer_height       = 1L,
+    colors              = .TS_COLORS,
+    ylab_cex            = 2.75,
+    ylab_centered       = FALSE
 ) {
+
+  # ---- build preds / dates from raw data if not pre-supplied ----
+  if (is.null(preds) || is.null(dates)) {
+    raw_args    <- list(aus.lag      = aus.lag,
+                        pred_df      = pred_df,
+                        season_years = season_years,
+                        season.weeks = season.weeks,
+                        sub_season   = sub_season)
+    missing_raw <- names(raw_args)[vapply(raw_args, is.null, logical(1L))]
+    if (length(missing_raw) > 0L)
+      stop("plot_pred_ts_panels: 'preds' or 'dates' is NULL but the following ",
+           "raw-data arguments are also NULL: ",
+           paste(missing_raw, collapse = ", "),
+           ".\nSupply either pre-built 'preds' + 'dates', or all five raw-data ",
+           "arguments (aus.lag, pred_df, season_years, season.weeks, sub_season).")
+
+    season_mats <- build_season_mats(aus.lag, season.weeks, sub_season,
+                                     n_main_lags = n_main_lags,
+                                     col_spec    = col_spec)
+    if (is.null(preds))
+      preds <- extract_season_preds(season_i, season_mats)
+    if (is.null(dates))
+      dates <- build_season_dates(season_i, pred_df, season_years,
+                                  season.weeks, sub_season,
+                                  n_main_lags = n_main_lags)
+  }
 
   # ---- resolve lag highlights ----
   # model_coef takes priority; lag_list is the manual fallback
@@ -759,24 +894,64 @@ plot_pred_ts_panels <- function(
     lag_list <- list()
   }
 
-  # ---- predictor draw order ----
-  n_panels  <- length(preds_ord)
+  # ---- predictor draw order / panel count ----
+  n_panels <- length(preds_ord)
+
+  # ---- figure title ----
+  fig_title <- if (!is.null(main_title)) main_title else
+               paste0(seasons[season_i], " Wildfire Season")
+
+  # ---- resolve pred display labels ----
+  # show_pred_label = FALSE suppresses all in-panel predictor name labels
+  pred_lbl <- if (show_pred_label) pred_labels else
+                setNames(rep("", length(pred_labels)), names(pred_labels))
 
   # ---- shared y-axis ----
-  if (is.null(y_max)) {
-    y_max <- ceiling(max(abs(unlist(preds)), na.rm = TRUE) * 10L) / 10L
+  # ylim: explicit > y_max-derived > auto from data
+  if (!is.null(ylim)) {
+    ylim_use <- ylim
+  } else {
+    if (is.null(y_max))
+      y_max <- ceiling(max(abs(unlist(preds)), na.rm = TRUE) * 10L) / 10L
+    ylim_use <- c(-y_max, y_max)
   }
-  y_tick_lab <- .make_yticks(y_max)
-  ylim       <- c(-y_max, y_max)
+  # y_axis_at: explicit ticks > auto-derived from ylim half-range
+  y_tick_lab <- if (!is.null(y_axis_at)) y_axis_at else
+                  .make_yticks(max(abs(ylim_use)))
 
   # ---- unpack date elements ----
   pred_time   <- dates$pred_time
   xlim        <- dates$xrange
-  n_group     <- dates$n_group        # sub-season group size → highlight window width
+  n_group     <- dates$n_group
   xticks      <- dates$month_ticks$ticks
   xlabs       <- dates$month_ticks$labs
   month_lines <- dates$month_lines
   year_lines  <- dates$year_lines
+
+  # ---- resolve lag_offsets: per-predictor or global ----
+  # Per-predictor: all names of lag_offsets match predictor keys in preds_ord
+  #   (case-insensitive).  Each entry is then routed to its named panel only.
+  # Global (flat): any other structure — the same offset list goes to every panel.
+  # This mirrors the per-group / global detection in plot_mode_comparison_panels().
+  if (is.null(lag_offsets)) {
+    lag_offsets_per_pred <- setNames(vector("list", n_panels), preds_ord)
+  } else {
+    lo_names_low  <- tolower(names(lag_offsets))
+    pred_keys_low <- tolower(preds_ord)
+    is_per_pred   <- !is.null(names(lag_offsets)) &&
+                     length(names(lag_offsets)) > 0L &&
+                     all(lo_names_low %in% pred_keys_low)
+    if (is_per_pred) {
+      lag_offsets_per_pred <- lapply(pred_keys_low, function(nm) {
+        hit <- which(lo_names_low == nm)
+        if (length(hit) > 0L) lag_offsets[[hit[1L]]] else NULL
+      })
+      names(lag_offsets_per_pred) <- preds_ord
+    } else {
+      # global: same flat list broadcast to every panel
+      lag_offsets_per_pred <- setNames(rep(list(lag_offsets), n_panels), preds_ord)
+    }
+  }
 
   # ---- open output device ----
   if (!is.null(outfile)) {
@@ -787,55 +962,87 @@ plot_pred_ts_panels <- function(
     on.exit(dev.off(), add = TRUE)
   }
 
-  # ---- layout ----
-  par(mfrow = c(n_panels, 1))
-  par(oma  = c(7, 4, 5.5, 0))   # bottom: x labels; top: figure title
-  par(mgp  = c(4, 0.25, 0))     # axis title, tick labels, tick marks
+  # ---- layout: content rows alternating with spacer rows ----
+  # When spacer_height = 0, skip the spacer machinery entirely to avoid
+  # plot.new() being called into a zero-height region.
+  if (spacer_height > 0L) {
+    row_heights <- c(rep(c(20L, spacer_height), n_panels - 1L), 20L)
+    is_spacer   <- c(rep(c(FALSE, TRUE), n_panels - 1L), FALSE)
+    layout(matrix(seq_len(length(row_heights)), ncol = 1L), heights = row_heights)
+  } else {
+    layout(matrix(seq_len(n_panels), ncol = 1L))
+    is_spacer <- rep(FALSE, n_panels)
+  }
+  n_rows <- length(is_spacer)
 
-  # ---- panels ----
-  for (k in seq_along(preds_ord)) {
+  par(oma = c(7, 4, 5.5, 0))
+  par(mgp = c(4, 0.25, 0))
 
+  content_k <- 0L
+
+  for (row in seq_len(n_rows)) {
+
+    # ---- spacer row: empty panel, no content, no margins ----
+    if (is_spacer[row]) {
+      par(mar = c(0, 0, 0, 0))
+      plot.new()
+      next
+    }
+
+    # ---- content row ----
+    content_k <- content_k + 1L
+    k        <- content_k
     p        <- preds_ord[k]
     is_first <- k == 1L
     is_last  <- k == n_panels
 
-    # top panel gets a small top margin for the outer title; bottom gets
-    # space for the x-axis; all others are flush
     par(mar = c(if (is_last) 1L else 0L,
                 5L,
                 if (is_first) 1L else 0L,
                 0L))
 
     .draw_pred_panel(
-      pred_time           = pred_time,
-      y                   = preds[[p]],
-      ylim                = ylim,
-      ylab                = ylabs[p],
-      label               = pred_labels[p],
-      xlim                = xlim,
-      year_lines          = year_lines,
-      month_lines         = month_lines,
-      xticks              = xticks,
-      xlabs               = xlabs,
-      lag_vals            = lag_list[[p]],
-      n_group             = n_group,
-      show_x              = is_last,
-      colors              = colors,
-      y_tick_lab          = y_tick_lab,
-      pred_label_cex      = pred_label_cex,
-      pred_label_x_offset = pred_label_x_offset,
-      pred_label_y_frac   = pred_label_y_frac,
-      lag_label_cex       = lag_label_cex
+      pred_time             = pred_time,
+      y                     = preds[[p]],
+      ylim                  = ylim_use,
+      ylab                  = if (ylab_centered) "" else ylabs[p],
+      label                 = pred_lbl[p],
+      xlim                  = xlim,
+      year_lines            = year_lines,
+      month_lines           = month_lines,
+      xticks                = xticks,
+      xlabs                 = xlabs,
+      lag_vals              = lag_list[[p]],
+      n_group               = n_group,
+      show_x                = is_last,
+      colors                = colors,
+      y_tick_lab            = y_tick_lab,
+      pred_label_cex        = pred_label_cex,
+      pred_label_x_offset   = pred_label_x_offset,
+      pred_label_y_frac     = pred_label_y_frac,
+      lag_label_cex         = lag_label_cex,
+      lag_offsets           = lag_offsets_per_pred[[p]],
+      group_label           = if (!is.null(group_labels)) group_labels[k] else NULL,
+      group_label_cex       = group_label_cex,
+      group_label_x_frac    = group_label_x_frac,
+      group_label_y_frac    = group_label_y_frac,
+      lab_cex               = ylab_cex
     )
 
     # season title sits in the outer top margin, above the first panel
     if (is_first) {
-      title(paste0(seasons[season_i], " Wildfire Season"),
-            adj     = 0,
+      title(fig_title,
+            adj      = 0,
             cex.main = 3.0,
-            xpd     = TRUE,
-            outer   = TRUE)
+            xpd      = TRUE,
+            outer    = TRUE)
     }
+  }
+
+  # ---- single centred y-axis label across all panels ----
+  if (ylab_centered && nzchar(ylab)) {
+    mtext(ylab, side = 2, outer = TRUE, line = 1,
+          cex = ylab_cex, las = 0)
   }
 
   invisible(NULL)

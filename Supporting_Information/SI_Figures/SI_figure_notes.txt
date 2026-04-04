@@ -61,6 +61,10 @@ b. SI_FigDMI_SEcoefint_peak_2019.png from ~/Supporting_Information/SI_Figures/SI
 c. SI_FigDMI_SEcoefint_late_2019.png from ~/Supporting_Information/SI_Figures/SI_coef_int_figures.R line 421
 	TODO: finalize name and line when location in SI settled
 
+SI Fig X Comparison panels for TSA, SAM, and OLR
 
 
+
+
+SI Fig 9 change from all correlation to only nino (then repeat for others as needed)
 
