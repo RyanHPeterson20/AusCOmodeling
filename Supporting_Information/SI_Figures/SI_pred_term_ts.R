@@ -66,14 +66,20 @@ plot_pred_ts_panels(
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 5,
-  pred_label_cex = 3,
+  pred_label_cex = 3.5,
   model_coef = SE2.coef,
   outfile = file.path(out_dir, "SI_SE2006_pred_ts.png"),
+  lag_label_cex =3.0,
   lag_offsets = list(
-    nino = list("40" = c(0, 0.1)),
-    sam = list("33" = c(0, 0))
+    nino = list("40" = c(-3, 0.1)),
+    etio = list("7" = c(-3, 0.1),
+                "33" = c(-3, 0.1)),
+    wtio = list("14" = c(-3, 0.1),
+                "46" = c(0, 0.1)),
+    tsa = list("29" = c(-3, 0.25)),
+    sam = list("9" = c(-3, 0.1))
   ),
-  y_axis_at = c(-2, -1, 0, 1, 2),
+  y_axis_at = c(-1.5, 0, 1.5),
   spacer_height = 1L
 )
 
@@ -90,14 +96,20 @@ plot_pred_ts_panels(
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 9,
-  pred_label_cex = 3,
+  pred_label_cex = 3.5,
   model_coef = SE2.coef,
   outfile = file.path(out_dir, "SI_SE2015_pred_ts.png"),
+  lag_label_cex =3.0,
   lag_offsets = list(
-    nino = list("40" = c(0, 0.1)),
-    sam = list("33" = c(0, 0))
+    nino = list("40" = c(-3, 0.1)),
+    etio = list("7" = c(-3, 0.1),
+                "33" = c(-3, 0.1)),
+    wtio = list("14" = c(-3, 0.1),
+                "46" = c(0, 0.1)),
+    tsa = list("29" = c(-3, 0.25)),
+    sam = list("9" = c(-3, 0.1))
   ),
-  y_axis_at = c(-2, -1, 0, 1, 2),
+  y_axis_at = c(-1.5, 0, 1.5),
   spacer_height = 1L
 )
 
@@ -114,14 +126,20 @@ plot_pred_ts_panels(
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 9,
-  pred_label_cex = 3,
+  pred_label_cex = 3.5,
   model_coef = SE2.coef,
   outfile = file.path(out_dir, "SI_SE2019_pred_ts.png"),
-  lag_offsets = list( #TODO: shift a lot of these around a bit
-    nino = list("40" = c(0, 0.1)),
-    sam = list("33" = c(0, 0))
+  lag_label_cex =3.0,
+  lag_offsets = list( 
+    nino = list("40" = c(-3, 0.1)),
+    etio = list("7" = c(-3, 0.1),
+                "33" = c(-3, 0.1)),
+    wtio = list("14" = c(-3.5, 0.35),
+                "46" = c(0, 0.1)),
+    tsa = list("29" = c(-3, 0.25)),
+    sam = list("9" = c(-3, 0.1))
   ),
-  y_axis_at = c(-2, -1, 0, 1, 2),
+  y_axis_at = c(-1.5, 0, 1.5),
   spacer_height = 1L
 )
 
@@ -138,14 +156,20 @@ plot_pred_ts_panels(
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 9,
-  pred_label_cex = 3,
+  pred_label_cex = 3.5,
   model_coef = SE2.coef,
   outfile = file.path(out_dir, "SI_SE2002_pred_ts.png"),
-  lag_offsets = list( #TODO: shift a lot of these around a bit
-    nino = list("40" = c(0, 0.1)),
-    sam = list("33" = c(0, 0))
+  lag_label_cex =3.0,
+  lag_offsets = list(
+    nino = list("40" = c(-3, 0.1)),
+    etio = list("7" = c(-3, 0.1),
+                "33" = c(-3, 0.1)),
+    wtio = list("14" = c(-3, 0.1),
+                "46" = c(-3, 0.1)),
+    tsa = list("29" = c(-3, 0.25)),
+    sam = list("9" = c(-3, 0.1))
   ),
-  y_axis_at = c(-2, -1, 0, 1, 2),
+  y_axis_at = c(-1.5, 0, 1.5),
   spacer_height = 1L
 )
 
@@ -162,14 +186,20 @@ plot_pred_ts_panels(
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 9,
-  pred_label_cex = 3,
+  pred_label_cex = 3.5,
   model_coef = SE2.coef,
   outfile = file.path(out_dir, "SI_SE2003_pred_ts.png"),
-  lag_offsets = list( #TODO: shift a lot of these around a bit
-    nino = list("40" = c(0, 0.1)),
-    sam = list("33" = c(0, 0))
+  lag_label_cex =3.0,
+  lag_offsets = list( 
+    nino = list("40" = c(-3, 0.1)),
+    etio = list("7" = c(-3, 0.1),
+                "33" = c(-3, 0.1)),
+    wtio = list("14" = c(-3, 0.1),
+                "46" = c(0, 0.1)),
+    tsa = list("29" = c(-3, 0.25)),
+    sam = list("9" = c(-3, 0.1))
   ),
-  y_axis_at = c(-2, -1, 0, 1, 2),
+  y_axis_at = c(-1.5, 0, 1.5),
   spacer_height = 1L
 )
 
@@ -186,16 +216,26 @@ plot_pred_ts_panels(
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 9,
-  pred_label_cex = 3,
+  pred_label_cex = 3.5,
   model_coef = SE2.coef,
   outfile = file.path(out_dir, "SI_SE2005_pred_ts.png"),
-  lag_offsets = list( #TODO: shift a lot of these around a bit
-    nino = list("40" = c(0, 0.1)),
-    sam = list("33" = c(0, 0))
+  lag_label_cex =3.0,
+  lag_offsets = list( 
+    nino = list("40" = c(-3, 0.1)),
+    etio = list("7" = c(-3, 0.1),
+                "33" = c(-3, 0.1)),
+    wtio = list("14" = c(-3, 0.1),
+                "46" = c(0, 0.1)),
+    tsa = list("29" = c(-3, 0.25)),
+    sam = list("9" = c(-3, 0.1))
   ),
-  y_axis_at = c(-2, -1, 0, 1, 2),
+  y_axis_at = c(-1.5, 0, 1.5),
   spacer_height = 1L
 )
+
+
+
+
 
 #comparison plots
 out_dir <- "~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures"
