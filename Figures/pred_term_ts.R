@@ -144,13 +144,13 @@ plot_mode_comparison_panels(
   ylim  = c(-3.2, 3.2),
   y_axis_at = c(-1.5, 0, 1.5),
   ylab_centered = TRUE,
-  ylab_cex = 1.5,
+  ylab_cex = 1.75,
   seasons  = seasons,
   png_dims = list(width = 5400, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
-  group_label_cex     = 2.5,
+  group_label_cex     = 2.65,
   lag_label_cex       = 2.2,
   lag_offsets = list(
     early = list("33" = c(0, 0)),
@@ -171,13 +171,13 @@ plot_mode_comparison_panels(
   ylim  = c(-3.2, 3.2),
   y_axis_at = c(-1.5, 0, 1.5),
   ylab_centered = TRUE,
-  ylab_cex = 1.5,
+  ylab_cex = 1.75,
   seasons  = seasons,
   png_dims = list(width = 5400, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
-  group_label_cex     = 2.5,
+  group_label_cex     = 2.65,
   lag_label_cex       = 2.2,
   lag_offsets = list(
     peak  = list("33" = c(-2, 0.25),
@@ -198,13 +198,13 @@ plot_mode_comparison_panels(
   ylim  = c(-3.2, 3.2),
   y_axis_at = c(-1.5, 0, 1.5),
   ylab_centered = TRUE,
-  ylab_cex = 1.5,
+  ylab_cex = 1.75,
   seasons  = seasons,
   png_dims = list(width = 5400, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
-  group_label_cex     = 2.5,
+  group_label_cex     = 2.65,
   lag_label_cex       = 2.2,
   lag_offsets = list(
     early = list("5" = c(0, -0.175)),
@@ -214,6 +214,9 @@ plot_mode_comparison_panels(
   spacer_height = 0,
   outfile  = file.path(out_dir, "fig3c_SE2019_wtio_comparison.png")
 )
+
+
+
 
 
 out_dir <- "~/CO_AUS/AusCOmodeling/Supporting_Information"

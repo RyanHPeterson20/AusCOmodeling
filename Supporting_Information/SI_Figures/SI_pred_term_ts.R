@@ -80,7 +80,7 @@ plot_pred_ts_panels(
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
-  spacer_height = 1L
+  spacer_height = 0
 )
 
 
@@ -110,7 +110,7 @@ plot_pred_ts_panels(
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
-  spacer_height = 1L
+  spacer_height = 0
 )
 
 
@@ -140,7 +140,7 @@ plot_pred_ts_panels(
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
-  spacer_height = 1L
+  spacer_height = 0
 )
 
 
@@ -170,7 +170,7 @@ plot_pred_ts_panels(
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
-  spacer_height = 1L
+  spacer_height = 0
 )
 
 
@@ -200,7 +200,7 @@ plot_pred_ts_panels(
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
-  spacer_height = 1L
+  spacer_height = 0
 )
 
 
@@ -230,7 +230,7 @@ plot_pred_ts_panels(
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
-  spacer_height = 1L
+  spacer_height = 0
 )
 
 
@@ -263,13 +263,13 @@ plot_mode_comparison_panels(
   ylim  = c(-3.2, 3.2),
   y_axis_at = c(-1.5, 0, 1.5),
   ylab_centered = TRUE,
-  ylab_cex = 1.5,
+  ylab_cex = 1.75,
   seasons  = seasons,
-  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  png_dims = list(width = 5400, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
-  group_label_cex     = 2.5,
+  group_label_cex     = 2.65,
   lag_label_cex       = 2.2,
   lag_offsets = list(
     early = list("12" = c(7.45, -0.475),
@@ -291,13 +291,13 @@ plot_mode_comparison_panels(
   ylim  = c(-3.2, 3.2),
   y_axis_at = c(-1.5, 0, 1.5),
   ylab_centered = TRUE,
-  ylab_cex = 1.5,
+  ylab_cex = 1.75,
   seasons  = seasons,
-  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  png_dims = list(width = 5400, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
-  group_label_cex     = 2.5,
+  group_label_cex     = 2.65,
   lag_label_cex       = 2.2,
   lag_offsets = list(
     early = list("24" = c(1.75, 0.85),
@@ -324,13 +324,13 @@ plot_mode_comparison_panels(
   ylim  = c(-3.2, 3.2),
   y_axis_at = c(-1.5, 0, 1.5),
   ylab_centered = TRUE,
-  ylab_cex = 1.5,
+  ylab_cex = 1.75,
   seasons  = seasons,
-  png_dims = list(width = 5200, height = 2100, res = 300), #was res = 275
+  png_dims = list(width = 5400, height = 2100, res = 300), #was res = 275
   show_pred_label = FALSE,
   group_label_x_frac  = 0.020,
   group_label_y_frac  = 0.1,
-  group_label_cex     = 2.5,
+  group_label_cex     = 2.65,
   lag_label_cex       = 2.2,
   lag_offsets = list(
     early = list("2" = c(-2.0,-0.1),

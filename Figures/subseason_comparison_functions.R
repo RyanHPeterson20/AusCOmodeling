@@ -317,7 +317,7 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
                               group_label_cex       = pred_label_cex,
                               group_label_x_frac    = 1,
                               group_label_y_frac    = 0,
-                              axis_cex              = 2.25,
+                              axis_cex              = 2.5,
                               xaxis_cex             = 2.75,
                               lab_cex               = 2.75) {
 
@@ -899,7 +899,7 @@ plot_pred_ts_panels <- function(
 
   # ---- figure title ----
   fig_title <- if (!is.null(main_title)) main_title else
-               paste0(seasons[season_i], " Wildfire Season")
+               paste0(seasons[season_i], " Peak Wildfire Season")
 
   # ---- resolve pred display labels ----
   # show_pred_label = FALSE suppresses all in-panel predictor name labels
