@@ -125,7 +125,7 @@ climate_modes <- list(
   etio <- list(x1 = 90, x2 = 110, y1 = -10, y2 = 0, lab = "ETIO")
 )
 sam <- list(x1 = -32.95, x2 = -33.05, y1 = -60, y2 = -40, lab = "SAM")
-olr.msea <- list(x1 = 89.65, x2 = 160, y1 = -10.35, y2 = 10, lab = "MSEA - OLR")
+olr.msea <- list(x1 = 89.65, x2 = 160, y1 = -10.35, y2 = 10, lab = " OLR")
 
 # Clip/saturate the data so outside range uses endpoint colors
 z_clip <- vmr.new.sub
@@ -182,7 +182,7 @@ text(xmid, sam$y1 + 10, sam$lab, cex = 1.12, col = "white")
 #olr
 rect(lon_to_plotx(olr.msea$x1), olr.msea$y1, lon_to_plotx(olr.msea$x2), olr.msea$y2, border = "white", lwd = 1.65, lty = 4)
 xmid <- 0.502 * (lon_to_plotx(olr.msea$x1) + lon_to_plotx(olr.msea$x2))
-text(xmid, olr.msea$y1 + 10, olr.msea$lab, cex = 1.02, col = "white")
+text(xmid, olr.msea$y1 + 10, olr.msea$lab, cex = 1.12, col = "white")
 
 dev.off()
 
