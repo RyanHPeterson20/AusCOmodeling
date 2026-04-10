@@ -106,33 +106,6 @@ legend("bottomright",
        xpd = TRUE)
 dev.off()
 
-
-png(filename = "SI_fig3b_strongetio_cor.png", width = 2000, height = 2000, res = 275)
-par(mar = c(4.2, 4.25, 3, 1))
-plot(etio.son, s.index.son, pch = 19, cex = 1.25, 
-     xlab = "", ylab = "",
-     ylim = full.range.manual, 
-     axes = FALSE)
-axis(1, cex.axis = yaxis.cex)
-axis(2, at = seq(-2,4, by = 2), cex.axis = yaxis.cex, las = 1)
-title("(b) Correlation Weekly S-Index and ETIO", adj = 0, cex.main = subtitle.cex)
-mtext("S-Index", side = 2, cex = ylab.cex, line = 2.75) #y-axis
-mtext("ETIO", side = 1, cex = xlab.cex, line = 2.75) #x-axis
-box()
-points(etio.son[ind.2019], s.index.son[ind.2019], pch = 23, cex = 1.5, col = "gray3", bg = "red1", lwd = 1.25)
-#text(-1.75, -1.5, paste0("Cor = ", round(etio.son.cor, 3)), adj = 0 )
-legend("bottomleft",
-       legend = c("2019"),
-       pch = 23,
-       col = "gray3", pt.bg = "red1", pt.lwd = 1.25,
-       pt.cex = 1.5,
-       #bty    = "n",               # no box; remove if you want a box
-       cex = 1.65, 
-       xpd = TRUE)
-dev.off()
-
-
-
 #wtio figures
 
 png(filename = "SI_fig3c_modwtio_ts.png", width = 3600, height = 2000, res = 275) 
@@ -164,23 +137,52 @@ legend("topright",
 dev.off()
 
 
-png(filename = "SI_fig3d_modwtio_cor.png", width = 2000, height = 2000, res = 275)
-par(mar = c(4.5, 4.25, 3, 1))
-plot(wtio.son, m.index.son, pch = 19, cex = 1.25, 
+#correlation figures
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+
+png(filename = "SI_fig3b_strongetio_cor.png", width = 2000, height = 2000, res = 275)
+par(mar = c(4.2, 4.25, 3, 1))
+plot(etio.son, s.index.son, pch = 19, cex = 1.35, 
      xlab = "", ylab = "",
      ylim = full.range.manual, 
      axes = FALSE)
 axis(1, cex.axis = yaxis.cex)
 axis(2, at = seq(-2,4, by = 2), cex.axis = yaxis.cex, las = 1)
-title("(b) Correlation Weekly M-Index and WTIO", adj = 0, cex.main = subtitle.cex)
+title("(b) Correlation Weekly S-Index and ETIO", adj = 0, cex.main = subtitle.cex)
+mtext("S-Index", side = 2, cex = ylab.cex, line = 2.75) #y-axis
+mtext("ETIO", side = 1, cex = xlab.cex, line = 2.75) #x-axis
+box()
+points(etio.son[ind.2019], s.index.son[ind.2019], pch = 23, cex = 1.55, col = "gray3", bg = "red1", lwd = 1.3)
+text(-3.35, -2.45, paste0("Correlation = ", round(etio.son.cor, 3)), adj = 0, cex = 1.65)
+legend("bottomleft",
+       legend = c("2019"),
+       pch = 23,
+       col = "gray3", pt.bg = "red1", pt.lwd = 1.3,
+       pt.cex = 1.5,
+       #bty    = "n",               # no box; remove if you want a box
+       cex = 1.65, 
+       xpd = TRUE)
+dev.off()
+
+
+png(filename = "SI_fig3d_modwtio_cor.png", width = 2000, height = 2000, res = 275)
+par(mar = c(4.5, 4.25, 3, 1))
+plot(wtio.son, m.index.son, pch = 19, cex = 1.35, 
+     xlab = "", ylab = "",
+     ylim = full.range.manual, 
+     axes = FALSE)
+axis(1, cex.axis = yaxis.cex)
+axis(2, at = seq(-2,4, by = 2), cex.axis = yaxis.cex, las = 1)
+title("(d) Correlation Weekly M-Index and WTIO", adj = 0, cex.main = subtitle.cex)
 mtext("M-Index", side = 2, cex = ylab.cex, line = 2.75) #y-axis
 mtext("WTIO", side = 1, cex = xlab.cex, line = 2.75) #x-axis
 box()
-points(wtio.son[ind.2019], m.index.son[ind.2019], pch = 23, cex = 1.5, col = "gray23", bg = "red1", lwd = 1.25)
+points(wtio.son[ind.2019], m.index.son[ind.2019], pch = 23, cex = 1.55, col = "gray23", bg = "red1", lwd = 1.3)
+text(-2.5, 4.15, paste0("Correlation = ", round(wtio.son.cor, 3)), adj = 0, cex = 1.65)
 legend("topleft",
        legend = c("2019"),
        pch = 23,
-       col = "gray23", pt.bg = "red1", pt.lwd = 1.25,
+       col = "gray23", pt.bg = "red1", pt.lwd = 1.3,
        pt.cex = 1.5,
        #bty    = "n",               # no box; remove if you want a box
        cex = 1.65, 

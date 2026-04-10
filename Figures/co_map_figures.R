@@ -125,6 +125,7 @@ climate_modes <- list(
   etio <- list(x1 = 90, x2 = 110, y1 = -10, y2 = 0, lab = "ETIO")
 )
 sam <- list(x1 = -32.95, x2 = -33.05, y1 = -60, y2 = -40, lab = "SAM")
+olr.msea <- list(x1 = 89.65, x2 = 160, y1 = -10.35, y2 = 10, lab = "MSEA - OLR")
 
 # Clip/saturate the data so outside range uses endpoint colors
 z_clip <- vmr.new.sub
@@ -166,7 +167,7 @@ mtext("Latitude",  side=2, line=2.25, cex = 1.25) #y-axis
 title("(a) Mean Peak-Season CO 2001 to 2019", adj = 0, cex.main = 1.25)
 
 lines(x.newest, y.new, col = "gray76", lwd = 0.8)
-
+#IOD, nino, tsa
 for (i in climate_modes) {
   rect(lon_to_plotx(i$x1), i$y1, lon_to_plotx(i$x2), i$y2, border = "white", lwd = 1.5)
   
@@ -174,12 +175,17 @@ for (i in climate_modes) {
   xmid <- 0.5 * (lon_to_plotx(i$x1) + lon_to_plotx(i$x2))
   text(xmid, i$y1 + 3.75, i$lab, cex = 1.06, col = "white")
 }
-
+#sam
 rect(lon_to_plotx(sam$x1), sam$y1, lon_to_plotx(sam$x2), sam$y2, border = "white", lwd = 1.1, lty = 2)
 xmid <- 0.5 * (lon_to_plotx(sam$x1) + lon_to_plotx(sam$x2))
 text(xmid, sam$y1 + 10, sam$lab, cex = 1.12, col = "white")
+#olr
+rect(lon_to_plotx(olr.msea$x1), olr.msea$y1, lon_to_plotx(olr.msea$x2), olr.msea$y2, border = "white", lwd = 1.65, lty = 4)
+xmid <- 0.502 * (lon_to_plotx(olr.msea$x1) + lon_to_plotx(olr.msea$x2))
+text(xmid, olr.msea$y1 + 10, olr.msea$lab, cex = 1.02, col = "white")
 
 dev.off()
+
 
 
 

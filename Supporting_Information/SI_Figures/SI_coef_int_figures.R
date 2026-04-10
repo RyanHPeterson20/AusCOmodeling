@@ -409,6 +409,9 @@ plot_lagged_coef_panels(
 dev.off()
 
 
+
+setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
+
 #fig 2d late-season
 #peak models
 coefs3 <- list(
@@ -416,7 +419,6 @@ coefs3 <- list(
   #const = coef(const.early[[i]]), 
   vary  = coef(vary.late[[1]])  
 )
-
 
 png(filename = paste0("SI_FigDMI_SEcoefint_late_", season.years[i], ".png"),  width = 2000, height = 4150, res = 300)
 plot_lagged_coef_panels(
@@ -459,7 +461,21 @@ plot_lagged_coef_panels(
   auto_int_x_nudge = 0.10,
   model_cols = c(base="forestgreen", const="magenta3", vary="darkorange3"),
   model_lty  = c(base=1, const=2, vary=3),
-  add_legends = FALSE)
+  add_legends = TRUE, 
+  legend_terms =  c("Ni\u00f1o 3.4", "DMI",
+                    "TSA", "SAM", "OLR", "Interaction"),
+  legend_terms_pch = c(21, 24, 22, 23, 10, 11),
+  legend_terms_pt_cex   = c(2.75, 2.5, 2.5, 2.75, 2.75, 2.75, 2.5),
+  legend_pos_terms = "topright",
+  legend_pos_model = "topright",
+  legend_inset_terms = c(0.000, 0.122),
+  legend_inset_model = c(0.00, 0.00),
+  legend_x_intersp_terms  = 2.65,
+  legend_x_intersp_model = 1.55,
+  legend_cex_terms = 2.33,
+  legend_cex_model = 2.40,
+  legend_models = c("All-Data", "Withheld-\nSeason"),
+  legend_model_keys = c("base",  "vary"))
 dev.off()
 
 

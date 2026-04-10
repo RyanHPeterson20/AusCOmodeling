@@ -325,9 +325,9 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
   plot(pred_time, y,
        type = "l", col = "black", lwd = 2,
        xaxt = "n", xlab = "",
-       yaxt = "n", ylab = ylab, col.lab = "black",
+       yaxt = "n", ylab = "",
        xlim = xlim, ylim = ylim, bty = "n",
-       cex.lab = lab_cex, xpd = NA)
+       xpd = NA)
 
   # --- y-axis ---
   axis(side = 2, at = y_tick_lab, cex.axis = axis_cex,
@@ -336,6 +336,9 @@ draw_envelope_zero <- function(x, y, col_pos, col_neg, alpha = 0.67) {
   # --- reference lines ---
   abline(h = 0, lty = 1, col = "grey50", lwd = 1)
 
+  # --- ylab ---
+  mtext(ylab, side = 2, line = 5.5, cex = lab_cex, col = "black", outer = FALSE)
+  
   # Vertical grid lines: drawn as segments inset from ylim so they stop
   # short of the panel boundary and do not bleed into adjacent panels
   # when mar = 0 makes plot regions flush.
@@ -812,6 +815,7 @@ plot_pred_ts_panels <- function(
     # ---- figure / data ----
     seasons,
     main_title          = NULL,
+    cex_main            = 3.0,
     preds_ord           = c("nino", "wtio", "etio", "tsa", "sam", "olr"),
     model_coef          = NULL,
     lag_list            = NULL,
@@ -997,7 +1001,7 @@ plot_pred_ts_panels <- function(
     is_last  <- k == n_panels
 
     par(mar = c(if (is_last) 1L else 0L,
-                5L,
+                6,
                 if (is_first) 1L else 0L,
                 0L))
 
@@ -1033,7 +1037,7 @@ plot_pred_ts_panels <- function(
     if (is_first) {
       title(fig_title,
             adj      = 0,
-            cex.main = 3.0,
+            cex.main = cex_main,
             xpd      = TRUE,
             outer    = TRUE)
     }

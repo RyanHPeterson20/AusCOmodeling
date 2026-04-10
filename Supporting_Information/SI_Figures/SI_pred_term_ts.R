@@ -63,11 +63,13 @@ plot_pred_ts_panels(
   season.weeks = season.weeks,
   sub_season = SE.mid,
   seasons = seasons,
+  cex_main = 3.5,
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 5,
   pred_label_cex = 3.5,
   model_coef = SE2.coef,
+  png_dims = list(width = 3600, height = 5600, res = 275),
   outfile = file.path(out_dir, "SI_SE2006_pred_ts.png"),
   lag_label_cex =3.0,
   lag_offsets = list(
@@ -80,8 +82,10 @@ plot_pred_ts_panels(
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.85,
   spacer_height = 0
 )
+
 
 
 #2015/2016
@@ -93,11 +97,13 @@ plot_pred_ts_panels(
   season.weeks = season.weeks,
   sub_season = SE.mid,
   seasons = seasons,
+  cex_main = 3.5,
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 9,
   pred_label_cex = 3.5,
   model_coef = SE2.coef,
+  png_dims = list(width = 3600, height = 5600, res = 275),
   outfile = file.path(out_dir, "SI_SE2015_pred_ts.png"),
   lag_label_cex =3.0,
   lag_offsets = list(
@@ -110,8 +116,10 @@ plot_pred_ts_panels(
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.85,
   spacer_height = 0
 )
+
 
 
 #2019/2020
@@ -123,25 +131,29 @@ plot_pred_ts_panels(
   season.weeks = season.weeks,
   sub_season = SE.mid,
   seasons = seasons,
+  cex_main = 3.5,
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 9,
   pred_label_cex = 3.5,
   model_coef = SE2.coef,
+  png_dims = list(width = 3600, height = 5600, res = 275),
   outfile = file.path(out_dir, "SI_SE2019_pred_ts.png"),
   lag_label_cex =3.0,
   lag_offsets = list( 
     nino = list("40" = c(-3, 0.1)),
     etio = list("7" = c(-3, 0.1),
                 "33" = c(-3, 0.1)),
-    wtio = list("14" = c(-3.5, 0.35),
+    wtio = list("14" = c(-6, 0.40),
                 "46" = c(0, 0.1)),
     tsa = list("29" = c(-3, 0.25)),
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.85,
   spacer_height = 0
 )
+
 
 
 #2002/2003
@@ -153,25 +165,29 @@ plot_pred_ts_panels(
   season.weeks = season.weeks,
   sub_season = SE.mid,
   seasons = seasons,
+  cex_main = 3.5,
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 9,
   pred_label_cex = 3.5,
   model_coef = SE2.coef,
+  png_dims = list(width = 3600, height = 5600, res = 275),
   outfile = file.path(out_dir, "SI_SE2002_pred_ts.png"),
   lag_label_cex =3.0,
   lag_offsets = list(
     nino = list("40" = c(-3, 0.1)),
     etio = list("7" = c(-3, 0.1),
-                "33" = c(-3, 0.1)),
+                "33" = c(-3, 0.75)),
     wtio = list("14" = c(-3, 0.1),
-                "46" = c(-3, 0.1)),
+                "46" = c(-6, 0.1)),
     tsa = list("29" = c(-3, 0.25)),
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.85,
   spacer_height = 0
 )
+
 
 
 #2003/2004
@@ -183,11 +199,13 @@ plot_pred_ts_panels(
   season.weeks = season.weeks,
   sub_season = SE.mid,
   seasons = seasons,
+  cex_main = 3.5,
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 9,
   pred_label_cex = 3.5,
   model_coef = SE2.coef,
+  png_dims = list(width = 3600, height = 5600, res = 275),
   outfile = file.path(out_dir, "SI_SE2003_pred_ts.png"),
   lag_label_cex =3.0,
   lag_offsets = list( 
@@ -200,6 +218,7 @@ plot_pred_ts_panels(
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.85,
   spacer_height = 0
 )
 
@@ -213,11 +232,13 @@ plot_pred_ts_panels(
   season.weeks = season.weeks,
   sub_season = SE.mid,
   seasons = seasons,
+  cex_main = 3.5,
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 9,
   pred_label_cex = 3.5,
   model_coef = SE2.coef,
+  png_dims = list(width = 3600, height = 5600, res = 275),
   outfile = file.path(out_dir, "SI_SE2005_pred_ts.png"),
   lag_label_cex =3.0,
   lag_offsets = list( 
@@ -230,6 +251,7 @@ plot_pred_ts_panels(
     sam = list("9" = c(-3, 0.1))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.85,
   spacer_height = 0
 )
 

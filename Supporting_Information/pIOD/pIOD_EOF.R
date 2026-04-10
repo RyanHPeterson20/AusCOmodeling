@@ -151,16 +151,17 @@ tio.box.lwd <- 2.0
 
 #s-index
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
-png(filename = "SI_pIOD_S_Index.png", width = 3600, height = 2000, res = 300)
-par(mar = c(4.5, 4.5, 4, 3.5))
+png(filename = "SI_pIOD_S_Index.png", width = 3700, height = 2055, res = 300)
+par(mar = c(4.5, 4.5, 4, 1.5))
 image.plot(list(x = lon.wide, y = lat.wide, z = strong.son), 
            col = cmocean("balance")(45), zlim = c(-1, 1),
            xlim = c(35, 120), ylim = c(-20,20),
            xaxt = "n", yaxt = "n", cex.lab = 1.35, 
-           legend.line = -4, legend.mar = 5,
-           legend.cex = 1.5, 
-           legend.width	= 1.3,
-           legend.args = list(text = "", cex = 1.2), 
+           legend.lab = "Temperature Anomalies (\u00B0C)",
+           legend.cex = 1.25,
+           legend.line = 2.8,
+           legend.mar = 5.6,
+           axis.args = list(tcl = -0.25, mgp = c(2.75, 0.95, 0), cex.axis = 1.15),
            xlab = "Longitude", ylab = "Latitude")
 # Major axes
 box()
@@ -180,16 +181,21 @@ dev.off()
 
 #m-index (projected over Indian Ocean)
 setwd("~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures")
-png(filename = "SI_pIOD_M_Index.png", width = 3600, height = 2000, res = 300)
-par(mar = c(4.5, 4.5, 4, 3.5))
+png(filename = "SI_pIOD_M_Index.png", width = 3700, height = 2055, res = 300)
+par(mar = c(4.5, 4.5, 4, 1.5))
 image.plot(list(x = lon.wide, y = lat.wide, z = moderate.son), 
            col = cmocean("balance")(45), zlim = c(-1, 1),
            xlim = c(35, 120), ylim = c(-20,20),
-           xaxt = "n", yaxt = "n", cex.lab = 1.35, 
-           legend.line = -4, legend.mar = 5,
-           legend.cex = 1.5,
-           legend.width	= 1.3,
-           legend.args = list(text = "", cex = 1.2), 
+           xaxt = "n", yaxt = "n", cex.lab = 1.35,   
+           legend.lab = "Temperature Anomalies (\u00B0C)",
+           legend.cex = 1.25,
+           legend.line = 2.8,
+           legend.mar = 5.6,
+           axis.args = list(tcl = -0.25, mgp = c(2.75, 0.95, 0), cex.axis = 1.15),
+           #legend.line = -4, legend.mar = 5,
+           #legend.cex = 1.5,
+           #legend.width	= 1.3,
+           #legend.args = list(text = "Temperature Anomalies (\u00B0C)", cex = 1.2), 
            xlab = "Longitude", ylab = "Latitude")
 # Major axes
 box()
