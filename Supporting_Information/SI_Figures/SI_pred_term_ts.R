@@ -50,11 +50,12 @@ SE3.coef <- coef(SE3.lm)
 
 #begin with group 1: 2006/2007, 2015/2016, 2019/2020
 
+
 #combined peak season plot
 #plot_pred_ts_panels
 out_dir <- "~/CO_AUS/AusCOmodeling/Supporting_Information/SI_Figures"
 
-#2006/2007
+#2006/2007 (new)
 plot_pred_ts_panels(
   season_i = 6,
   aus.lag = SEAus.lag,
@@ -67,26 +68,198 @@ plot_pred_ts_panels(
   preds_ord = c("nino", "etio", "wtio", 
                 "tsa", "sam", "olr"),
   pred_label_x_offset = 5,
-  pred_label_cex = 3.5,
+  pred_label_cex = 3.15,
   model_coef = SE2.coef,
-  png_dims = list(width = 3600, height = 5600, res = 275),
-  outfile = file.path(out_dir, "SI_SE2006_pred_ts.png"),
-  lag_label_cex =3.0,
+  png_dims = list(width = 2300, height = 4250, res = 275),
+  outfile = file.path(out_dir, "test_SI_SE2006_pred_ts.png"),
+  lag_label_cex = 2.75,
   lag_offsets = list(
     nino = list("40" = c(-3, 0.1)),
     etio = list("7" = c(-3, 0.1),
                 "33" = c(-3, 0.1)),
-    wtio = list("14" = c(-3, 0.1),
+    wtio = list("14" = c(-1, 0.65),
                 "46" = c(0, 0.1)),
     tsa = list("29" = c(-3, 0.25)),
-    sam = list("9" = c(-3, 0.1))
+    sam = list("9" = c(-3, 0.1),
+               "21" = c(-3.5, 0.75))
   ),
   y_axis_at = c(-1.5, 0, 1.5),
-  ylab_cex = 1.85,
+  ylab_cex = 1.5,
   spacer_height = 0
 )
 
 
+#2015/2016 (new)
+plot_pred_ts_panels(
+  season_i = 15,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  cex_main = 3.5,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 5,
+  pred_label_cex = 3.15,
+  model_coef = SE2.coef,
+  png_dims = list(width = 2300, height = 4250, res = 275),
+  outfile = file.path(out_dir, "test_SI_SE2015_pred_ts.png"),
+  lag_label_cex = 2.75,
+  lag_offsets = list(
+    nino = list("40" = c(-6, 0.1)),
+    etio = list("7" = c(-7, 0.1),
+                "33" = c(-3, 0.1)),
+    wtio = list("14" = c(-3, 0.1),
+                "46" = c(-6, 0.1)),
+    tsa = list("29" = c(0, 0.25)),
+    sam = list("9" = c(-3, 0.1),
+               "21" = c(0, 0.25))
+  ),
+  y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.5,
+  spacer_height = 0
+)
+
+
+#2019/2020 (new)
+plot_pred_ts_panels(
+  season_i = 19,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  cex_main = 3.5,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 5,
+  pred_label_cex = 3.15,
+  model_coef = SE2.coef,
+  png_dims = list(width = 2300, height = 4250, res = 275),
+  outfile = file.path(out_dir, "test_SI_SE2019_pred_ts.png"),
+  lag_label_cex = 2.75,
+  lag_offsets = list(
+    nino = list("40" = c(-3, 0.0)),
+    etio = list("7" = c(-3, 0.1),
+                "33" = c(1, 0.25)),
+    wtio = list("14" = c(-13, 0.55),
+                "46" = c(0, 0.0)),
+    tsa = list("29" = c(0, 0.1)),
+    sam = list("9" = c(-3, 0.1),
+               "21" = c(0, 0.1))
+  ),
+  y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.5,
+  spacer_height = 0
+)
+
+#2002/2003
+plot_pred_ts_panels(
+  season_i = 2,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  cex_main = 3.5,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 5,
+  pred_label_cex = 3.15,
+  model_coef = SE2.coef,
+  png_dims = list(width = 2300, height = 4250, res = 275),
+  outfile = file.path(out_dir, "test_SI_SE2002_pred_ts.png"),
+  lag_label_cex = 2.75,
+  lag_offsets = list(
+    nino = list("40" = c(-3, 0.1)),
+    etio = list("7" = c(-6, 0.1),
+                "33" = c(-1, 0.75)),
+    wtio = list("14" = c(-3, 0.05),
+                "46" = c(-2, 0.75)),
+    tsa = list("29" = c(0, 0.1)),
+    sam = list("9" = c(-3, 0.1),
+               "21" = c(0, 0.1))
+  ),
+  y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.5,
+  spacer_height = 0
+)
+
+
+#2003/2004
+plot_pred_ts_panels(
+  season_i = 3,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  cex_main = 3.5,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 5,
+  pred_label_cex = 3.15,
+  model_coef = SE2.coef,
+  png_dims = list(width = 2300, height = 4250, res = 275),
+  outfile = file.path(out_dir, "test_SI_SE2003_pred_ts.png"),
+  lag_label_cex = 2.75,
+  lag_offsets = list(
+    nino = list("40" = c(-2, -0.05)),
+    etio = list("7" = c(-3, 0.1),
+                "33" = c(-3, 0.1)),
+    wtio = list("14" = c(-3, 0.05),
+                "46" = c(-3, -0.1)),
+    tsa = list("29" = c(-5, 0.25)),
+    sam = list("9" = c(-3, 0.05),
+               "21" = c(0, 0.05))
+  ),
+  y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.5,
+  spacer_height = 0
+)
+
+
+#2005/2006
+plot_pred_ts_panels(
+  season_i = 5,
+  aus.lag = SEAus.lag,
+  pred_df = pred.df,
+  season_years = season.years,
+  season.weeks = season.weeks,
+  sub_season = SE.mid,
+  seasons = seasons,
+  cex_main = 3.5,
+  preds_ord = c("nino", "etio", "wtio", 
+                "tsa", "sam", "olr"),
+  pred_label_x_offset = 5,
+  pred_label_cex = 3.15,
+  model_coef = SE2.coef,
+  png_dims = list(width = 2300, height = 4250, res = 275),
+  outfile = file.path(out_dir, "test_SI_SE2005_pred_ts.png"),
+  lag_label_cex = 2.75,
+  lag_offsets = list(
+    nino = list("40" = c(-3, 0.1)),
+    etio = list("7" = c(-3, 0.1),
+                "33" = c(-1, 0.1)),
+    wtio = list("14" = c(-3, 0.05),
+                "46" = c(-2, 0.3)),
+    tsa = list("29" = c(0, 0.1)),
+    sam = list("9" = c(-3, 0.1),
+               "21" = c(0, 0.1))
+  ),
+  y_axis_at = c(-1.5, 0, 1.5),
+  ylab_cex = 1.5,
+  spacer_height = 0
+)
+
+
+
+#previous figures (old)
 
 #2015/2016
 plot_pred_ts_panels(

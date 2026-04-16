@@ -46,8 +46,8 @@ b. "RMSE delta" ~/Supporting_Information/SI_Figures/...
 
 SI Fig 6 Predictor Lags for seasons (2002/2003, 2003/2004, 2005/2006, 2006/2007, 2015/2016, 2019/2020)
 - TODO: split this into at least two SI Figures, for readability. 
--	group 1 (IOD): 2006/2007, 2015/2016, 2019/2020
--	group 2 (other): 2002/2003, 2003/2004, 2005/2006
+-	group 1 (IOD): 2006/2007, 2015/2016, 2019/2020 from ~/.../SI_Figures/SI_pred_term_ts.R line ...
+-	group 2 (other): 2002/2003, 2003/2004, 2005/2006 from ~/.../SI_Figures/SI_pred_term_ts.R line ...
 
 
 

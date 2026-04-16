@@ -175,13 +175,13 @@ vary.lwr.late <- c(mean(pred.vary.lwr[17:18]),  pred.vary.lwr[18:29])
 
 
 #setup cex values:
-cex.xaxis <- 1.85
-cex.yaxis <- 1.85
+cex.xaxis <- 1.65
+cex.yaxis <- 1.65
 cex.model.lab <- 1.90
 cex.season.lab <- 1.90
 
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "Fig2a_SEpreds_2019.png", width = 6150, height = 2600, res = 300)
+png(filename = "Fig2a_SEpreds_2019_new.png", width = 6150, height = 2600, res = 300)
 
 par(mfrow = c(2, 1), oma = c(3, 4.0, 1.5, 1), mar = c(2, 2, 1.5, 1))
 #update prediction figure (full model)

@@ -1,0 +1,24 @@
+figures comments and notes
+
+Figure 1
+fig 1a:
+ - tilde over nino
+-y-axis text size
+-resolution (fuzzy) from ppt, fix
+
+Figure 2
+- bigger text size 
+- horizontal y-axis
+- solid gray lines for the differentiating lines in panel a
+fig 2a:
+- bottom right and increase text (stack together, single legend)
+- subtitle for model variant change to associated color (E.g. all-data green and withheld orange)
+fig 2b-d:
+- move down to bottom of peak and double font size 
+- try solid line type?? 
+-- all-data = lty 1, withheld = lty 3
+- interaction coefficient label on different lines for bigger text
+
+
+figure 3:
+- GOOD
