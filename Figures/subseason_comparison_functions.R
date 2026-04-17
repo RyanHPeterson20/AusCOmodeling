@@ -979,7 +979,7 @@ plot_pred_ts_panels <- function(
   }
   n_rows <- length(is_spacer)
 
-  par(oma = c(7, 4, 5.5, 0))
+  par(oma = c(7, 3.5, 5.5, 1))
   par(mgp = c(4, 0.25, 0))
 
   content_k <- 0L
