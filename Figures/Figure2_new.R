@@ -129,20 +129,21 @@ for (j in 1:3) {
   SE.terms <- sapply(SE.terms, rename_term)
   
   SEci.vec <- rbind(SEci.vec, SE.ci)
-  SEcoef.vec <- c(SEcoef.vec, SE.coefs)
-  SEterms.vec <- c(SEterms.vec, SE.terms)
+  SEci.vec <- rbind(SEci.vec, c(NA,NA))
+  SEcoef.vec <- c(SEcoef.vec, c(SE.coefs, NA))
+  SEterms.vec <- c(SEterms.vec, c(SE.terms, NA))
 }
 
-max.ci <- max(abs(SEci.vec))
+max.ci <- max(abs(SEci.vec), na.rm = TRUE)
 
 
 
 setwd("~/CO_AUS/AusCOmodeling/Figures")
-png(filename = "fig2_new.png", width = 2400, height = 4800, res = 300)
-par(mar = c(4, 6, 2, 2))  # wider left margin for term labels
+png(filename = "fig2_new.png", width = 3200, height = 4000, res = 300)
+par(mar = c(4, 10, 2, 2))  # wider left margin for term labels
 plot(SEcoef.vec, seq_along(SEcoef.vec),
-     xlim = c(-max.ci, max.ci) * 1.05,
-     #ylim = c(0.5, length(SEcoef.vec) + 0.5),
+     xlim = c(-max.ci, max.ci) * 0.98,
+     ylim = c(1.75, length(SEcoef.vec) - 1.75),
      yaxt = "n", ylab = "", xlab = "Estimate",
      pch = 16, col = "grey12", 
      bg =  alpha("grey70",.65), cex = 1.75,
@@ -157,6 +158,8 @@ segments(x0 = SEci.vec[, 1], x1 = SEci.vec[, 2],
 
 # Reference line at zero
 abline(v = 0, lty = 3, col = "grey40")
+abline(h = 15, lty = 1, col = "grey40")
+abline(h = 25, lty = 1, col = "grey40")
 
 cap <- 0.1  # half-height of the cap
 segments(x0 = SEci.vec[, 1], x1 = SEci.vec[, 1],
