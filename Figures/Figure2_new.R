@@ -103,6 +103,10 @@ segments(x0 = SE2.ci[, 2], x1 = SE2.ci[, 2],
          col = "grey12", lwd = 1.75)
 
 
+##
+coef(SE3.lm)
+coef(SE.vary.LM$`2019-2020`[[1]])
+
 
 #full plot
 SE.lm.list <- list(SE3.lm, SE2.lm, SE1.lm)
@@ -134,23 +138,97 @@ for (j in 1:3) {
   SEterms.vec <- c(SEterms.vec, c(SE.terms, NA))
 }
 
+SEterms.vec <- as.list(SEterms.vec)
+SEterms.vec[[26]] <- bquote("NINO (33)"^2)
+SEterms.vec[[25]] <- c("")
+SEterms.vec[[15]] <- c("")
+
 max.ci <- max(abs(SEci.vec), na.rm = TRUE)
+
+
+#update pch and cex
+#TODO: automate
+SE.pch <- c(24, 21, 16, 24, 24, 24, 21, 21, 24, 16, 21, 24, 16, 16, NA,
+            16, 21, 16, 21, 21, 21, 24, 21, 16, NA,
+            22, 21, 16, 24, 16, 16, 21, 24, 21, 16, 16, 16, 21, 16, NA)
+SE.col <- c(rep("darkgreen", 15), rep("firebrick",  10), rep("royalblue4", 15))
+SE.bg <- c(rep(alpha("chartreuse2", 0.40), 15), 
+           rep(alpha("coral3", 0.40), 10),
+           rep(alpha("royalblue", 0.40), 15))
+SE.cex <- c()
 
 
 
 setwd("~/CO_AUS/AusCOmodeling/Figures")
 png(filename = "fig2_new.png", width = 3200, height = 4000, res = 300)
-par(mar = c(4, 10, 2, 2))  # wider left margin for term labels
+par(mar = c(4, 10, 3, 2), oma = c(0, 1.5, 0, 0.5))  # wider left margin for term labels
 plot(SEcoef.vec, seq_along(SEcoef.vec),
      xlim = c(-max.ci, max.ci) * 0.98,
      ylim = c(1.75, length(SEcoef.vec) - 1.75),
      yaxt = "n", ylab = "", xlab = "Estimate",
-     pch = 16, col = "grey12", 
-     bg =  alpha("grey70",.65), cex = 1.75,
-     main = "Coefficient Plot")
+     pch = SE.pch, col = SE.col, 
+     bg =  SE.bg, cex = 1.5)
+title("Figure 2", adj = 0, cex.main = 2)
+
+mtext("Early", side = 2, cex = 1.5, adj = 0.825, padj = 0, line = 0, outer = TRUE)
+mtext("Peak", side = 2, cex = 1.5, padj = 0, line = 0, outer = TRUE)
+mtext("Late", side = 2, cex = 1.5, adj = 0.20, padj = 0, line = 0, outer = TRUE)
+legend("topright", 
+       title = "Robust",
+       legend = c("Main",
+                  "Square",
+                  "Interaction"),
+       inset =  c(0.0, 0),
+       pch = c(16, 15, 17),
+       cex = 1.07, x.intersp = 3,
+       xpd = TRUE)
+legend("topright", 
+       title = "Not-Robust",
+       legend = c("Main",
+                  "Square",
+                  "Interaction"),
+       inset =  c(0.0, 0.10),
+       pch = c(21, 22, 24),
+       col = "grey12", 
+       pt.bg =  alpha("grey70",.65),
+       cex = 1.07, x.intersp = 3,
+       xpd = TRUE)
+
+#add in legend segments 95\% CI
+lg <- legend("topright",
+             legend = "95% CI",
+             inset =  c(0.0, 0.20),
+             bty = "o",        # draw the box
+             pch = NA,         # no default symbol
+             lty = 0,         # no default line
+             cex = 1.00, x.intersp = 4.75)
+lg
+# lg$rect gives you: left, top, w (width), h (height)
+x_left  <- lg$rect$left
+x_right <- lg$rect$left + lg$rect$w
+y_top   <- lg$rect$top
+y_mid   <- lg$rect$top - lg$rect$h / 2  # vertical center of legend
+
+# Now draw your error bar centered inside the legend box
+x_center <- x_left + lg$rect$w * 0.3    # tweak multiplier to taste
+half_w   <- lg$rect$w * 0.2
+cap      <- lg$rect$h * 0.15
+
+segments(x0 = x_center - half_w, x1 = x_center + half_w,
+         y0 = y_mid, y1 = y_mid,
+         col = "grey12", lwd = 1.75, lty = 2)
+
+# Tick caps
+segments(x0 = c(x_center - half_w, x_center + half_w),
+         x1 = c(x_center - half_w, x_center + half_w),
+         y0 = y_mid - cap, y1 = y_mid + cap,
+         col = "grey12", lwd = 1.75)
+
+
 
 # Y-axis with term names
-axis(2, at = seq_along(SEcoef.vec), labels = SEterms.vec, las = 1)
+axis(2, at = seq_along(SEcoef.vec), 
+     labels = do.call(expression, SEterms.vec), las = 1)
 # Confidence intervals as segments
 segments(x0 = SEci.vec[, 1], x1 = SEci.vec[, 2],
          y0 = seq_along(SEcoef.vec), y1 = seq_along(SEcoef.vec),
