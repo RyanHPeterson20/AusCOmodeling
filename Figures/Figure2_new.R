@@ -71,6 +71,7 @@ coef(SE3.lm)
 coef(SE.vary.LM$`2019-2020`[[1]])
 
 
+
 #full plot
 SE.lm.list <- list(SE3.lm, SE2.lm, SE1.lm)
 SEci.vec <- c()
@@ -138,7 +139,7 @@ rect(-7, 0.5+(2*(0:19)), 7, 1.5+(2*(0:19)), col = alpha("gray78",0.5), border = 
 #rect(-7, 4.5, 7, 5.5, col = alpha("gray78",0.5), border = NA)
 
 # Reference line at zero
-abline(v = 0, lty = 2, col = "grey24")
+abline(v = 0, lty = 1, col = "grey13", lwd = 1.75)
 abline(h = 15, lty = 1, col = "grey36")
 abline(h = 25, lty = 1, col = "grey36")
 abline(v = c(-6:-1, 1:6), lty = 2, col = "grey66")
